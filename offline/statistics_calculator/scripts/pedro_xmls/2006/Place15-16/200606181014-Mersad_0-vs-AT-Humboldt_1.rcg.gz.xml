@@ -1,0 +1,1521 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<analysis>
+  <leftteam name="TeamLeft">
+    <player type="PT_DEFAULT" unum="1" viewQuality="HIGH"/>
+    <player type="PT_DEFAULT" unum="2" viewQuality="HIGH"/>
+    <player type="PT_DEFAULT" unum="3" viewQuality="HIGH"/>
+    <player type="PT_DEFAULT" unum="4" viewQuality="HIGH"/>
+    <player type="PT_DEFAULT" unum="5" viewQuality="HIGH"/>
+    <player type="PT_DEFAULT" unum="6" viewQuality="HIGH"/>
+    <player type="PT_DEFAULT" unum="7" viewQuality="HIGH"/>
+    <player type="PT_DEFAULT" unum="8" viewQuality="HIGH"/>
+    <player type="PT_DEFAULT" unum="9" viewQuality="HIGH"/>
+    <player type="PT_DEFAULT" unum="10" viewQuality="HIGH"/>
+    <player type="PT_DEFAULT" unum="11" viewQuality="HIGH"/>
+  </leftteam>
+  <rightteam name="TeamRight">
+    <player type="PT_DEFAULT" unum="1" viewQuality="HIGH"/>
+    <player type="PT_DEFAULT" unum="2" viewQuality="HIGH"/>
+    <player type="PT_DEFAULT" unum="3" viewQuality="HIGH"/>
+    <player type="PT_DEFAULT" unum="4" viewQuality="HIGH"/>
+    <player type="PT_DEFAULT" unum="5" viewQuality="HIGH"/>
+    <player type="PT_DEFAULT" unum="6" viewQuality="HIGH"/>
+    <player type="PT_DEFAULT" unum="7" viewQuality="HIGH"/>
+    <player type="PT_DEFAULT" unum="8" viewQuality="HIGH"/>
+    <player type="PT_DEFAULT" unum="9" viewQuality="HIGH"/>
+    <player type="PT_DEFAULT" unum="10" viewQuality="HIGH"/>
+    <player type="PT_DEFAULT" unum="11" viewQuality="HIGH"/>
+  </rightteam>
+  <goals left="0" right="1">
+    <goal team="RIGHT_SIDE" time="3923">
+      <kick player="10" team="RIGHT_SIDE" time="3922" zone="GOAL_AREA"/>
+    </goal>
+  </goals>
+  <goalmisses left="0" right="3">
+    <goalmiss team="RIGHT_SIDE" time="757" type="GOALIE_CATCHED">
+      <kick player="8" team="RIGHT_SIDE" time="752" zone="PENALTY_AREA"/>
+    </goalmiss>
+    <goalmiss team="RIGHT_SIDE" time="3328" type="GOALIE_CATCHED">
+      <kick player="10" team="RIGHT_SIDE" time="3324" zone="PENALTY_AREA"/>
+    </goalmiss>
+    <goalmiss team="RIGHT_SIDE" time="5993" type="GOALIE_CATCHED">
+      <kick player="7" team="RIGHT_SIDE" time="5969" zone="FAR_SHOT"/>
+    </goalmiss>
+  </goalmisses>
+  <ballpossession left="839" neutral="735" right="2771" total="4345">
+    <zone name="TopLeftleft" percent="13.528463" time="587">
+      <possession percent="5.6218057" team="LEFT_SIDE" time="33"/>
+      <possession percent="82.28279" team="RIGHT_SIDE" time="483"/>
+      <possession percent="12.095401" team="NEUTRAL" time="71"/>
+    </zone>
+    <zone name="TopLeftright" percent="12.19175" time="529">
+      <possession percent="20.604914" team="LEFT_SIDE" time="109"/>
+      <possession percent="72.967865" team="RIGHT_SIDE" time="386"/>
+      <possession percent="6.427221" team="NEUTRAL" time="34"/>
+    </zone>
+    <zone name="MiddleLeftleft" percent="2.3277254" time="101">
+      <possession percent="22.772278" team="LEFT_SIDE" time="23"/>
+      <possession percent="37.623764" team="RIGHT_SIDE" time="38"/>
+      <possession percent="39.603962" team="NEUTRAL" time="40"/>
+    </zone>
+    <zone name="MiddleLeftright" percent="16.962435" time="736">
+      <possession percent="17.119566" team="LEFT_SIDE" time="126"/>
+      <possession percent="70.108696" team="RIGHT_SIDE" time="516"/>
+      <possession percent="12.771739" team="NEUTRAL" time="94"/>
+    </zone>
+    <zone name="BottomLeftleft" percent="10.670661" time="463">
+      <possession percent="17.4946" team="LEFT_SIDE" time="81"/>
+      <possession percent="69.11447" team="RIGHT_SIDE" time="320"/>
+      <possession percent="13.390928" team="NEUTRAL" time="62"/>
+    </zone>
+    <zone name="BottomLeftright" percent="16.685871" time="724">
+      <possession percent="11.464088" team="LEFT_SIDE" time="83"/>
+      <possession percent="68.09392" team="RIGHT_SIDE" time="493"/>
+      <possession percent="20.44199" team="NEUTRAL" time="148"/>
+    </zone>
+    <zone name="TopRightleft" percent="3.2726433" time="142">
+      <possession percent="45.774647" team="LEFT_SIDE" time="65"/>
+      <possession percent="25.352112" team="RIGHT_SIDE" time="36"/>
+      <possession percent="28.873238" team="NEUTRAL" time="41"/>
+    </zone>
+    <zone name="TopRightright" percent="2.350772" time="102">
+      <possession percent="63.72549" team="LEFT_SIDE" time="65"/>
+      <possession percent="20.588236" team="RIGHT_SIDE" time="21"/>
+      <possession percent="15.6862755" team="NEUTRAL" time="16"/>
+    </zone>
+    <zone name="MiddleRightleft" percent="9.426135" time="409">
+      <possession percent="26.16137" team="LEFT_SIDE" time="107"/>
+      <possession percent="59.902203" team="RIGHT_SIDE" time="245"/>
+      <possession percent="13.93643" team="NEUTRAL" time="57"/>
+    </zone>
+    <zone name="MiddleRightright" percent="3.2495968" time="141">
+      <possession percent="19.858156" team="LEFT_SIDE" time="28"/>
+      <possession percent="46.80851" team="RIGHT_SIDE" time="66"/>
+      <possession percent="33.333336" team="NEUTRAL" time="47"/>
+    </zone>
+    <zone name="BottomRightleft" percent="7.236691" time="314">
+      <possession percent="24.203821" team="LEFT_SIDE" time="76"/>
+      <possession percent="51.273884" team="RIGHT_SIDE" time="161"/>
+      <possession percent="24.522293" team="NEUTRAL" time="77"/>
+    </zone>
+    <zone name="BottomRightright" percent="2.0972574" time="91">
+      <possession percent="47.252747" team="LEFT_SIDE" time="43"/>
+      <possession percent="7.692308" team="RIGHT_SIDE" time="7"/>
+      <possession percent="45.054947" team="NEUTRAL" time="41"/>
+    </zone>
+    <zone name="OutsideLeft" percent="0.0" time="0">
+      <possession percent="0.0" team="LEFT_SIDE" time="0"/>
+      <possession percent="0.0" team="RIGHT_SIDE" time="0"/>
+      <possession percent="0.0" team="NEUTRAL" time="0"/>
+    </zone>
+    <zone name="OutsideRight" percent="0.0" time="0">
+      <possession percent="0.0" team="LEFT_SIDE" time="0"/>
+      <possession percent="0.0" team="RIGHT_SIDE" time="0"/>
+      <possession percent="0.0" team="NEUTRAL" time="0"/>
+    </zone>
+    <zone name="OutsideTop" percent="0.0" time="0">
+      <possession percent="0.0" team="LEFT_SIDE" time="0"/>
+      <possession percent="0.0" team="RIGHT_SIDE" time="0"/>
+      <possession percent="0.0" team="NEUTRAL" time="0"/>
+    </zone>
+    <zone name="OutsideBottom" percent="0.0" time="0">
+      <possession percent="0.0" team="LEFT_SIDE" time="0"/>
+      <possession percent="0.0" team="RIGHT_SIDE" time="0"/>
+      <possession percent="0.0" team="NEUTRAL" time="0"/>
+    </zone>
+  </ballpossession>
+  <passes left="62" right="131">
+    <pass breakpass="false" offensive="false" team="LEFT_SIDE">
+      <kick player="3" time="33"/>
+      <reception player="11" time="37"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="4" time="209"/>
+      <reception player="6" time="220"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="6" time="230"/>
+      <reception player="10" time="241"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="10" time="242"/>
+      <reception player="8" time="253"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="8" time="272"/>
+      <reception player="10" time="279"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="10" time="283"/>
+      <reception player="8" time="291"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="LEFT_SIDE">
+      <kick player="7" time="298"/>
+      <reception player="4" time="305"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="LEFT_SIDE">
+      <kick player="4" time="305"/>
+      <reception player="3" time="311"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="LEFT_SIDE">
+      <kick player="4" time="322"/>
+      <reception player="11" time="329"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="LEFT_SIDE">
+      <kick player="11" time="333"/>
+      <reception player="4" time="354"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="RIGHT_SIDE">
+      <kick player="1" time="363"/>
+      <reception player="3" time="370"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="RIGHT_SIDE">
+      <kick player="3" time="372"/>
+      <reception player="8" time="381"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="RIGHT_SIDE">
+      <kick player="8" time="382"/>
+      <reception player="10" time="389"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="RIGHT_SIDE">
+      <kick player="10" time="393"/>
+      <reception player="9" time="404"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="RIGHT_SIDE">
+      <kick player="9" time="405"/>
+      <reception player="7" time="413"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="LEFT_SIDE">
+      <kick player="8" time="475"/>
+      <reception player="9" time="478"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="LEFT_SIDE">
+      <kick player="9" time="488"/>
+      <reception player="2" time="501"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="9" time="540"/>
+      <reception player="7" time="546"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="7" time="558"/>
+      <reception player="6" time="566"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="6" time="567"/>
+      <reception player="7" time="571"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="7" time="579"/>
+      <reception player="6" time="585"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="6" time="587"/>
+      <reception player="7" time="592"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="LEFT_SIDE">
+      <kick player="9" time="629"/>
+      <reception player="2" time="639"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="5" time="655"/>
+      <reception player="8" time="665"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="LEFT_SIDE">
+      <kick player="1" time="908"/>
+      <reception player="6" time="910"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="LEFT_SIDE">
+      <kick player="6" time="916"/>
+      <reception player="10" time="929"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="LEFT_SIDE">
+      <kick player="10" time="929"/>
+      <reception player="3" time="951"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="LEFT_SIDE">
+      <kick player="3" time="985"/>
+      <reception player="2" time="988"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="RIGHT_SIDE">
+      <kick player="6" time="1116"/>
+      <reception player="9" time="1126"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="9" time="1135"/>
+      <reception player="7" time="1144"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="7" time="1169"/>
+      <reception player="6" time="1178"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="6" time="1185"/>
+      <reception player="7" time="1194"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="LEFT_SIDE">
+      <kick player="9" time="1343"/>
+      <reception player="11" time="1350"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="LEFT_SIDE">
+      <kick player="11" time="1355"/>
+      <reception player="3" time="1365"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="4" time="1457"/>
+      <reception player="7" time="1461"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="7" time="1477"/>
+      <reception player="9" time="1483"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="9" time="1483"/>
+      <reception player="6" time="1486"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="6" time="1491"/>
+      <reception player="8" time="1502"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="8" time="1502"/>
+      <reception player="9" time="1508"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="LEFT_SIDE">
+      <kick player="4" time="1518"/>
+      <reception player="11" time="1519"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="RIGHT_SIDE">
+      <kick player="2" time="1550"/>
+      <reception player="4" time="1557"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="4" time="1558"/>
+      <reception player="9" time="1566"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="9" time="1567"/>
+      <reception player="10" time="1576"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="10" time="1576"/>
+      <reception player="8" time="1585"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="8" time="1604"/>
+      <reception player="6" time="1612"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="5" time="1635"/>
+      <reception player="6" time="1641"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="6" time="1642"/>
+      <reception player="8" time="1652"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="8" time="1662"/>
+      <reception player="6" time="1668"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="6" time="1669"/>
+      <reception player="7" time="1678"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="7" time="1687"/>
+      <reception player="9" time="1693"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="9" time="1693"/>
+      <reception player="7" time="1705"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="7" time="1710"/>
+      <reception player="6" time="1715"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="6" time="1715"/>
+      <reception player="8" time="1724"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="8" time="1811"/>
+      <reception player="5" time="1825"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="5" time="1827"/>
+      <reception player="8" time="1832"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="8" time="1865"/>
+      <reception player="5" time="1876"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="5" time="1881"/>
+      <reception player="8" time="1886"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="8" time="1927"/>
+      <reception player="6" time="1937"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="6" time="1939"/>
+      <reception player="8" time="1943"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="LEFT_SIDE">
+      <kick player="6" time="2143"/>
+      <reception player="2" time="2155"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="LEFT_SIDE">
+      <kick player="2" time="2158"/>
+      <reception player="10" time="2167"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="LEFT_SIDE">
+      <kick player="10" time="2168"/>
+      <reception player="2" time="2172"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="LEFT_SIDE">
+      <kick player="2" time="2176"/>
+      <reception player="3" time="2186"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="LEFT_SIDE">
+      <kick player="3" time="2197"/>
+      <reception player="4" time="2204"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="RIGHT_SIDE">
+      <kick player="2" time="2215"/>
+      <reception player="4" time="2221"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="RIGHT_SIDE">
+      <kick player="4" time="2221"/>
+      <reception player="9" time="2233"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="9" time="2235"/>
+      <reception player="7" time="2244"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="7" time="2260"/>
+      <reception player="6" time="2269"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="6" time="2270"/>
+      <reception player="10" time="2278"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="10" time="2278"/>
+      <reception player="8" time="2287"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="8" time="2291"/>
+      <reception player="6" time="2296"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="6" time="2297"/>
+      <reception player="7" time="2325"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="LEFT_SIDE">
+      <kick player="9" time="2403"/>
+      <reception player="4" time="2420"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="LEFT_SIDE">
+      <kick player="2" time="2447"/>
+      <reception player="3" time="2453"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="8" time="2489"/>
+      <reception player="10" time="2497"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="10" time="2501"/>
+      <reception player="8" time="2508"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="8" time="2531"/>
+      <reception player="6" time="2537"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="LEFT_SIDE">
+      <kick player="9" time="2552"/>
+      <reception player="4" time="2559"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="5" time="2567"/>
+      <reception player="10" time="2574"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="10" time="2586"/>
+      <reception player="8" time="2606"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="LEFT_SIDE">
+      <kick player="5" time="2672"/>
+      <reception player="2" time="2679"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="LEFT_SIDE">
+      <kick player="2" time="2680"/>
+      <reception player="10" time="2688"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="LEFT_SIDE">
+      <kick player="10" time="2688"/>
+      <reception player="11" time="2698"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="LEFT_SIDE">
+      <kick player="11" time="2701"/>
+      <reception player="4" time="2702"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="RIGHT_SIDE">
+      <kick player="3" time="2716"/>
+      <reception player="1" time="2724"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="RIGHT_SIDE">
+      <kick player="1" time="2725"/>
+      <reception player="7" time="2736"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="7" time="2757"/>
+      <reception player="9" time="2770"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="9" time="2771"/>
+      <reception player="10" time="2782"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="RIGHT_SIDE">
+      <kick player="6" time="3030"/>
+      <reception player="8" time="3040"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="LEFT_SIDE">
+      <kick player="10" time="3060"/>
+      <reception player="3" time="3065"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="LEFT_SIDE">
+      <kick player="3" time="3065"/>
+      <reception player="4" time="3076"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="RIGHT_SIDE">
+      <kick player="1" time="3105"/>
+      <reception player="10" time="3120"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="RIGHT_SIDE">
+      <kick player="10" time="3124"/>
+      <reception player="9" time="3135"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="RIGHT_SIDE">
+      <kick player="9" time="3141"/>
+      <reception player="8" time="3151"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="RIGHT_SIDE">
+      <kick player="8" time="3162"/>
+      <reception player="6" time="3178"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="6" time="3185"/>
+      <reception player="8" time="3192"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="8" time="3200"/>
+      <reception player="6" time="3215"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="6" time="3220"/>
+      <reception player="10" time="3231"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="10" time="3234"/>
+      <reception player="8" time="3244"/>
+    </pass>
+    <pass breakpass="true" offensive="true" team="RIGHT_SIDE">
+      <kick player="8" time="3310"/>
+      <reception player="6" time="3317"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="6" time="3320"/>
+      <reception player="10" time="3324"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="LEFT_SIDE">
+      <kick player="1" time="3496"/>
+      <reception player="6" time="3500"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="LEFT_SIDE">
+      <kick player="6" time="3502"/>
+      <reception player="10" time="3510"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="LEFT_SIDE">
+      <kick player="10" time="3510"/>
+      <reception player="2" time="3517"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="LEFT_SIDE">
+      <kick player="2" time="3564"/>
+      <reception player="3" time="3570"/>
+    </pass>
+    <pass breakpass="true" offensive="true" team="LEFT_SIDE">
+      <kick player="3" time="3570"/>
+      <reception player="2" time="3578"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="RIGHT_SIDE">
+      <kick player="3" time="3661"/>
+      <reception player="8" time="3668"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="RIGHT_SIDE">
+      <kick player="8" time="3673"/>
+      <reception player="6" time="3683"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="RIGHT_SIDE">
+      <kick player="6" time="3685"/>
+      <reception player="7" time="3696"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="RIGHT_SIDE">
+      <kick player="7" time="3700"/>
+      <reception player="9" time="3706"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="RIGHT_SIDE">
+      <kick player="9" time="3708"/>
+      <reception player="7" time="3717"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="7" time="3720"/>
+      <reception player="9" time="3724"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="9" time="3726"/>
+      <reception player="10" time="3735"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="10" time="3736"/>
+      <reception player="8" time="3744"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="4" time="3784"/>
+      <reception player="6" time="3788"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="6" time="3797"/>
+      <reception player="7" time="3807"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="6" time="3828"/>
+      <reception player="7" time="3837"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="7" time="3853"/>
+      <reception player="6" time="3860"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="6" time="3916"/>
+      <reception player="10" time="3922"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="LEFT_SIDE">
+      <kick player="3" time="3955"/>
+      <reception player="11" time="3959"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="LEFT_SIDE">
+      <kick player="11" time="3959"/>
+      <reception player="3" time="3968"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="LEFT_SIDE">
+      <kick player="3" time="3968"/>
+      <reception player="11" time="3973"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="LEFT_SIDE">
+      <kick player="11" time="3973"/>
+      <reception player="4" time="3978"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="LEFT_SIDE">
+      <kick player="4" time="3978"/>
+      <reception player="3" time="3981"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="LEFT_SIDE">
+      <kick player="3" time="3981"/>
+      <reception player="2" time="3983"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="LEFT_SIDE">
+      <kick player="2" time="3986"/>
+      <reception player="3" time="3990"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="LEFT_SIDE">
+      <kick player="2" time="4017"/>
+      <reception player="4" time="4027"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="RIGHT_SIDE">
+      <kick player="4" time="4030"/>
+      <reception player="7" time="4057"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="7" time="4061"/>
+      <reception player="9" time="4070"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="9" time="4073"/>
+      <reception player="6" time="4074"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="6" time="4076"/>
+      <reception player="10" time="4084"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="10" time="4084"/>
+      <reception player="8" time="4091"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="8" time="4110"/>
+      <reception player="6" time="4118"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="6" time="4118"/>
+      <reception player="7" time="4129"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="7" time="4130"/>
+      <reception player="9" time="4147"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="LEFT_SIDE">
+      <kick player="7" time="4165"/>
+      <reception player="2" time="4172"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="LEFT_SIDE">
+      <kick player="2" time="4175"/>
+      <reception player="3" time="4183"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="LEFT_SIDE">
+      <kick player="3" time="4183"/>
+      <reception player="11" time="4191"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="LEFT_SIDE">
+      <kick player="11" time="4206"/>
+      <reception player="3" time="4209"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="LEFT_SIDE">
+      <kick player="3" time="4212"/>
+      <reception player="4" time="4219"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="RIGHT_SIDE">
+      <kick player="2" time="4399"/>
+      <reception player="7" time="4407"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="RIGHT_SIDE">
+      <kick player="7" time="4410"/>
+      <reception player="9" time="4424"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="9" time="4433"/>
+      <reception player="8" time="4440"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="8" time="4473"/>
+      <reception player="6" time="4481"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="6" time="4481"/>
+      <reception player="7" time="4488"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="9" time="4508"/>
+      <reception player="7" time="4512"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="LEFT_SIDE">
+      <kick player="9" time="4648"/>
+      <reception player="11" time="4654"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="5" time="4665"/>
+      <reception player="6" time="4672"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="6" time="4688"/>
+      <reception player="7" time="4695"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="LEFT_SIDE">
+      <kick player="7" time="4722"/>
+      <reception player="9" time="4732"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="LEFT_SIDE">
+      <kick player="9" time="4732"/>
+      <reception player="11" time="4741"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="LEFT_SIDE">
+      <kick player="11" time="4742"/>
+      <reception player="3" time="4749"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="RIGHT_SIDE">
+      <kick player="3" time="4829"/>
+      <reception player="9" time="4850"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="RIGHT_SIDE">
+      <kick player="9" time="4852"/>
+      <reception player="10" time="4861"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="RIGHT_SIDE">
+      <kick player="3" time="5046"/>
+      <reception player="1" time="5056"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="RIGHT_SIDE">
+      <kick player="1" time="5058"/>
+      <reception player="6" time="5067"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="RIGHT_SIDE">
+      <kick player="6" time="5068"/>
+      <reception player="10" time="5076"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="RIGHT_SIDE">
+      <kick player="10" time="5082"/>
+      <reception player="9" time="5094"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="9" time="5094"/>
+      <reception player="7" time="5114"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="7" time="5125"/>
+      <reception player="6" time="5133"/>
+    </pass>
+    <pass breakpass="true" offensive="true" team="RIGHT_SIDE">
+      <kick player="9" time="5149"/>
+      <reception player="7" time="5182"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="LEFT_SIDE">
+      <kick player="9" time="5194"/>
+      <reception player="8" time="5201"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="4" time="5214"/>
+      <reception player="8" time="5227"/>
+    </pass>
+    <pass breakpass="true" offensive="true" team="RIGHT_SIDE">
+      <kick player="8" time="5230"/>
+      <reception player="9" time="5239"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="9" time="5246"/>
+      <reception player="4" time="5275"/>
+    </pass>
+    <pass breakpass="true" offensive="true" team="RIGHT_SIDE">
+      <kick player="4" time="5276"/>
+      <reception player="9" time="5300"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="9" time="5313"/>
+      <reception player="7" time="5324"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="7" time="5325"/>
+      <reception player="4" time="5338"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="4" time="5342"/>
+      <reception player="6" time="5347"/>
+    </pass>
+    <pass breakpass="true" offensive="true" team="RIGHT_SIDE">
+      <kick player="8" time="5376"/>
+      <reception player="10" time="5404"/>
+    </pass>
+    <pass breakpass="true" offensive="true" team="RIGHT_SIDE">
+      <kick player="10" time="5429"/>
+      <reception player="8" time="5438"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="8" time="5448"/>
+      <reception player="5" time="5458"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="5" time="5458"/>
+      <reception player="8" time="5464"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="LEFT_SIDE">
+      <kick player="7" time="5517"/>
+      <reception player="4" time="5529"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="LEFT_SIDE">
+      <kick player="4" time="5529"/>
+      <reception player="2" time="5534"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="LEFT_SIDE">
+      <kick player="2" time="5538"/>
+      <reception player="3" time="5547"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="10" time="5589"/>
+      <reception player="6" time="5596"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="LEFT_SIDE">
+      <kick player="7" time="5597"/>
+      <reception player="8" time="5602"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="LEFT_SIDE">
+      <kick player="8" time="5605"/>
+      <reception player="4" time="5618"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="LEFT_SIDE">
+      <kick player="4" time="5618"/>
+      <reception player="2" time="5624"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="LEFT_SIDE">
+      <kick player="2" time="5631"/>
+      <reception player="3" time="5637"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="LEFT_SIDE">
+      <kick player="3" time="5638"/>
+      <reception player="10" time="5645"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="LEFT_SIDE">
+      <kick player="10" time="5647"/>
+      <reception player="3" time="5651"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="LEFT_SIDE">
+      <kick player="3" time="5653"/>
+      <reception player="4" time="5658"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="RIGHT_SIDE">
+      <kick player="2" time="5747"/>
+      <reception player="4" time="5753"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="RIGHT_SIDE">
+      <kick player="4" time="5757"/>
+      <reception player="6" time="5763"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="RIGHT_SIDE">
+      <kick player="6" time="5767"/>
+      <reception player="9" time="5774"/>
+    </pass>
+    <pass breakpass="false" offensive="false" team="RIGHT_SIDE">
+      <kick player="9" time="5775"/>
+      <reception player="10" time="5787"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="10" time="5787"/>
+      <reception player="8" time="5830"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="8" time="5848"/>
+      <reception player="6" time="5858"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="6" time="5859"/>
+      <reception player="7" time="5869"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="7" time="5889"/>
+      <reception player="6" time="5897"/>
+    </pass>
+    <pass breakpass="false" offensive="true" team="RIGHT_SIDE">
+      <kick player="6" time="5897"/>
+      <reception player="7" time="5906"/>
+    </pass>
+  </passes>
+  <passmisses left="48" right="16">
+    <passmiss team="LEFT_SIDE">
+      <kick player="11" time="37"/>
+      <target player="4" time="40"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="11" time="37"/>
+      <target player="4" time="40"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="11" time="143"/>
+      <target player="4" time="147"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="11" time="143"/>
+      <target player="4" time="147"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="4" time="354"/>
+      <target player="3" time="356"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="4" time="354"/>
+      <target player="3" time="356"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="2" time="639"/>
+      <target player="3" time="644"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="2" time="639"/>
+      <target player="3" time="644"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="2" time="993"/>
+      <target player="3" time="995"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="2" time="993"/>
+      <target player="3" time="995"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="3" time="1369"/>
+      <target player="4" time="1374"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="3" time="1369"/>
+      <target player="4" time="1374"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="11" time="1524"/>
+      <target player="4" time="1540"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="11" time="1524"/>
+      <target player="4" time="1540"/>
+    </passmiss>
+    <passmiss team="RIGHT_SIDE">
+      <kick player="6" time="1613"/>
+      <target player="7" time="1619"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="9" time="1625"/>
+      <target player="2" time="1631"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="9" time="1625"/>
+      <target player="2" time="1631"/>
+    </passmiss>
+    <passmiss team="RIGHT_SIDE">
+      <kick player="8" time="1953"/>
+      <target player="6" time="1956"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="4" time="1966"/>
+      <target player="2" time="1970"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="4" time="1966"/>
+      <target player="2" time="1970"/>
+    </passmiss>
+    <passmiss team="RIGHT_SIDE">
+      <kick player="6" time="1980"/>
+      <target player="8" time="1986"/>
+    </passmiss>
+    <passmiss team="RIGHT_SIDE">
+      <kick player="7" time="2396"/>
+      <target player="6" time="2401"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="4" time="2420"/>
+      <target player="11" time="2425"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="4" time="2420"/>
+      <target player="11" time="2425"/>
+    </passmiss>
+    <passmiss team="RIGHT_SIDE">
+      <kick player="3" time="2444"/>
+      <target player="5" time="2447"/>
+    </passmiss>
+    <passmiss team="RIGHT_SIDE">
+      <kick player="6" time="2539"/>
+      <target player="7" time="2544"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="4" time="2559"/>
+      <target player="3" time="2563"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="4" time="2559"/>
+      <target player="3" time="2563"/>
+    </passmiss>
+    <passmiss team="RIGHT_SIDE">
+      <kick player="8" time="2662"/>
+      <target player="10" time="2667"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="4" time="2702"/>
+      <target player="3" time="2705"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="4" time="2702"/>
+      <target player="3" time="2705"/>
+    </passmiss>
+    <passmiss team="RIGHT_SIDE">
+      <kick player="10" time="2791"/>
+      <target player="8" time="2800"/>
+    </passmiss>
+    <passmiss team="RIGHT_SIDE">
+      <kick player="8" time="3051"/>
+      <target player="5" time="3056"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="9" time="3814"/>
+      <target player="2" time="3820"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="9" time="3814"/>
+      <target player="2" time="3820"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="4" time="4028"/>
+      <target player="11" time="4030"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="4" time="4028"/>
+      <target player="11" time="4030"/>
+    </passmiss>
+    <passmiss team="RIGHT_SIDE">
+      <kick player="9" time="4155"/>
+      <target player="6" time="4157"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="4" time="4230"/>
+      <target player="3" time="4233"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="4" time="4230"/>
+      <target player="3" time="4233"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="8" time="4505"/>
+      <target player="9" time="4507"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="8" time="4505"/>
+      <target player="9" time="4507"/>
+    </passmiss>
+    <passmiss team="RIGHT_SIDE">
+      <kick player="7" time="4522"/>
+      <target player="9" time="4524"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="11" time="4654"/>
+      <target player="3" time="4660"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="11" time="4654"/>
+      <target player="3" time="4660"/>
+    </passmiss>
+    <passmiss team="RIGHT_SIDE">
+      <kick player="10" time="4870"/>
+      <target player="8" time="4878"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="2" time="5034"/>
+      <target player="3" time="5044"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="2" time="5034"/>
+      <target player="3" time="5044"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="8" time="5139"/>
+      <target player="5" time="5144"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="8" time="5139"/>
+      <target player="5" time="5144"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="8" time="5201"/>
+      <target player="4" time="5210"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="8" time="5201"/>
+      <target player="4" time="5210"/>
+    </passmiss>
+    <passmiss team="RIGHT_SIDE">
+      <kick player="6" time="5364"/>
+      <target player="8" time="5371"/>
+    </passmiss>
+    <passmiss team="RIGHT_SIDE">
+      <kick player="8" time="5501"/>
+      <target player="10" time="5506"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="3" time="5548"/>
+      <target player="10" time="5553"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="3" time="5548"/>
+      <target player="10" time="5553"/>
+    </passmiss>
+    <passmiss team="RIGHT_SIDE">
+      <kick player="8" time="5561"/>
+      <target player="10" time="5579"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="10" time="5562"/>
+      <target player="6" time="5577"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="10" time="5562"/>
+      <target player="6" time="5577"/>
+    </passmiss>
+    <passmiss team="RIGHT_SIDE">
+      <kick player="10" time="5589"/>
+      <target player="6" time="5594"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="4" time="5661"/>
+      <target player="11" time="5665"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="4" time="5661"/>
+      <target player="11" time="5665"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="9" time="5717"/>
+      <target player="4" time="5723"/>
+    </passmiss>
+    <passmiss team="LEFT_SIDE">
+      <kick player="9" time="5717"/>
+      <target player="4" time="5723"/>
+    </passmiss>
+  </passmisses>
+  <passchains left="9" right="19">
+    <passchain end="291" size="5" start="209" team="RIGHT_SIDE"/>
+    <passchain end="413" size="5" start="363" team="RIGHT_SIDE"/>
+    <passchain end="592" size="5" start="540" team="RIGHT_SIDE"/>
+    <passchain end="988" size="4" start="908" team="LEFT_SIDE"/>
+    <passchain end="1194" size="4" start="1116" team="RIGHT_SIDE"/>
+    <passchain end="1508" size="5" start="1457" team="RIGHT_SIDE"/>
+    <passchain end="1612" size="5" start="1550" team="RIGHT_SIDE"/>
+    <passchain end="1943" size="14" start="1635" team="RIGHT_SIDE"/>
+    <passchain end="2204" size="5" start="2143" team="LEFT_SIDE"/>
+    <passchain end="2325" size="8" start="2215" team="RIGHT_SIDE"/>
+    <passchain end="2537" size="3" start="2489" team="RIGHT_SIDE"/>
+    <passchain end="2702" size="4" start="2672" team="LEFT_SIDE"/>
+    <passchain end="2782" size="4" start="2716" team="RIGHT_SIDE"/>
+    <passchain end="3324" size="10" start="3105" team="RIGHT_SIDE"/>
+    <passchain end="3578" size="5" start="3496" team="LEFT_SIDE"/>
+    <passchain end="3744" size="8" start="3661" team="RIGHT_SIDE"/>
+    <passchain end="3922" size="3" start="3828" team="RIGHT_SIDE"/>
+    <passchain end="3990" size="7" start="3955" team="LEFT_SIDE"/>
+    <passchain end="4147" size="8" start="4030" team="RIGHT_SIDE"/>
+    <passchain end="4219" size="5" start="4165" team="LEFT_SIDE"/>
+    <passchain end="4488" size="5" start="4399" team="RIGHT_SIDE"/>
+    <passchain end="4749" size="3" start="4722" team="LEFT_SIDE"/>
+    <passchain end="5133" size="6" start="5046" team="RIGHT_SIDE"/>
+    <passchain end="5347" size="7" start="5214" team="RIGHT_SIDE"/>
+    <passchain end="5464" size="4" start="5376" team="RIGHT_SIDE"/>
+    <passchain end="5547" size="3" start="5517" team="LEFT_SIDE"/>
+    <passchain end="5658" size="7" start="5597" team="LEFT_SIDE"/>
+    <passchain end="5906" size="9" start="5747" team="RIGHT_SIDE"/>
+  </passchains>
+  <wingchanges left="10" right="31">
+    <wingchange offensive="true" totalvariation="false">
+      <pass team="RIGHT_SIDE">
+        <kick player="10" time="283" wing="MIDDLE"/>
+        <reception player="8" time="291" wing="TOP"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="false" totalvariation="false">
+      <pass team="LEFT_SIDE">
+        <kick player="7" time="298" wing="TOP"/>
+        <reception player="4" time="305" wing="MIDDLE"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="false" totalvariation="false">
+      <pass team="RIGHT_SIDE">
+        <kick player="3" time="372" wing="MIDDLE"/>
+        <reception player="8" time="381" wing="TOP"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="false" totalvariation="false">
+      <pass team="RIGHT_SIDE">
+        <kick player="8" time="382" wing="TOP"/>
+        <reception player="10" time="389" wing="MIDDLE"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="true" totalvariation="false">
+      <pass team="RIGHT_SIDE">
+        <kick player="10" time="1576" wing="MIDDLE"/>
+        <reception player="8" time="1585" wing="TOP"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="true" totalvariation="false">
+      <pass team="RIGHT_SIDE">
+        <kick player="6" time="1642" wing="MIDDLE"/>
+        <reception player="8" time="1652" wing="TOP"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="true" totalvariation="false">
+      <pass team="RIGHT_SIDE">
+        <kick player="8" time="1662" wing="TOP"/>
+        <reception player="6" time="1668" wing="MIDDLE"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="true" totalvariation="false">
+      <pass team="LEFT_SIDE">
+        <kick player="3" time="2197" wing="TOP"/>
+        <reception player="4" time="2204" wing="MIDDLE"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="true" totalvariation="false">
+      <pass team="RIGHT_SIDE">
+        <kick player="6" time="2297" wing="MIDDLE"/>
+        <reception player="7" time="2325" wing="BOTTOM"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="false" totalvariation="false">
+      <pass team="LEFT_SIDE">
+        <kick player="9" time="2403" wing="MIDDLE"/>
+        <reception player="4" time="2420" wing="BOTTOM"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="true" totalvariation="false">
+      <pass team="RIGHT_SIDE">
+        <kick player="8" time="2489" wing="TOP"/>
+        <reception player="10" time="2497" wing="MIDDLE"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="true" totalvariation="false">
+      <pass team="RIGHT_SIDE">
+        <kick player="10" time="2501" wing="MIDDLE"/>
+        <reception player="8" time="2508" wing="TOP"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="true" totalvariation="false">
+      <pass team="RIGHT_SIDE">
+        <kick player="8" time="2531" wing="TOP"/>
+        <reception player="6" time="2537" wing="MIDDLE"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="true" totalvariation="false">
+      <pass team="RIGHT_SIDE">
+        <kick player="10" time="2586" wing="MIDDLE"/>
+        <reception player="8" time="2606" wing="TOP"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="false" totalvariation="false">
+      <pass team="LEFT_SIDE">
+        <kick player="10" time="2688" wing="TOP"/>
+        <reception player="11" time="2698" wing="MIDDLE"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="false" totalvariation="false">
+      <pass team="RIGHT_SIDE">
+        <kick player="3" time="2716" wing="TOP"/>
+        <reception player="1" time="2724" wing="MIDDLE"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="false" totalvariation="false">
+      <pass team="RIGHT_SIDE">
+        <kick player="6" time="3030" wing="MIDDLE"/>
+        <reception player="8" time="3040" wing="TOP"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="true" totalvariation="false">
+      <pass team="LEFT_SIDE">
+        <kick player="10" time="3060" wing="TOP"/>
+        <reception player="3" time="3065" wing="MIDDLE"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="false" totalvariation="false">
+      <pass team="RIGHT_SIDE">
+        <kick player="9" time="3141" wing="MIDDLE"/>
+        <reception player="8" time="3151" wing="TOP"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="false" totalvariation="false">
+      <pass team="RIGHT_SIDE">
+        <kick player="8" time="3162" wing="TOP"/>
+        <reception player="6" time="3178" wing="MIDDLE"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="true" totalvariation="false">
+      <pass team="RIGHT_SIDE">
+        <kick player="6" time="3185" wing="MIDDLE"/>
+        <reception player="8" time="3192" wing="TOP"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="true" totalvariation="false">
+      <pass team="RIGHT_SIDE">
+        <kick player="8" time="3200" wing="TOP"/>
+        <reception player="6" time="3215" wing="MIDDLE"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="true" totalvariation="false">
+      <pass team="RIGHT_SIDE">
+        <kick player="10" time="3234" wing="MIDDLE"/>
+        <reception player="8" time="3244" wing="TOP"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="true" totalvariation="false">
+      <pass team="RIGHT_SIDE">
+        <kick player="6" time="3320" wing="TOP"/>
+        <reception player="10" time="3324" wing="MIDDLE"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="false" totalvariation="false">
+      <pass team="RIGHT_SIDE">
+        <kick player="6" time="3685" wing="TOP"/>
+        <reception player="7" time="3696" wing="MIDDLE"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="true" totalvariation="false">
+      <pass team="RIGHT_SIDE">
+        <kick player="10" time="3736" wing="MIDDLE"/>
+        <reception player="8" time="3744" wing="TOP"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="true" totalvariation="false">
+      <pass team="RIGHT_SIDE">
+        <kick player="6" time="3828" wing="MIDDLE"/>
+        <reception player="7" time="3837" wing="BOTTOM"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="false" totalvariation="false">
+      <pass team="RIGHT_SIDE">
+        <kick player="4" time="4030" wing="MIDDLE"/>
+        <reception player="7" time="4057" wing="BOTTOM"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="true" totalvariation="false">
+      <pass team="RIGHT_SIDE">
+        <kick player="8" time="4110" wing="TOP"/>
+        <reception player="6" time="4118" wing="MIDDLE"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="true" totalvariation="false">
+      <pass team="RIGHT_SIDE">
+        <kick player="6" time="4481" wing="TOP"/>
+        <reception player="7" time="4488" wing="MIDDLE"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="false" totalvariation="false">
+      <pass team="RIGHT_SIDE">
+        <kick player="3" time="5046" wing="TOP"/>
+        <reception player="1" time="5056" wing="MIDDLE"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="true" totalvariation="false">
+      <pass team="RIGHT_SIDE">
+        <kick player="9" time="5094" wing="MIDDLE"/>
+        <reception player="7" time="5114" wing="BOTTOM"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="true" totalvariation="false">
+      <pass team="RIGHT_SIDE">
+        <kick player="9" time="5246" wing="MIDDLE"/>
+        <reception player="4" time="5275" wing="BOTTOM"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="true" totalvariation="false">
+      <pass team="RIGHT_SIDE">
+        <kick player="8" time="5376" wing="MIDDLE"/>
+        <reception player="10" time="5404" wing="TOP"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="false" totalvariation="false">
+      <pass team="LEFT_SIDE">
+        <kick player="7" time="5597" wing="TOP"/>
+        <reception player="8" time="5602" wing="MIDDLE"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="false" totalvariation="false">
+      <pass team="LEFT_SIDE">
+        <kick player="4" time="5618" wing="MIDDLE"/>
+        <reception player="2" time="5624" wing="TOP"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="false" totalvariation="false">
+      <pass team="LEFT_SIDE">
+        <kick player="2" time="5631" wing="TOP"/>
+        <reception player="3" time="5637" wing="MIDDLE"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="false" totalvariation="false">
+      <pass team="LEFT_SIDE">
+        <kick player="3" time="5638" wing="MIDDLE"/>
+        <reception player="10" time="5645" wing="TOP"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="false" totalvariation="false">
+      <pass team="LEFT_SIDE">
+        <kick player="10" time="5647" wing="TOP"/>
+        <reception player="3" time="5651" wing="MIDDLE"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="true" totalvariation="false">
+      <pass team="RIGHT_SIDE">
+        <kick player="10" time="5787" wing="MIDDLE"/>
+        <reception player="8" time="5830" wing="TOP"/>
+      </pass>
+    </wingchange>
+    <wingchange offensive="true" totalvariation="false">
+      <pass team="RIGHT_SIDE">
+        <kick player="6" time="5859" wing="TOP"/>
+        <reception player="7" time="5869" wing="MIDDLE"/>
+      </pass>
+    </wingchange>
+  </wingchanges>
+  <wingchange_bypossession left="9" right="30">
+    <wingchange from="MIDDLE" team="RIGHT_SIDE" time="287" to="TOP"/>
+    <wingchange from="MIDDLE" team="RIGHT_SIDE" time="376" to="TOP"/>
+    <wingchange from="TOP" team="RIGHT_SIDE" time="383" to="MIDDLE"/>
+    <wingchange from="MIDDLE" team="RIGHT_SIDE" time="664" to="TOP"/>
+    <wingchange from="MIDDLE" team="RIGHT_SIDE" time="1582" to="TOP"/>
+    <wingchange from="TOP" team="RIGHT_SIDE" time="1611" to="MIDDLE"/>
+    <wingchange from="MIDDLE" team="RIGHT_SIDE" time="1645" to="TOP"/>
+    <wingchange from="TOP" team="RIGHT_SIDE" time="1665" to="MIDDLE"/>
+    <wingchange from="MIDDLE" team="RIGHT_SIDE" time="1735" to="TOP"/>
+    <wingchange from="TOP" team="LEFT_SIDE" time="2196" to="MIDDLE"/>
+    <wingchange from="TOP" team="RIGHT_SIDE" time="2491" to="MIDDLE"/>
+    <wingchange from="MIDDLE" team="RIGHT_SIDE" time="2500" to="TOP"/>
+    <wingchange from="TOP" team="RIGHT_SIDE" time="2535" to="MIDDLE"/>
+    <wingchange from="MIDDLE" team="RIGHT_SIDE" time="2587" to="TOP"/>
+    <wingchange from="TOP" team="LEFT_SIDE" time="2678" to="MIDDLE"/>
+    <wingchange from="MIDDLE" team="LEFT_SIDE" time="2679" to="TOP"/>
+    <wingchange from="TOP" team="LEFT_SIDE" time="2688" to="MIDDLE"/>
+    <wingchange from="MIDDLE" team="RIGHT_SIDE" time="3035" to="TOP"/>
+    <wingchange from="TOP" team="LEFT_SIDE" time="3061" to="MIDDLE"/>
+    <wingchange from="MIDDLE" team="RIGHT_SIDE" time="3147" to="TOP"/>
+    <wingchange from="TOP" team="RIGHT_SIDE" time="3165" to="MIDDLE"/>
+    <wingchange from="MIDDLE" team="RIGHT_SIDE" time="3188" to="TOP"/>
+    <wingchange from="TOP" team="RIGHT_SIDE" time="3203" to="MIDDLE"/>
+    <wingchange from="MIDDLE" team="RIGHT_SIDE" time="3236" to="TOP"/>
+    <wingchange from="TOP" team="RIGHT_SIDE" time="3320" to="MIDDLE"/>
+    <wingchange from="TOP" team="RIGHT_SIDE" time="3684" to="MIDDLE"/>
+    <wingchange from="MIDDLE" team="RIGHT_SIDE" time="3741" to="TOP"/>
+    <wingchange from="MIDDLE" team="RIGHT_SIDE" time="4096" to="TOP"/>
+    <wingchange from="TOP" team="RIGHT_SIDE" time="4112" to="MIDDLE"/>
+    <wingchange from="MIDDLE" team="RIGHT_SIDE" time="4454" to="TOP"/>
+    <wingchange from="TOP" team="RIGHT_SIDE" time="4480" to="MIDDLE"/>
+    <wingchange from="TOP" team="RIGHT_SIDE" time="5049" to="MIDDLE"/>
+    <wingchange from="MIDDLE" team="RIGHT_SIDE" time="5380" to="TOP"/>
+    <wingchange from="MIDDLE" team="LEFT_SIDE" time="5622" to="TOP"/>
+    <wingchange from="TOP" team="LEFT_SIDE" time="5631" to="MIDDLE"/>
+    <wingchange from="MIDDLE" team="LEFT_SIDE" time="5639" to="TOP"/>
+    <wingchange from="TOP" team="LEFT_SIDE" time="5649" to="MIDDLE"/>
+    <wingchange from="MIDDLE" team="RIGHT_SIDE" time="5791" to="TOP"/>
+    <wingchange from="TOP" team="RIGHT_SIDE" time="5860" to="MIDDLE"/>
+  </wingchange_bypossession>
+  <attacks left="8" right="22">
+    <attack dangerous="true" end="361" start="328" team="LEFT_SIDE" type="FAST"/>
+    <attack dangerous="false" end="452" start="405" team="RIGHT_SIDE" type="BROKEN"/>
+    <attack dangerous="false" end="693" start="650" team="RIGHT_SIDE" type="BROKEN"/>
+    <attack dangerous="true" end="756" start="702" team="RIGHT_SIDE" type="FAST"/>
+    <attack dangerous="true" end="1003" start="910" team="LEFT_SIDE" type="FAST"/>
+    <attack dangerous="false" end="1170" start="1135" team="RIGHT_SIDE" type="BROKEN"/>
+    <attack dangerous="true" end="1224" start="1175" team="RIGHT_SIDE" type="FAST"/>
+    <attack dangerous="true" end="1808" start="1751" team="RIGHT_SIDE" type="FAST"/>
+    <attack dangerous="true" end="1925" start="1888" team="RIGHT_SIDE" type="FAST"/>
+    <attack dangerous="false" end="2277" start="2235" team="RIGHT_SIDE" type="BROKEN"/>
+    <attack dangerous="true" end="2395" start="2343" team="RIGHT_SIDE" type="FAST"/>
+    <attack dangerous="false" end="2443" start="2403" team="LEFT_SIDE" type="BROKEN"/>
+    <attack dangerous="false" end="2637" start="2584" team="RIGHT_SIDE" type="BROKEN"/>
+    <attack dangerous="false" end="2755" start="2724" team="RIGHT_SIDE" type="BROKEN"/>
+    <attack dangerous="false" end="2824" start="2790" team="RIGHT_SIDE" type="BROKEN"/>
+    <attack dangerous="true" end="3094" start="3059" team="LEFT_SIDE" type="FAST"/>
+    <attack dangerous="false" end="3272" start="3231" team="RIGHT_SIDE" type="BROKEN"/>
+    <attack dangerous="true" end="3327" start="3274" team="RIGHT_SIDE" type="FAST"/>
+    <attack dangerous="true" end="3577" start="3517" team="LEFT_SIDE" type="FAST"/>
+    <attack dangerous="true" end="3910" start="3860" team="RIGHT_SIDE" type="FAST"/>
+    <attack dangerous="true" end="4231" start="4183" team="LEFT_SIDE" type="MEDIUM"/>
+    <attack dangerous="true" end="4802" start="4767" team="LEFT_SIDE" type="FAST"/>
+    <attack dangerous="true" end="5191" start="5144" team="RIGHT_SIDE" type="FAST"/>
+    <attack dangerous="true" end="5312" start="5275" team="RIGHT_SIDE" type="FAST"/>
+    <attack dangerous="true" end="5446" start="5376" team="RIGHT_SIDE" type="FAST"/>
+    <attack dangerous="true" end="5508" start="5469" team="RIGHT_SIDE" type="FAST"/>
+    <attack dangerous="false" end="5683" start="5647" team="LEFT_SIDE" type="BROKEN"/>
+    <attack dangerous="false" end="5715" start="5684" team="RIGHT_SIDE" type="BROKEN"/>
+    <attack dangerous="false" end="5847" start="5787" team="RIGHT_SIDE" type="BROKEN"/>
+    <attack dangerous="true" end="5992" start="5919" team="RIGHT_SIDE" type="MEDIUM"/>
+  </attacks>
+  <goalopportunities left="2" right="7">
+    <opportunity end="3102" player="3" side="LEFT_SIDE" start="3101"/>
+    <opportunity end="3323" player="10" side="RIGHT_SIDE" start="3323"/>
+    <opportunity end="3913" player="6" side="RIGHT_SIDE" start="3906"/>
+    <opportunity end="3915" player="6" side="RIGHT_SIDE" start="3915"/>
+    <opportunity end="3921" player="10" side="RIGHT_SIDE" start="3921"/>
+    <opportunity end="4816" player="10" side="LEFT_SIDE" start="4816"/>
+    <opportunity end="5238" player="9" side="RIGHT_SIDE" start="5238"/>
+    <opportunity end="5511" player="10" side="RIGHT_SIDE" start="5511"/>
+    <opportunity end="5992" player="8" side="RIGHT_SIDE" start="5992"/>
+  </goalopportunities>
+</analysis>

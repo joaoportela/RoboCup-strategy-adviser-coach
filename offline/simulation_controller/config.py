@@ -1,0 +1,129 @@
+#! /usr/bin/env python
+
+import os
+import logging
+
+# DATA START
+running_dir = "/home/joao/robocup/runner_workdir/"
+#serverconf = "server_official.conf"
+serverconf = "server_fast.conf"
+logfile = "runner.log"
+matchesdir = "matches/"
+teamsdir = "teams/"
+matchhost = "127.0.0.1"
+
+# fcportugal_dynamic
+ # strategy file to modify
+base_strategy="base_strategy.conf"
+ # folder to put the generated strategy files.
+strategy_folder = "strategies/"
+strategy_data = {
+        "formation":
+                 # valid values...
+                 [1,  # 433OPEN
+                  2,  # 442OPEN
+                  3,  # 443OPEN11Players
+                  4,  # 343
+                  8,  # TUDOAMONTE
+                  9,  # 433OPENDef
+                  12] # 4213 RiOne
+        ,
+        "mentality":# this one is not used yet...
+                 [0,
+                  1,
+                  2,
+                  3,
+                  4]
+}
+
+# scripts...
+scripts_dir=os.getcwd()
+team_start="team_start.sh"
+team_stop="team_stop.sh"
+serverbin = "/usr/local/bin/rcssserver"
+# DATA END
+
+# metadata start
+files = ["serverconf", "base_strategy"]
+to_write = ["logfile"]
+dirs = ["matchesdir", "teamsdir", "strategy_folder"]
+
+s_dirs = []
+s_files = ["team_start", "team_stop", "serverbin"]
+
+special_dirs = ["running_dir", "scripts_dir"]
+other = ["matchhost"]
+# metadata end
+
+class ConfigurationError(Exception):
+    def __init__(self, msg='Unspecified'):
+        Exception.__init__(self, msg)
+
+import functools
+
+# note1: os.path.join("/lulz","bananas") -> "/lulz/bananas"
+# note2: os.path.join("/lulz","/bananas") -> "/bananas"
+
+def config():
+    """
+    validate the current configuration data
+    and rebuild some variables when necessary
+
+    """
+    for var in special_dirs:
+        value = globals()[var]
+        if not os.path.isdir(value):
+            errmsg = "'{var}'({value}) is not a dir".format(**locals())
+            logging.error(errmsg)
+            raise ConfigurationError(errmsg)
+        # transform it to absolute path
+        globals()[var]=os.path.abspath(value)
+
+    # transform paths into absolute paths
+    fixp = functools.partial(os.path.join,running_dir)
+    for var in files+dirs+to_write:
+        globals()[var] = fixp(globals()[var])
+
+    # transform paths into absolute paths (scripts only)
+    s_fixp = functools.partial(os.path.join,scripts_dir)
+    for var in s_dirs+s_files:
+        globals()[var] = s_fixp(globals()[var])
+
+    # check if the files paths refer to files
+    for var in files+s_files:
+        value = globals()[var]
+        if not os.path.isfile(value):
+            errmsg = "'{var}'({value}) is not a file".format(**locals())
+            logging.error(errmsg)
+            raise ConfigurationError(errmsg)
+
+    # check if can write in the files
+    for var in to_write:
+        value = globals()[var]
+        try:
+            f = open(value,"a")
+            f.close()
+        except(IOError):
+            errmsg = "'{var}'({value}) cannot be written to".format(**locals())
+            raise ConfigurationError(errmsg)
+
+    # check if the dirs paths refer to dirs
+    for var in dirs+s_dirs:
+        value = globals()[var]
+        if not os.path.isdir(value):
+            errmsg = "'{var}'({value}) is not a dir".format(**locals())
+            logging.error(errmsg)
+            raise ConfigurationError(errmsg)
+
+def validate_strategy(data):
+    for param_name, value in data.items():
+        if value not in strategy_data[param_name]:
+            return False
+    return True
+
+def printvars():
+    for var in special_dirs+files+s_files+dirs+s_dirs+to_write+other:
+        print(var,"=",globals()[var])
+
+# when imported validate and build configuration
+config()

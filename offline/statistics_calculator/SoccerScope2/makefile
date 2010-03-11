@@ -7,7 +7,7 @@ JAR_FILE=soccerscope.jar
 all: soccerscope
 
 build: $(JAR_FILE)
-	cp *.jar ../
+	cp *.jar ../../simulation_controller/
 
 $(JAR_FILE): $(OBJECTS)
 	CLASSPATH=$(JPATH) jar cf $@ soccerscope/
@@ -18,5 +18,5 @@ soccerscope: $(OBJECTS)
 	CLASSPATH=$(JPATH) javac -Xlint $<
 
 clean:
-	rm -vf $(OBJECTS) $(JAR_FILE)
+	rm -vf $(OBJECTS)
 

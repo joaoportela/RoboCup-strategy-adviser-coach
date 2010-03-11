@@ -41,6 +41,7 @@ scripts_dir=os.getcwd()
 team_start="team_start.sh"
 team_stop="team_stop.sh"
 serverbin = "/usr/local/bin/rcssserver"
+rcgconvert = "/usr/local/bin/rcgconvert"
 # DATA END
 
 # metadata start

@@ -7,6 +7,7 @@ __all__ = ["Team", "FCPortugal"]
 
 import logging
 import config
+from utils import runcommand
 
 class TeamError(Exception):
     def __init__(self, msg='Unspecified'):
@@ -47,11 +48,11 @@ class Team(object):
 	return "\"{team_stop}\" \"{self.teamdir}\"".format(**locals())
 
     def start(self, matchdir):
-        os.system(self.command_start(matchdir))
+        runcommand(self.command_start(matchdir))
 
     def stop(self):
         logging.info("stopping %s", self.name)
-        os.system(self.command_stop())
+        runcommand(self.command_stop())
 
     def __str__(self):
         return self.name

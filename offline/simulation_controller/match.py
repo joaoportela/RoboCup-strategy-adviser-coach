@@ -4,8 +4,11 @@ __all__ = ["Match"]
 
 import logging
 import os
+import glob
+
 import config
 from team import Team
+import statistics
 
 #match.rb, resumo:
 # def initialize team_l, team_r, results_csv, tournament_log_dir, config
@@ -122,9 +125,7 @@ class Match(object):
         command = commf.format(**locals())
 
         logging.info("match start.")
-        logging.debug("match command \"{0}\"".format(command))
-        retcode = os.system(command)
-        logging.debug("match command returned {0}".format(retcode))
+        runcommand(command)
         logging.info("match end.")
 
         # stop teams
@@ -138,4 +139,13 @@ class Match(object):
         pass
 
     def statistics(self):
-        pass
+        # pattern = re.compile(r'\d+')
+        # lekey = lambda name: pattern.match(name).group(0)
+
+        # use the most recent rcg
+        # find which file to use
+        possible_files = glob.glob(os.path.join(self.matchdir,"*.rcg.gz"))
+        rcg = max(possible_files, key=os.path.basename)
+        xml = statistics.calculate(rcg)
+        return xml
+

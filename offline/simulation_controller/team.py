@@ -71,24 +71,23 @@ class Team(object):
         # filter
         return [team for team in teams if has_start(team) and has_kill(team)]
 
-# remember: ./FCPortugalPlayer -file client.conf -file server.conf -host 127.0.0.1 -team_name LOL > rawr.out -strategy_file strategy.conf -formations_file /home/joao/robocup/runner_workdir/teams/fcportugalY/formations.conf && cat rawr.out
+# remember: ./FCPortugalPlayer -file client.conf -file server.conf -host
+# 127.0.0.1 -team_name LOL -strategy_file strategy.conf -formations_file
+# /home/joao/robocup/runner_workdir/teams/fcportugalY/formations.conf 
+
 class FCPortugal(Team):
-    def __init__(self, formation):
+    def __init__(self, strategy_params):
         Team.__init__(self, "fcportugal_dynamic")
-        self.strategy_data={"formation":formation}
-        config.validate_strategy(self.strategy_data)
+        self.strategy_params=strategy_params
+        config.validate_strategy(self.strategy_params)
         # generate the strategy file
-        self._gen_strategy_file()
+        strategy_fname = self._gen_strategy_file()
         # set the bonus args with the formation
-        self.bonus_args = ["-strategy_file \"{0}\"".format(self.strategy_fname)]
+        # self.bonus_args = ["\"-strategy_file\" \"{0}\" ".format(strategy_fname)]
 
     def _gen_strategy_file(self):
         # calculate_file_name
-        dynamic_part = []
-        for name, value in self.strategy_data.items():
-            value = str(value)
-            dynamic_part.append("{name}{value}".format(**locals()))
-        dynamic_part = "__".join(dynamic_part)
+        dynamic_part = self.params_summary()
         target_fname = "strategy__{0}.conf".format(dynamic_part)
         target_fname = os.path.join(config.strategy_folder, target_fname)
         if os.path.isfile(target_fname):
@@ -99,11 +98,21 @@ class FCPortugal(Team):
         with open(config.base_strategy,"r") as source:
             with open(target_fname, "w") as target:
                 for line in source:
-                    for name, value in self.strategy_data.items():
+                    for name, value in self.strategy_params.items():
                         name = "${0}$".format(name)
                         value = str(value)
                         line = line.replace(name, value)
                     target.write(line)
 
         self.strategy_fname = target_fname
+        return self.strategy_fname
 
+    def params_summary(self):
+        dynamic_part = []
+        for name, value in self.strategy_params.items():
+            value = str(value)
+            dynamic_part.append("{name}{value}".format(**locals()))
+        return "_".join(dynamic_part)
+
+    def __str__(self):
+        return self.name+"-"+self.params_summary()

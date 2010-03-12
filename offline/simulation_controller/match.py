@@ -9,6 +9,10 @@ import glob
 import config
 from team import Team
 import statistics
+from utils import *
+
+# TODO: call match.sh instead of calling directly so that there is no need to
+# put the redirects here.
 
 #match.rb, resumo:
 # def initialize team_l, team_r, results_csv, tournament_log_dir, config
@@ -125,8 +129,12 @@ class Match(object):
         command = commf.format(**locals())
 
         logging.info("match start.")
-        runcommand(command)
+        retcode = runcommand(command)
         logging.info("match end.")
+        if retcode != 0:
+            errmsg = "something went wrong while running the match.\n"
+            errmsg+= "consider checking {0}".format(self.matchdir+"/server-error.log")
+            logging.error(errmsg)
 
         # stop teams
         self.team_l.stop()

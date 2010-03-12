@@ -5,8 +5,8 @@ import logging
 
 # DATA START
 running_dir = "/home/joao/robocup/runner_workdir/"
-#serverconf = "server_official.conf"
-serverconf = "server_fast.conf"
+#serverconf = "server_fast.conf"
+serverconf = "server_official.conf"
 logfile = "runner.log"
 matchesdir = "matches/"
 teamsdir = "teams/"
@@ -27,13 +27,13 @@ strategy_data = {
                   8,  # TUDOAMONTE
                   9,  # 433OPENDef
                   12] # 4213 RiOne
-        ,
-        "mentality":# this one is not used yet...
-                 [0,
-                  1,
-                  2,
-                  3,
-                  4]
+#        ,
+#        "mentality":
+#                 [0,
+#                  1,
+#                  2,
+#                  3,
+#                  4]
 }
 
 # scripts...

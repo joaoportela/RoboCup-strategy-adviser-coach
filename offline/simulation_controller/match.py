@@ -10,6 +10,7 @@ import config
 from team import Team
 import statistics
 from utils import *
+import xml.dom.minidom as minidom
 
 # TODO: call match.sh instead of calling directly so that there is no need to
 # put the redirects here.
@@ -57,6 +58,7 @@ class Match(object):
             team_r = Team(team_r)
 
         # assign the variables
+        self._statistics = None
         self._result = None
         self.team_l = team_l
         self.team_r = team_r
@@ -85,7 +87,10 @@ class Match(object):
         self.statistics()
 
         # calculate game result from whatever
-        self._result = (0,0)
+        dom = minidom.parse(self._statistics)
+        left_goals = statistics.goals("left",dom)[0][1]
+        right_goals = statistics.goals("right",dom)[0][1]
+        self._result = (left_goals, right_goals)
 
         # write metadata to match directory
         self._write_metadata()
@@ -147,6 +152,9 @@ class Match(object):
         pass
 
     def statistics(self):
+        if self._statistics is not None:
+            return self._statistics
+
         # pattern = re.compile(r'\d+')
         # lekey = lambda name: pattern.match(name).group(0)
 
@@ -155,5 +163,6 @@ class Match(object):
         possible_files = glob.glob(os.path.join(self.matchdir,"*.rcg.gz"))
         rcg = max(possible_files, key=os.path.basename)
         xml = statistics.calculate(rcg)
+        self._statistics = xml
         return xml
 

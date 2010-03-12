@@ -15,9 +15,9 @@ from team import *
 from match import *
 
 def main():
-    match = Match("fcportugalX", "fcportugalY")
-    # match = Match("fcportugalX", FCPortugal({"formation": 1}))
-    match.play()
+    # match = Match("fcportugalX", "fcportugalY")
+    match = Match("fcportugalX", FCPortugal({"formation": 1}))
+    print match.play()
 
 if __name__ == '__main__':
     logging.info("----------- '%s' started -----------", sys.argv[0])

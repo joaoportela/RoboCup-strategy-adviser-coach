@@ -8,6 +8,7 @@ import config
 
 statistics_script="""#! /bin/bash
 
+scriptsdir="{scriptsdir}"
 dirname="{dirname}"
 rcgconvert="{rcgconvert}"
 rcg="{rcg}"
@@ -17,6 +18,8 @@ xml="{xml}"
 rcgout="${{dirname}}/rcgconvert-output.log"
 rcgerr="${{dirname}}/rcgconvert-error.log"
 
+cd ${{dirname}}
+
 # convert to the right version
 "${{rcgconvert}}" -v 3 -o "${{rcgc}}" "${{rcg}}" > ${{rcgout}} 2> ${{rcgerr}}
 
@@ -25,7 +28,7 @@ sout="${{dirname}}/statistics-output.log"
 serr="${{dirname}}/statistics-error.log"
 
 # generate the statistics
-MYCLASSPATH="soccerscope.jar:java-xmlbuilder-0.3.jar"
+MYCLASSPATH="${{scriptsdir}}/soccerscope.jar:${{scriptsdir}}/java-xmlbuilder-0.3.jar"
 CLASSPATH="${{MYCLASSPATH}}" java ${{jclass}} --batch "${{rcgc}}" "${{xml}}" > ${{sout}} 2> ${{serr}}
 """
 
@@ -39,6 +42,7 @@ def converted_name(rcg):
     return rcgc
 
 def calculate(rcg):
+    scriptsdir=config.scripts_dir
     dirname=os.path.dirname(rcg)
     rcgconvert = config.rcgconvert
     rcgc=converted_name(rcg)

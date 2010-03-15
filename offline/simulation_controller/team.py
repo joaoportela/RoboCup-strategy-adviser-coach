@@ -1,14 +1,13 @@
 #! /usr/bin/env python
 
 import os
-import stat
 import functools
 
 __all__ = ["Team", "FCPortugal"]
 
 import logging
 import config
-from utils import runcommand
+from utils import *
 
 class TeamError(Exception):
     def __init__(self, msg='Unspecified'):
@@ -26,17 +25,32 @@ matchhost=\"{matchhost}\"
 
 cd $matchdir
 teamComm="${{teamdir}}/start"
+output="${{name}}-output.log"
+outerror="${{name}}-error.log"
 
 #echo "--$name" >> le_argv.txt
 #python /home/joao/RoboCup-strategy-adviser-coach/offline/simulation_controller/print_argv.py $teamComm $matchhost $teamdir "$@" >> $matchdir/le_argv.txt
 #echo "--" >> le_argv.txt
 
 sleep 1
-echo command: \"${{teamComm}}\" \"${{matchhost}}\" \"${{teamdir}}\" {other_as_arg} > ${{name}}.out 2> ${{name}}.err
-\"${{teamComm}}\" \"${{matchhost}}\" \"${{teamdir}}\" {other_as_arg} > ${{name}}.out 2> ${{name}}.err
+echo command: \"${{teamComm}}\" \"${{matchhost}}\" \"${{teamdir}}\" {other_as_arg} > ${{output}} 2> ${{outerror}}
+\"${{teamComm}}\" \"${{matchhost}}\" \"${{teamdir}}\" {other_as_arg} > ${{output}} 2> ${{outerror}}
 
 """
 
+team_stop_script = """#! /bin/bash
+
+matchdir=\"{matchdir}\"
+teamdir=\"{teamdir}\"
+name=\"{teamname}\"
+
+cd ${{matchdir}}
+teamComm="${{teamdir}}/kill"
+output="${{name}}-output.log"
+outerror="${{name}}-error.log"
+
+$teamComm >> ${{output}} 2>> ${{outerror}}
+"""
 # holds the team data for use in the match class...
 class Team(object):
     def __init__(self, name):
@@ -45,7 +59,8 @@ class Team(object):
             logging.error(errmsg)
             raise TeamError(errmsg)
         self.name = name
-        self.teamdir = os.path.join(config.teamsdir,name)
+        self.teamdir=os.path.join(config.teamsdir,name)
+        self.matchdir=None
         # bonus args is to be filled in the format ("varname", "varvalue")
         self.bonus_args = []
         logging.debug("assuming %s teamdir to be %s",self.name, self.teamdir)
@@ -53,6 +68,7 @@ class Team(object):
     def command_start(self, matchdir):
         """ build the start script and return the command
         to start it """
+        self.matchdir=matchdir
         # variables required: matchdir, teamdir, teamname, matchhost,
         # other, other_as_arg
         teamdir = self.teamdir
@@ -70,25 +86,27 @@ class Team(object):
 
         script_name = "start_" + teamname + ".sh"
         script_name = os.path.join(matchdir,script_name)
-        if os.path.exists(script_name):
-            warnmsg="{0} already exists. it will be overwritten".format(script_name)
-            logging.warning(warnmsg)
-        # write the script.
-        with open(script_name, "w") as f:
-            f.write(team_start_script.format(**locals()))
-
-        # chmod
-        mask = stat.S_IRWXU | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH
-        os.chmod(script_name, mask)
+        content = team_start_script.format(**locals())
+        write_script(script_name, content)
 
         # return the command to run it.
         return script_name
 
     def command_stop(self):
-        team_stop = config.team_stop
-	return "\"{team_stop}\" \"{self.teamdir}\"".format(**locals())
+        matchdir=self.matchdir
+        teamdir=self.teamdir
+        teamname=self.name
+
+        script_name = "stop_" + teamname + ".sh"
+        script_name = os.path.join(matchdir,script_name)
+        content = team_stop_script.format(**locals())
+        write_script(script_name, content)
+
+        self.matchdir=None
+	return script_name
 
     def start(self, matchdir):
+        logging.info("starting %s", self.name)
         runcommand(self.command_start(matchdir))
 
     def stop(self):
@@ -130,7 +148,7 @@ class FCPortugal(Team):
     def _gen_strategy_file(self):
         # calculate_file_name
         dynamic_part = self.params_summary()
-        target_fname = "strategy__{0}.conf".format(dynamic_part)
+        target_fname = "{self.name}__{dynamic_part}.conf".format(**locals())
         target_fname = os.path.join(config.strategy_folder, target_fname)
         if os.path.isfile(target_fname):
             warnmsg = "{0} already exists and will be overwritten".format(target_fname)

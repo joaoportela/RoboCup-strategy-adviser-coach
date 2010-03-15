@@ -4,7 +4,6 @@ __all__ = ["Match"]
 
 import logging
 import os
-import stat
 import glob
 
 import config
@@ -149,15 +148,9 @@ class Match(object):
         team_r_command=self.team_r.command_start(self.matchdir)
 
         command = os.path.join(self.matchdir,"start_match.sh")
-        if os.path.exists(command):
-            warnmsg="{0} already exists. it will be overwritten".format(command)
-            logging.warning(warnmsg)
-        with open(command,"w") as f:
-            f.write(match_start_script.format(**locals()))
+        content = match_start_script.format(**locals())
+        write_script(command, content)
 
-        # chmod
-        mask = stat.S_IRWXU | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH
-        os.chmod(command, mask)
         logging.info("match start.")
         retcode = runcommand(command)
         logging.info("match end.")

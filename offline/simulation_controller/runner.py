@@ -15,11 +15,14 @@ from team import *
 from match import *
 
 def main():
-    # match = Match("fcportugalX", "fcportugalY")
-    # match = Match("fcportugalX", "fcportugalD")
     match = Match("fcportugalX", FCPortugal({"formation": 1}))
     print match.play()
 
 if __name__ == '__main__':
-    logging.info("----------- '%s' started -----------", sys.argv[0])
-    main()
+    try:
+        logging.info("----------- '%s' started  ----------", sys.argv[0])
+        main()
+        logging.info("----------- '%s' finished ----------", sys.argv[0])
+    except:
+        logging.exception("Unforeseen exception:")
+        raise

@@ -6,31 +6,50 @@ import os
 from utils import *
 import config
 
-CLASSPATH="soccerscope.jar:java-xmlbuilder-0.3.jar"
+statistics_script="""#! /bin/bash
 
-CONVERT_COMMAND="{rcgconvert} -v 3 -o {rcgc} {rcg}"
-JAVA_COMMAND="CLASSPATH={CLASSPATH} java soccerscope.SoccerScope --batch {rcg} {xml}"
+dirname="{dirname}"
+rcgconvert="{rcgconvert}"
+rcg="{rcg}"
+rcgc="{rcgc}"
+xml="{xml}"
 
-# TODO - call statistics.sh and rcgconvert.sh so that I can redirect the
-# output there... (also, change the directory to the rcg dir)
+rcgout="${{dirname}}/rcgconvert-output.log"
+rcgerr="${{dirname}}/rcgconvert-error.log"
+
+# convert to the right version
+"${{rcgconvert}}" -v 3 -o "${{rcgc}}" "${{rcg}}" > ${{rcgout}} 2> ${{rcgerr}}
+
+jclass="soccerscope.SoccerScope"
+sout="${{dirname}}/statistics-output.log"
+serr="${{dirname}}/statistics-error.log"
+
+# generate the statistics
+MYCLASSPATH="soccerscope.jar:java-xmlbuilder-0.3.jar"
+CLASSPATH="${{MYCLASSPATH}}" java ${{jclass}} --batch "${{rcgc}}" "${{xml}}" > ${{sout}} 2> ${{serr}}
+"""
 
 # convert the rcg to a supported version
-def _rcgconvert(rcg):
-    rcgconvert = config.rcgconvert
+def converted_name(rcg):
     bname, ext = os.path.splitext(rcg)
     if ext == ".gz":
         bname, ext2 = os.path.splitext(bname)
         ext = ext2+ext
     rcgc = bname + "_convert" + ext
-    command = CONVERT_COMMAND.format(**locals())
-    runcommand(command)
     return rcgc
 
 def calculate(rcg):
-    rcg=_rcgconvert(rcg)
-    xml=rcg+".xml"
-    command = JAVA_COMMAND.format(CLASSPATH=CLASSPATH,**locals())
-    runcommand(command)
+    dirname=os.path.dirname(rcg)
+    rcgconvert = config.rcgconvert
+    rcgc=converted_name(rcg)
+    xml=rcgc+".xml"
+
+    script_name = "calculate_statistics.sh"
+    script_name = os.path.join(dirname,script_name)
+    content = statistics_script.format(**locals())
+    write_script(script_name, content)
+
+    runcommand(script_name)
     return xml
 
 

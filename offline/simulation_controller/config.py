@@ -4,7 +4,7 @@ import os
 import logging
 
 # DATA START
-running_dir = "/home/joao/robocup/runner_workdir/"
+running_dir = "/home/joao/autorun/"
 #serverconf = "server_fast.conf"
 #serverconf = "server_official_notautostart.conf"
 serverconf = "server_official.conf"

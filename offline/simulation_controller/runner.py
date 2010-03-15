@@ -17,6 +17,10 @@ from match import *
 def main():
     match = Match("fcportugalX", FCPortugal({"formation": 1}))
     print match.play()
+    match = Match("bahia2d", FCPortugal({"formation": 1}))
+    print match.play()
+    match = Match("wrighteagle", FCPortugal({"formation": 1}))
+    print match.play()
 
 if __name__ == '__main__':
     try:

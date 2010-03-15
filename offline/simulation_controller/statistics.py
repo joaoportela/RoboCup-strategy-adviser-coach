@@ -15,13 +15,15 @@ rcg="{rcg}"
 rcgc="{rcgc}"
 xml="{xml}"
 
+libpath="/usr/local/lib/"
+
 rcgout="${{dirname}}/rcgconvert-output.log"
 rcgerr="${{dirname}}/rcgconvert-error.log"
 
 cd ${{dirname}}
 
 # convert to the right version
-"${{rcgconvert}}" -v 3 -o "${{rcgc}}" "${{rcg}}" > ${{rcgout}} 2> ${{rcgerr}}
+LD_LIBRARY_PATH=${{libpath}} "${{rcgconvert}}" -v 3 -o "${{rcgc}}" "${{rcg}}" > ${{rcgout}} 2> ${{rcgerr}}
 
 jclass="soccerscope.SoccerScope"
 sout="${{dirname}}/statistics-output.log"

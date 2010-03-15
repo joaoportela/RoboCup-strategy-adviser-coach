@@ -6,6 +6,7 @@ import logging
 # DATA START
 running_dir = "/home/joao/robocup/runner_workdir/"
 #serverconf = "server_fast.conf"
+#serverconf = "server_official_notautostart.conf"
 serverconf = "server_official.conf"
 logfile = "runner.log"
 matchesdir = "matches/"

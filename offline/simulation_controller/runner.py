@@ -16,6 +16,7 @@ from match import *
 
 def main():
     # match = Match("fcportugalX", "fcportugalY")
+    # match = Match("fcportugalX", "fcportugalD")
     match = Match("fcportugalX", FCPortugal({"formation": 1}))
     print match.play()
 

@@ -4,6 +4,7 @@ __all__ = ["Match"]
 
 import logging
 import os
+import stat
 import glob
 
 import config
@@ -40,6 +41,28 @@ import xml.dom.minidom as minidom
 #     Match.increment_match_index
 # end
 
+match_start_script = """#!/bin/bash
+
+# match directory
+matchdir={matchdir}
+#server binary file
+serverbin={serverbin}
+# configuration file
+include={serverconf}
+
+# teams start scripts
+team_l_start={team_l_command}
+team_r_start={team_r_command}
+
+cd ${{matchdir}}
+
+# version that does not start the teams...
+# ${{serverbin}} include="${{include}}" > server-output.log 2> server-error.log
+
+# start the server and it starts the teams
+${{serverbin}} include="${{include}}" server::team_l_start = "${{team_l_start}}" server::team_r_start = "${{team_r_start}}" > server-output.log 2> server-error.log
+
+"""
 
 class MatchError(Exception):
     def __init__(self, msg='Unspecified'):
@@ -114,25 +137,27 @@ class Match(object):
         else:
             os.mkdir(self.matchdir)
 
-        ## build command ##
-        # change directory
-        commf  = "cd {self.matchdir} && "
-        # binary
+        # match directory
+        matchdir = self.matchdir
+        # server binary file
         serverbin = config.serverbin
-        commf += "{serverbin} "
         # default configs file
         serverconf = config.serverconf
-        commf += "include='{serverconf}' "
         # left team
         team_l_command=self.team_l.command_start(self.matchdir)
-        commf += "server::team_l_start = '{team_l_command}' "
         # right team
         team_r_command=self.team_r.command_start(self.matchdir)
-        commf += "server::team_r_start = '{team_r_command}' "
-        # redirect output
-        commf += "> server-output.log 2> server-error.log"
-        command = commf.format(**locals())
 
+        command = os.path.join(self.matchdir,"start_match.sh")
+        if os.path.exists(command):
+            warnmsg="{0} already exists. it will be overwritten".format(command)
+            logging.warning(warnmsg)
+        with open(command,"w") as f:
+            f.write(match_start_script.format(**locals()))
+
+        # chmod
+        mask = stat.S_IRWXU | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH
+        os.chmod(command, mask)
         logging.info("match start.")
         retcode = runcommand(command)
         logging.info("match end.")

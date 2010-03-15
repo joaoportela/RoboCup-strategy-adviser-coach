@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 
 import os
+import stat
 import functools
 
 __all__ = ["Team", "FCPortugal"]
@@ -13,6 +14,29 @@ class TeamError(Exception):
     def __init__(self, msg='Unspecified'):
         Exception.__init__(self, msg)
 
+team_start_script = """#! /bin/bash
+
+matchdir=\"{matchdir}\"
+teamdir=\"{teamdir}\"
+name=\"{teamname}\"
+matchhost=\"{matchhost}\"
+
+# bonus args:
+{other}
+
+cd $matchdir
+teamComm="${{teamdir}}/start"
+
+#echo "--$name" >> le_argv.txt
+#python /home/joao/RoboCup-strategy-adviser-coach/offline/simulation_controller/print_argv.py $teamComm $matchhost $teamdir "$@" >> $matchdir/le_argv.txt
+#echo "--" >> le_argv.txt
+
+sleep 1
+echo command: \"${{teamComm}}\" \"${{matchhost}}\" \"${{teamdir}}\" {other_as_arg} > ${{name}}.out 2> ${{name}}.err
+\"${{teamComm}}\" \"${{matchhost}}\" \"${{teamdir}}\" {other_as_arg} > ${{name}}.out 2> ${{name}}.err
+
+"""
+
 # holds the team data for use in the match class...
 class Team(object):
     def __init__(self, name):
@@ -22,26 +46,43 @@ class Team(object):
             raise TeamError(errmsg)
         self.name = name
         self.teamdir = os.path.join(config.teamsdir,name)
+        # bonus args is to be filled in the format ("varname", "varvalue")
         self.bonus_args = []
         logging.debug("assuming %s teamdir to be %s",self.name, self.teamdir)
 
     def command_start(self, matchdir):
-        # the team start script
-        team_start = config.team_start
+        """ build the start script and return the command
+        to start it """
+        # variables required: matchdir, teamdir, teamname, matchhost,
+        # other, other_as_arg
+        teamdir = self.teamdir
+        teamname = self.name
         # the match host (usually 127.0.0.1)
         matchhost = config.matchhost
 
-        # format bonus args
-        #quote = lambda a: "\"" + str(a) + "\""
-        #bonus = " ".join([quote(arg) for arg in self.bonus_args])
-        bonus = " ".join([str(arg) for arg in self.bonus_args])
+        # build it in the format 'varname=varvalue'
+        var_assign = lambda n,v: str(n) + "=\"" + str(value)+"\""
+        other="\n".join([var_assign(name,value) for name, value in self.bonus_args])
 
-        # command format
-        commf = "\"{team_start}\" \"{matchdir}\" "
-        commf+= "\"{self.teamdir}\" \"{self.name}\" "
-        commf+= "\"{matchhost}\" {bonus}"
+        # build it in the format '$varname'
+        var_value = lambda n: "\"${"+str(n)+"}\""
+        other_as_arg=" ".join([var_value(n) for n,v in self.bonus_args])
 
-        return commf.format(**locals())
+        script_name = "start_" + teamname + ".sh"
+        script_name = os.path.join(matchdir,script_name)
+        if os.path.exists(script_name):
+            warnmsg="{0} already exists. it will be overwritten".format(script_name)
+            logging.warning(warnmsg)
+        # write the script.
+        with open(script_name, "w") as f:
+            f.write(team_start_script.format(**locals()))
+
+        # chmod
+        mask = stat.S_IRWXU | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH
+        os.chmod(script_name, mask)
+
+        # return the command to run it.
+        return script_name
 
     def command_stop(self):
         team_stop = config.team_stop
@@ -77,13 +118,14 @@ class Team(object):
 
 class FCPortugal(Team):
     def __init__(self, strategy_params):
-        Team.__init__(self, "fcportugal_dynamic")
+        # changed while trying to track a problem
+        Team.__init__(self, "fcportugalD")
         self.strategy_params=strategy_params
         config.validate_strategy(self.strategy_params)
         # generate the strategy file
         strategy_fname = self._gen_strategy_file()
-        # set the bonus args with the formation
-        # self.bonus_args = ["\"-strategy_file\" \"{0}\" ".format(strategy_fname)]
+        # pass the generated strategy file as argument to the team
+        self.bonus_args.append(("strategy_file", strategy_fname))
 
     def _gen_strategy_file(self):
         # calculate_file_name
@@ -116,3 +158,4 @@ class FCPortugal(Team):
 
     def __str__(self):
         return self.name+"-"+self.params_summary()
+

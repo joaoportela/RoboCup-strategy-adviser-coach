@@ -6,7 +6,4 @@ shift
 
 teamComm="${teamdir}/kill"
 
-echo command: $teamComm "$@" > $name.out 2> $name.err
-# todo passar o host
-$teamComm "$@" > $name.out 2> $name.err
-
+$teamComm "$@" > /dev/null 2>&1

@@ -114,8 +114,8 @@ class Match(object):
         left_goals = statistics.goals("left",dom)[0][1]
         right_goals = statistics.goals("right",dom)[0][1]
 
-	left_goals = str(self.team_l) + str(left_goals)
-	right_goals = str(self.team_r) + str(right_goals)
+	left_goals = tuple(str(self.team_l), str(left_goals))
+	right_goals = tuple(str(self.team_r), str(right_goals))
         self._result = (left_goals, right_goals)
 
         # write metadata to match directory

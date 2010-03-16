@@ -80,6 +80,7 @@ class Match(object):
             team_r = Team(team_r)
 
         # assign the variables
+	self.use_cache = False
         self._statistics = None
         self._result = None
         self.team_l = team_l
@@ -97,7 +98,7 @@ class Match(object):
         logging.debug("assuming match dir to be %s", self.matchdir)
 
     def play(self):
-        if self.in_cache():
+        if self.in_cache() && self.use_cache:
             self.load_result_from_cache()
             return self.result()
 
@@ -112,6 +113,9 @@ class Match(object):
         dom = minidom.parse(self._statistics)
         left_goals = statistics.goals("left",dom)[0][1]
         right_goals = statistics.goals("right",dom)[0][1]
+
+	left_goals = str(self.team_l) + str(left_goals)
+	right_goals = str(self.team_r) + str(right_goals)
         self._result = (left_goals, right_goals)
 
         # write metadata to match directory

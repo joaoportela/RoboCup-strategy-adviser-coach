@@ -39,8 +39,6 @@ strategy_data = {
 
 # scripts...
 scripts_dir=os.getcwd()
-team_start="team_start.sh"
-team_stop="team_stop.sh"
 serverbin = "/usr/local/bin/rcssserver"
 rcgconvert = "/usr/local/bin/rcgconvert"
 # DATA END
@@ -51,7 +49,7 @@ to_write = ["logfile"]
 dirs = ["matchesdir", "teamsdir", "strategy_folder"]
 
 s_dirs = []
-s_files = ["team_start", "team_stop", "serverbin"]
+s_files = ["serverbin", "rcgconvert"]
 
 special_dirs = ["running_dir", "scripts_dir"]
 other = ["matchhost"]

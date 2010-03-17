@@ -13,7 +13,7 @@ class TeamError(Exception):
     def __init__(self, msg='Unspecified'):
         Exception.__init__(self, msg)
 
-team_start_script = """#! /bin/bash
+TEAM_START_SCRIPT = """#! /bin/bash
 
 matchdir=\"{matchdir}\"
 teamdir=\"{teamdir}\"
@@ -86,7 +86,7 @@ class Team(object):
 
         script_name = "start_" + teamname + ".sh"
         script_name = os.path.join(matchdir,script_name)
-        content = team_start_script.format(**locals())
+        content = TEAM_START_SCRIPT.format(**locals())
         write_script(script_name, content)
 
         # return the command to run it.

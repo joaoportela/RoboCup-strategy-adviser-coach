@@ -5,15 +5,13 @@ __all__ = ["Match"]
 import logging
 import os
 import glob
+import xml.dom.minidom as minidom
+import re
 
 import config
 from team import Team
 import statistics
 from utils import *
-import xml.dom.minidom as minidom
-
-# TODO: call match.sh instead of calling directly so that there is no need to
-# put the redirects here.
 
 #match.rb, resumo:
 # def initialize team_l, team_r, results_csv, tournament_log_dir, config
@@ -40,7 +38,7 @@ import xml.dom.minidom as minidom
 #     Match.increment_match_index
 # end
 
-match_start_script = """#!/bin/bash
+MATCH_START_SCRIPT = """#!/bin/bash
 
 # match directory
 matchdir={matchdir}
@@ -69,9 +67,15 @@ class MatchError(Exception):
 
 class Match(object):
 
-    def __init__(self, team_l, team_r):
+    def __init__(self, team_l, team_r, matchid=None, noplay=False):
         """team_l, team_r - left and right team. each team should be of the Team class
+        or a string with the name of the team.
 
+        matchid - if the matchid is supplied fetch it from cache... ("last" can
+        be supplied to fetch the last available match)
+
+        noplay - when noplay=True make sure the match will not be played. will
+        always raise an exception when noplay=True and the matchid=None
         """
         # also allow strings with the name of the team
         if isinstance(team_l, basestring):
@@ -80,42 +84,53 @@ class Match(object):
             team_r = Team(team_r)
 
         # assign the variables
-	self.use_cache = False
         self._statistics = None
         self._result = None
         self.team_l = team_l
         self.team_r = team_r
+        self.noplay = noplay
 
         # sort the teams names
         lower_str = lambda obj: str(obj).lower()
         self.teams = tuple(sorted((team_l,team_r), key=lower_str))
         self.name = "{0}__vs__{1}".format(self.teams[0],self.teams[1])
+        ## TODO - matchdir should be provided by the confrontation class??
         self.matchdir = os.path.join(config.matchesdir, self.name)
+
+        # TODO - check the matchid thing...
+        # if the matchid thing is provided load the match from cache.
+
+        # call the VERY expensive method...
+        self._play()
 
         # logging
         logging.info("Match object instanciated { teams: ('%s', '%s') }",
                 team_l, team_r)
         logging.debug("assuming match dir to be %s", self.matchdir)
 
-    def play(self):
-        if self.in_cache() && self.use_cache:
-            self.load_result_from_cache()
-            return self.result()
+    def _play(self):
 
+        if self.noplay is True:
+            raise MatchError("the match was not supposed to be run (noplay=True)")
         # play the game
-        self._play_raw()
+        self._run()
+        # TODO - validate if the match runned correctly from the rcg name
+        # -> to validate if the match runned correctly we have to:
+        # - check if the most recent rcg has a valid name
+        # - store the rcg that already existed before the match and see if a new one
+        # apeared
 
         # convert the log to a version supported and calculate statistics to
         # the statistics.xml file
         self.statistics()
 
-        # calculate game result from whatever
-        dom = minidom.parse(self._statistics)
-        left_goals = statistics.goals("left",dom)[0][1]
-        right_goals = statistics.goals("right",dom)[0][1]
+        # get the match result from the statistics
+        stat = self.statistics()
+        left_goals = stat.goals("left")
+        right_goals = stat.goals("right")
 
-	left_goals = tuple(str(self.team_l), str(left_goals))
-	right_goals = tuple(str(self.team_r), str(right_goals))
+	left_goals = (str(self.team_l), str(left_goals))
+	right_goals = (str(self.team_r), str(right_goals))
         self._result = (left_goals, right_goals)
 
         # write metadata to match directory
@@ -123,11 +138,7 @@ class Match(object):
 
         return self.result()
 
-    def in_cache(self):
-        # check the cache and return accordingly
-        return False
-
-    def _play_raw(self):
+    def _run(self):
         if os.path.exists(self.matchdir):
             if os.path.isdir(self.matchdir):
                 warnmsg = "reusing match directory {0}".format(self.matchdir)
@@ -152,7 +163,7 @@ class Match(object):
         team_r_command=self.team_r.command_start(self.matchdir)
 
         command = os.path.join(self.matchdir,"start_match.sh")
-        content = match_start_script.format(**locals())
+        content = MATCH_START_SCRIPT.format(**locals())
         write_script(command, content)
 
         logging.info("match start.")
@@ -173,18 +184,33 @@ class Match(object):
     def _write_metadata(self):
         pass
 
+    # TODO: return an array of statistics (all of the match statistics)
     def statistics(self):
         if self._statistics is not None:
             return self._statistics
 
-        # pattern = re.compile(r'\d+')
-        # lekey = lambda name: pattern.match(name).group(0)
-
         # use the most recent rcg
+        rcg=Match.allmatches(self.matchdir)[-1]
+
+        self._statistics = statistics.create_from_rcg(rcg)
+
+        return self._statistics
+
+    @staticmethod
+    def allmatches(confrontationdir):
+        """search for all the matches in "confrontationdir" directory"""
+
+        logging.info("searching all matches in {confrontationdir}".format(**locals()))
+
+        # from the filename (basename) get the numbers in the beggining (the date)
+        pattern = re.compile(r'\d+')
+        lekey = lambda name: pattern.match(os.path.basename(name)).group(0)
+
         # find which file to use
-        possible_files = glob.glob(os.path.join(self.matchdir,"*.rcg.gz"))
-        rcg = max(possible_files, key=os.path.basename)
-        xml = statistics.calculate(rcg)
-        self._statistics = xml
-        return xml
+        possible_files = glob.glob(os.path.join(confrontationdir,"*.rcg.gz"))
+
+        logging.debug("sorting {possible_files}".format(**locals()))
+        rcgs = sorted(possible_files, key=lekey)
+
+        return rcgs
 

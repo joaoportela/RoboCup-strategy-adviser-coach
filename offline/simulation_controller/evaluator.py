@@ -17,7 +17,7 @@ class BaseEvaluator(object):
     def value():
         raise NotImplementedError( "Must implement the 'value' method")
 
-    def switch_side(self,side):
+    def change_side(self,side):
         self._myside=myside
 
     def switch_match(self, statistics_file):

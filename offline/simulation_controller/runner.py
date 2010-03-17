@@ -16,17 +16,22 @@ from match import *
 
 def main():
     match = Match("fcportugalX", FCPortugal({"formation": 1}))
-    print match.play()
+    print match.result()
     match = Match("bahia2d", FCPortugal({"formation": 1}))
-    print match.play()
+    print match.result()
     match = Match("wrighteagle", FCPortugal({"formation": 1}))
-    print match.play()
+    print match.result()
 
 if __name__ == '__main__':
     try:
         logging.info("----------- '%s' started  ----------", sys.argv[0])
-        main()
-        logging.info("----------- '%s' finished ----------", sys.argv[0])
+        if len(sys.argv) == 3:
+            match = match(sys.arg[1], sys.argv[2])
+            loggin.info("match result is: {0}".format(match.result()))
+        else:
+            logging.info("running main()")
+            main()
+            logging.info("----------- '%s' finished ----------", sys.argv[0])
     except:
         logging.exception("Unforeseen exception:")
         raise

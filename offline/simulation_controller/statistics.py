@@ -92,16 +92,21 @@ def accept_side(fn):
             raise StatisticsError("side not specified")
 
         # call the actual function
-        fn(self, *args, **kwds)
+        rv=fn(self, *args, **kwds)
 
         # restore self.side
         self.side = backup
+
+        # the return value of the function is important
+        return rv
 
     # return the awesome function
     return wrapper
 
 class Statistics(object):
     def __init__(self, xml, side=None):
+        if not os.path.exists(xml):
+            raise StatisticsError('{0} not found'.format(xml))
         self.dom = minidom.parse(xml)
         assert side == "left" or side == "right" or side is None, "%s is invalid" % (side,)
         self.side = side
@@ -161,17 +166,21 @@ class Statistics(object):
     def goals(self, kick_area=None):
         """ get the number of goals. can accept the side, and the kick area as optional
         arguments.
+
+	use named arguments for the 'side' and 'kick_area' arguments, plz.
+
         giving the side argument will override the default side.
         the kick area argument will only return the number of goals scored from that
         area. (the valid areas are: "GOAL_AREA", "PENALTY_AREA", "FAR_SHOT")
         """
+        KICK_AREAS = ["GOAL_AREA", "PENALTY_AREA", "FAR_SHOT"]
 
         dom_goals = self.dom.getElementsByTagName("goals")[0]
         if kick_area is None:
             # no area specified, return all goals (for that team)
             n = int(dom_goals.getAttribute(self.side))
         else:
-            KICK_AREAS = ["GOAL_AREA", "PENALTY_AREA", "FAR_SHOT"]
+            n=0
             assert kick_area in KICK_AREAS, "kick_area must be one of {0}".format(KICK_AREAS)
             # if we want to filter by kick area we have to check every kick...
             for kick in dom_goals.getElementsByTagName("kick"):

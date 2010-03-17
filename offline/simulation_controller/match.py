@@ -184,7 +184,6 @@ class Match(object):
     def _write_metadata(self):
         pass
 
-    # TODO: return an array of statistics (all of the match statistics)
     def statistics(self):
         if self._statistics is not None:
             return self._statistics
@@ -202,12 +201,14 @@ class Match(object):
 
         logging.info("searching all matches in {confrontationdir}".format(**locals()))
 
+        # the matches files are the games logs (end in .rcg.gz)
+        possible_files = glob.glob(os.path.join(confrontationdir,"*.rcg.gz"))
+        # but do not include the converted ones...
+        possible_files = filter(lambda fname, not fname.endswith("_convert.rcg.gz"))
+
         # from the filename (basename) get the numbers in the beggining (the date)
         pattern = re.compile(r'\d+')
         lekey = lambda name: pattern.match(os.path.basename(name)).group(0)
-
-        # find which file to use
-        possible_files = glob.glob(os.path.join(confrontationdir,"*.rcg.gz"))
 
         logging.debug("sorting {possible_files}".format(**locals()))
         rcgs = sorted(possible_files, key=lekey)

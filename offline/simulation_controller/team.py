@@ -49,6 +49,7 @@ teamComm="${{teamdir}}/kill"
 output="${{name}}-output.log"
 outerror="${{name}}-error.log"
 
+echo $teamComm >> ${{output}} 2>> ${{outerror}}
 $teamComm >> ${{output}} 2>> ${{outerror}}
 """
 # holds the team data for use in the match class...

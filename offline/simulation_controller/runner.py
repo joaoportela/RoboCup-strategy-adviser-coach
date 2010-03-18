@@ -62,5 +62,5 @@ if __name__ == '__main__':
         raise
 
     # reporting results
-    report(rtypes=["upload","sound","eject"])
+    report(rtypes=["upload"])
 

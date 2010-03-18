@@ -1,0 +1,59 @@
+#! /usr/bin/env python
+
+import logging
+import config
+import sys
+from mechanize import Browser
+
+def dotheupload(filename, passwd):
+    URL="http://ni.fe.up.pt/~poncio/files/sp_upload.php"
+
+    br = Browser()
+    r=br.open(URL)
+    # print br.viewing_html()
+    # print "'{0}'".format(r.info())
+    # print "'{0}'".format(r.read())
+
+    br.select_form(name="upload")
+    br.form.add_file(open(filename), 'text/plain', filename)
+    br['password'] = passwd
+    r=br.submit()
+    logging.debug("upload response: '{0}'".format(r.read()))
+    logging.info("file must be in http://ni.fe.up.pt/~poncio/files/runner.log")
+
+if __name__ == "__main__":
+    if len(sys.argv) == 2:
+        dotheupload(config.logfile, sys.argv[1])
+    else:
+        print "nothing to do"
+
+
+"""note:
+
+You don't include the HTML mentioned in the exception message ('<!
+Others/0/WIN; Too') in the part of the HTML that you quote, but that
+snippet is enough to see what's wrong, and lets you find exactly where in
+the HTML the problem lies. Comments in HTML start with '<!--' and end
+with '-->'. The comment sgmllib is complaining about is missing the '--'.
+
+You can work around bad HTML using the .set_data() method on response
+objects and the .set_response() method on Browser. Call the latter before
+you call any other methods that would require parsing the HTML.
+
+r = br.response()
+r.set_data(clean_html(br.get_data()))
+br.set_response(r)
+
+
+You must write clean_html yourself (though you may use an external tool to
+do so, of course).
+
+Alternatively, use a more robust parser, e.g.
+
+br = mechanize.Browser(factory=mechanize.RobustFactory())
+
+
+(you may also integrate another parser of your choice with mechanize, with
+more effort)
+"""
+

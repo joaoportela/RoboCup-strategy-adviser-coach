@@ -22,7 +22,32 @@ def main():
     match = Match("wrighteagle", FCPortugal({"formation": 1}))
     print match.result()
 
+def report(rtypes):
+    logging.info("reporting results...")
+
+    #prepare the upload part
+    passwd=None
+    if len(sys.argv) == 2:
+        passwd=sys.argv[1]
+
+    # do it all...
+    if "upload" in rtypes:
+        if passwd is None:
+            logging.error("cannot upload without password")
+        else:
+            import upload
+            upload.dotheupload(config.logfile, passwd)
+    if "sound" in rtypes:
+        os.system("aplay beep.wav")
+    if "eject" in rtypes:
+        os.system("eject -T")
+
 if __name__ == '__main__':
+
+    # clean the log file
+    with open(config.logfile,"w") as f:
+        f.truncate(0) # no need for this line because "w" already truncates...
+
     try:
         logging.info("----------- '%s' started  ----------", sys.argv[0])
         if len(sys.argv) == 3:
@@ -32,6 +57,10 @@ if __name__ == '__main__':
             logging.info("running main()")
             main()
             logging.info("----------- '%s' finished ----------", sys.argv[0])
+
+            # reporting results
+            report(rtypes=["upload","sound","eject"])
+
     except:
         logging.exception("Unforeseen exception:")
         raise

@@ -204,7 +204,7 @@ class Match(object):
         # the matches files are the games logs (end in .rcg.gz)
         possible_files = glob.glob(os.path.join(confrontationdir,"*.rcg.gz"))
         # but do not include the converted ones...
-	dont_include_converted = lambda fname: not fname.endswith("_convert.rcg.gz")
+	dont_include_convert = lambda fname: not fname.endswith("_convert.rcg.gz")
         possible_files = filter(dont_include_convert, possible_files)
 
         # from the filename (basename) get the numbers in the beggining (the date)

@@ -17,10 +17,10 @@ from match import *
 def main():
     match = Match("fcportugalX", FCPortugal({"formation": 1}))
     print match.result()
-    match = Match("bahia2d", FCPortugal({"formation": 1}))
-    print match.result()
-    match = Match("wrighteagle", FCPortugal({"formation": 1}))
-    print match.result()
+    # match = Match("bahia2d", FCPortugal({"formation": 1}))
+    # print match.result()
+    # match = Match("wrighteagle", FCPortugal({"formation": 1}))
+    # print match.result()
 
 def report(rtypes):
     logging.info("reporting results...")
@@ -57,10 +57,10 @@ if __name__ == '__main__':
             logging.info("running main()")
             main()
             logging.info("----------- '%s' finished ----------", sys.argv[0])
-
-            # reporting results
-            report(rtypes=["upload","sound","eject"])
-
     except:
         logging.exception("Unforeseen exception:")
         raise
+
+    # reporting results
+    report(rtypes=["upload","sound","eject"])
+

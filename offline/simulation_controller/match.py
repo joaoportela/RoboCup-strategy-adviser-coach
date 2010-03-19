@@ -4,7 +4,6 @@ __all__ = ["Match"]
 
 import logging
 import os
-import glob
 import xml.dom.minidom as minidom
 import re
 
@@ -67,15 +66,13 @@ class MatchError(Exception):
 
 class Match(object):
 
-    def __init__(self, team_l, team_r, matchid=None, noplay=False):
+    def __init__(self, team_l, team_r, matchid=None):
         """team_l, team_r - left and right team. each team should be of the Team class
         or a string with the name of the team.
 
         matchid - if the matchid is supplied fetch it from cache... ("last" can
         be supplied to fetch the last available match)
 
-        noplay - when noplay=True make sure the match will not be played. will
-        always raise an exception when noplay=True and the matchid=None
         """
         # also allow strings with the name of the team
         if isinstance(team_l, basestring):
@@ -86,9 +83,9 @@ class Match(object):
         # assign the variables
         self._statistics = None
         self._result = None
+        self._id = matchid
         self.team_l = team_l
         self.team_r = team_r
-        self.noplay = noplay
 
         # sort the teams names
         lower_str = lambda obj: str(obj).lower()
@@ -97,10 +94,6 @@ class Match(object):
         ## TODO - matchdir should be provided by the confrontation class??
         self.matchdir = os.path.join(config.matchesdir, self.name)
 
-        # TODO - check the matchid thing...
-        # if the matchid thing is provided load the match from cache.
-
-        # call the VERY expensive method...
         self._play()
 
         # logging
@@ -110,22 +103,18 @@ class Match(object):
 
     def _play(self):
 
-        if self.noplay is True:
-            raise MatchError("the match was not supposed to be run (noplay=True)")
         # play the game
-        self._run()
-        # TODO - validate if the match runned correctly from the rcg name
-        # -> to validate if the match runned correctly we have to:
-        # - check if the most recent rcg has a valid name
-        # - store the rcg that already existed before the match and see if a new one
-        # apeared
+        if self._id is None:
+            # call the very expensive method
+            self._run()
+
+        # the id must be set...
+        assert self._id is not None
 
         # convert the log to a version supported and calculate statistics to
         # the statistics.xml file
-        self.statistics()
-
-        # get the match result from the statistics
         stat = self.statistics()
+        # get the match result from the statistics
         left_goals = stat.goals("left")
         right_goals = stat.goals("right")
 
@@ -139,10 +128,11 @@ class Match(object):
         return self.result()
 
     def _run(self):
+        # TODO put this in the confrontation module
         if os.path.exists(self.matchdir):
             if os.path.isdir(self.matchdir):
-                warnmsg = "reusing match directory {0}".format(self.matchdir)
-                logging.warning(warnmsg)
+                dbgmsg = "match directory {0} already exists, no need to create".format(self.matchdir)
+                logging.warning(dbgmsg)
             else:
                 # path exists but is not a directory
                 errmsg = "cannot create directory {0}".format(self.matchdir)
@@ -150,6 +140,8 @@ class Match(object):
                 raise MatchError(errmsg)
         else:
             os.mkdir(self.matchdir)
+
+        allids = allmatchesids(self.matchdir)
 
         # match directory
         matchdir = self.matchdir
@@ -178,6 +170,18 @@ class Match(object):
         self.team_l.stop()
         self.team_r.stop()
 
+        # calculate my id
+        # the last rcg must be mine...
+        lastrcg = allrcgs(self.matchdir)[-1]
+        self._id=theid(lastrcg)
+
+        # the id must be new...
+        assert self._id not in allids
+
+        # TODO
+        # check that the match runned fine
+        # (none of that null in the name)
+
     def result(self):
         return self._result
 
@@ -188,31 +192,21 @@ class Match(object):
         if self._statistics is not None:
             return self._statistics
 
-        # use the most recent rcg
-        rcg=Match.allmatches(self.matchdir)[-1]
-
-        self._statistics = statistics.create_from_rcg(rcg)
+        self._statistics = statistics.create_from_rcg(self.rcg())
 
         return self._statistics
 
+    def rcg():
+        """return my rcg name"""
+        fname_part="{0}*.rcg.gz".format(self._id)
+        possible_files = glob.glob(os.path.join(self.matchdir,fnamepart))
+        # matchid thingy is unique
+        assert len(possible_files) == 1
+        return possible_files[0]
+
     @staticmethod
-    def allmatches(confrontationdir):
-        """search for all the matches in "confrontationdir" directory"""
-
-        logging.info("searching all matches in {confrontationdir}".format(**locals()))
-
-        # the matches files are the games logs (end in .rcg.gz)
-        possible_files = glob.glob(os.path.join(confrontationdir,"*.rcg.gz"))
-        # but do not include the converted ones...
-	dont_include_convert = lambda fname: not fname.endswith("_convert.rcg.gz")
-        possible_files = filter(dont_include_convert, possible_files)
-
-        # from the filename (basename) get the numbers in the beggining (the date)
-        pattern = re.compile(r'\d+')
-        lekey = lambda name: pattern.match(os.path.basename(name)).group(0)
-
-        logging.debug("sorting {possible_files}".format(**locals()))
-        rcgs = sorted(possible_files, key=lekey)
-
-        return rcgs
+    def teamnames(rcg):
+        """find the teams names from the rcg name"""
+        #(re)use the statistics method that does just this...
+        statistics.Statistics.teamnames(rcg+".xml")
 

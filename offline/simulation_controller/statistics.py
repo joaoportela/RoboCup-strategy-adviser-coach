@@ -66,7 +66,6 @@ def create_from_rcg(rcg):
 
     return Statistics(xml)
 
-
 ##
 # statistics mega class
 ##
@@ -124,9 +123,9 @@ class Statistics(object):
 
     @staticmethod
     def teamnames(fname):
-        TEAMNAMESPATTERN = re.compile(r'^\d+-(.*)(?:_\d+)-vs-(.*)(?:_\d+)(?:_convert)?\.rcg\.gz\.xml$')
         """find the teams names from the xml file name
         """
+        TEAMNAMESPATTERN = re.compile(r'^\d+-(.*)(?:_\d+)-vs-(.*)(?:_\d+)(?:_convert)?\.rcg\.gz\.xml$')
         bname = os.path.basename(fname)
         (t1, t2) = TEAMNAMESPATTERN.match(bname).groups()
         return (t1,t2)

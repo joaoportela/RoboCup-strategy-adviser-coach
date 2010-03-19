@@ -1,11 +1,13 @@
 #! /usr/bin/env python
 
-__all__ = ["runcommand", "fake_runcommand", "write_script"]
+__all__ = ["runcommand", "fake_runcommand", "write_script", "allrcgs",
+        "allmatchesids", "theid" ]
 
 import logging
 import time
 import os
 import stat
+import glob
 
 def runcommand(command):
     logging.debug("running command: {0}".format(command))
@@ -32,4 +34,38 @@ def write_script(script_name, content):
     # chmod
     mask = stat.S_IRWXU | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH
     os.chmod(script_name, mask)
+
+# from the filename (basename) get the numbers in the beggining (the date)
+
+def theid(name):
+    NUMBERS_PATTERN = re.compile(r'\d+')
+    return NUMBERS_PATTERN.match(os.path.basename(name)).group(0)
+
+def allrcgs(confrontationdir):
+    """search for all the rcgs in "confrontationdir" directory
+    """
+
+    logging.info("searching all rcgs in {confrontationdir}".format(**locals()))
+
+    # the matches files are the games logs (end in .rcg.gz)
+    possible_files = glob.glob(os.path.join(confrontationdir,"*.rcg.gz"))
+    # but do not include the converted ones...
+    dont_include_convert = lambda fname: not fname.endswith("_convert.rcg.gz")
+    possible_files = filter(dont_include_convert, possible_files)
+
+    return sorted(possible_files, key=theid)
+
+# TODO - use metadata?
+def allmatchesids(confrontationdir):
+    """search for all the matches ids in "confrontationdir" directory
+    (from the rcg files...)"""
+
+    possible_files = allrcgs(confrontationdir)
+    ids = map(theid, possible_files)
+
+    # check that all the ids have the correct length
+    correct_len = 12
+    assert all(map(lambda x: len(x) == correct_len, ids))
+
+    return sorted(justids)
 

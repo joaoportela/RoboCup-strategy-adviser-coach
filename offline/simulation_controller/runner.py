@@ -4,6 +4,7 @@ import logging
 import sys
 import os
 import config
+import report
 
 # configure log file
 FORMAT = "%(asctime)s %(levelname)s: %(message)s"
@@ -21,26 +22,6 @@ def main():
     # print match.result()
     # match = Match("wrighteagle", FCPortugal({"formation": 1}))
     # print match.result()
-
-def report(rtypes):
-    logging.info("reporting results...")
-
-    #prepare the upload part
-    passwd=None
-    if len(sys.argv) == 2:
-        passwd=sys.argv[1]
-
-    # do it all...
-    if "upload" in rtypes:
-        if passwd is None:
-            logging.error("cannot upload without password")
-        else:
-            import upload
-            upload.dotheupload(config.logfile, passwd)
-    if "sound" in rtypes:
-        os.system("aplay beep.wav")
-    if "eject" in rtypes:
-        os.system("eject -T")
 
 if __name__ == '__main__':
 
@@ -62,5 +43,5 @@ if __name__ == '__main__':
         raise
 
     # reporting results
-    report(rtypes=["upload"])
+    report.report(rtypes=["upload"])
 

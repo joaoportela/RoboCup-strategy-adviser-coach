@@ -1,9 +1,13 @@
 #! /usr/bin/env python
 
-import logging
-import config
+import os
 import sys
 from mechanize import Browser
+
+import logging
+import config
+
+__all__ = ["report"]
 
 def dotheupload(filename, passwd):
     URL="http://ni.fe.up.pt/~poncio/files/sp_upload.php"
@@ -21,12 +25,25 @@ def dotheupload(filename, passwd):
     logging.debug("upload response: '{0}'".format(r.read()))
     logging.info("file must be in http://ni.fe.up.pt/~poncio/files/runner.log")
 
-if __name__ == "__main__":
-    if len(sys.argv) == 2:
-        dotheupload(config.logfile, sys.argv[1])
-    else:
-        print "nothing to do"
 
+def report(rtypes):
+    logging.info("reporting results...")
+
+    #prepare the upload part
+    passwd=None
+    if len(sys.argv) == 2:
+        passwd=sys.argv[1]
+
+    # do it all...
+    if "upload" in rtypes:
+        if passwd is None:
+            logging.error("cannot upload without password")
+        else:
+            dotheupload(config.logfile, passwd)
+    if "sound" in rtypes:
+        os.system("aplay beep.wav")
+    if "eject" in rtypes:
+        os.system("eject -T")
 
 """note:
 

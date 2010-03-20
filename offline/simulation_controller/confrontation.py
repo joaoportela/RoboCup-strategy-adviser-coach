@@ -49,6 +49,6 @@ class Confrontation(object):
     def playnewmatch(self):
         """force the teams to play a new match"""
         teams=(self.teamA,self.teamB)
-        random.shuffle(teams)
+        #random.shuffle(teams)
         Match(teams,self.confrontationdir)
 

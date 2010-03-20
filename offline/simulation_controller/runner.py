@@ -16,11 +16,11 @@ from team import *
 from match import *
 
 def main():
-    match = Match("fcportugalX", FCPortugal({"formation": 1}))
+    match = Match(("fcportugalX", FCPortugal({"formation": 1})))
     print match.result()
-    # match = Match("bahia2d", FCPortugal({"formation": 1}))
+    # match = Match(("bahia2d", FCPortugal({"formation": 1})))
     # print match.result()
-    # match = Match("wrighteagle", FCPortugal({"formation": 1}))
+    # match = Match(("wrighteagle", FCPortugal({"formation": 1})))
     # print match.result()
 
 if __name__ == '__main__':

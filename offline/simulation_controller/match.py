@@ -6,6 +6,7 @@ import logging
 import os
 import xml.dom.minidom as minidom
 import re
+import json
 
 import config
 from team import Team
@@ -66,40 +67,62 @@ class MatchError(Exception):
 
 class Match(object):
 
-    def __init__(self, team_l, team_r, matchid=None):
+    def __init__(self, teams=None, matchid=None, matchdir=None):
         """team_l, team_r - left and right team. each team should be of the Team class
         or a string with the name of the team.
+
+        teams - if the teams are supplied, use them (is ignored when matchid is
+        supplied)
 
         matchid - if the matchid is supplied fetch it from cache... ("last" can
         be supplied to fetch the last available match)
 
+        matchdir - the directory to run the match
+
         """
-        # also allow strings with the name of the team
-        if isinstance(team_l, basestring):
-            team_l = Team(team_l)
-        if isinstance(team_r, basestring):
-            team_r = Team(team_r)
+        # do the initial checks..
+        if teams is None and matchid is None:
+            raise MatchError("either teams or matchid must be supplied.")
+
+        if teams is not None:
+            team_l = teams[0]
+            team_r = teams[1]
+            # also allow strings with the name of the team
+            if isinstance(team_l, basestring):
+                team_l = Team(team_l)
+            if isinstance(team_r, basestring):
+                team_r = Team(team_r)
 
         # assign the variables
+        self._id = matchid
+
+        if self._id is not None:
+            # load the relevant data...
+            self._load_metadata()
+        else:
+            self.team_l = team_l
+            self.team_r = team_r
+
+        # match name...
+        lower_str = lambda obj: str(obj).lower()
+        teams = tuple(sorted((team_l,team_r), key=lower_str))
+        self.name = "{0}__vs__{1}".format(teams[0],teams[1])
+
+
+        if matchdir is None:
+            logging.warning("matchdir not provided to the match instance.")
+            # the matchdir
+            self.matchdir = os.path.join(config.matchesdir, self.name)
+
+        # initialize some more variables...
         self._statistics = None
         self._result = None
-        self._id = matchid
-        self.team_l = team_l
-        self.team_r = team_r
-
-        # sort the teams names
-        lower_str = lambda obj: str(obj).lower()
-        self.teams = tuple(sorted((team_l,team_r), key=lower_str))
-        self.name = "{0}__vs__{1}".format(self.teams[0],self.teams[1])
-        ## TODO - matchdir should be provided by the confrontation class??
-        self.matchdir = os.path.join(config.matchesdir, self.name)
 
         self._play()
 
         # logging
         logging.info("Match object instanciated { teams: ('%s', '%s') }",
                 team_l, team_r)
-        logging.debug("assuming match dir to be %s", self.matchdir)
 
     def _play(self):
 
@@ -107,6 +130,8 @@ class Match(object):
         if self._id is None:
             # call the very expensive method
             self._run()
+            # dump metadata to match directory
+            self._dump_metadata()
 
         # the id must be set...
         assert self._id is not None
@@ -122,23 +147,19 @@ class Match(object):
 	right_goals = (str(self.team_r), str(right_goals))
         self._result = (left_goals, right_goals)
 
-        # write metadata to match directory
-        self._write_metadata()
-
         return self.result()
 
     def _run(self):
-        # TODO put this in the confrontation module
         if os.path.exists(self.matchdir):
-            if os.path.isdir(self.matchdir):
-                dbgmsg = "match directory {0} already exists, no need to create".format(self.matchdir)
-                logging.warning(dbgmsg)
-            else:
+            if not os.path.isdir(self.matchdir):
                 # path exists but is not a directory
                 errmsg = "cannot create directory {0}".format(self.matchdir)
                 logging.error(errmsg)
                 raise MatchError(errmsg)
         else:
+            warnmsg = "match directory {0} did not exist, shouldn't the confrontation"
+            warnmsg+= " class create this?".format(self.matchdir)
+            logging.warning(warnmsg)
             os.mkdir(self.matchdir)
 
         allids = allmatchesids(self.matchdir)
@@ -185,8 +206,29 @@ class Match(object):
     def result(self):
         return self._result
 
-    def _write_metadata(self):
-        pass
+    def _metadata_fname(self):
+        basename = str(self._id) + "_metadata.json"
+        fname = os.path.join(self.matchdir,basename)
+        return fname
+
+    def _dump_metadata(self):
+        data={}
+        data['id'] = self._id
+        data['team_l'] = self.team_l.encode()
+        data['team_r'] = self.team_r.encode()
+
+        fname = self._metadata_fname()
+        with open(fname) as f:
+            json.dump(data,f)
+
+    def _load_metadata(self):
+        fname = self._metadata_fname()
+        with open(fname) as f:
+            data=json.load(f)
+
+        assert data['id'] == self._id
+        self.team_l = Team.decode(data['team_l'])
+        self.team_r = Team.decode(data['team_r'])
 
     def statistics(self):
         if self._statistics is not None:

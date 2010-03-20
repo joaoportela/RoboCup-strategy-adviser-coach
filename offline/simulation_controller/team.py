@@ -38,7 +38,7 @@ echo command: \"${{teamComm}}\" \"${{matchhost}}\" \"${{teamdir}}\" {other_as_ar
 
 """
 
-team_stop_script = """#! /bin/bash
+TEAM_STOP_SCRIPT = """#! /bin/bash
 
 matchdir=\"{matchdir}\"
 teamdir=\"{teamdir}\"
@@ -94,13 +94,16 @@ class Team(object):
         return script_name
 
     def command_stop(self):
+        if self.matchdir is None:
+            raise TeamError("cannot stop a match that hasn't started...")
+
         matchdir=self.matchdir
         teamdir=self.teamdir
         teamname=self.name
 
         script_name = "stop_" + teamname + ".sh"
         script_name = os.path.join(matchdir,script_name)
-        content = team_stop_script.format(**locals())
+        content = TEAM_STOP_SCRIPT.format(**locals())
         write_script(script_name, content)
 
         self.matchdir=None
@@ -119,6 +122,21 @@ class Team(object):
 
     def __repr__(self):
         return "Team('{0}')".format(self.name)
+
+    def encode(self):
+        """encode the team from a json compatible object (tuple to be specific)"""
+        return ("Team",[self.name])
+
+    @staticmethod
+    def decode(lst):
+        """decode a team from a json compatible object (list to be specific)"""
+        class_ = json[0]
+        params = json[1]
+        if class_ in Team.decoders:
+            return Team.decoders[class_](*params)
+        else:
+            raise TeamError("Unkown team class %s", class_)
+
 
     @staticmethod
     def all_teams():
@@ -175,6 +193,30 @@ class FCPortugal(Team):
             dynamic_part.append("{name}{value}".format(**locals()))
         return "_".join(dynamic_part)
 
+    def encode(self):
+        return ("FCPortugal", [self.strategy_params])
+
     def __str__(self):
         return self.name+"-"+self.params_summary()
+
+    def __repr__(self):
+        return "FCPortugal({0})".format(self.strategy_params)
+
+# register the decoders
+Team.decoders={}
+Team.decoders["Team"] = Team
+Team.decoders["FCPortugal"] = FCPortugal
+
+if __name__ == "__main__":
+    import json
+    # test the (en/de)coding
+    fcportugal=FCPortugal({"formation":1})
+    fcportugalX=Team("fcportugalX")
+    print fcportugal, fcportugalX
+    fcportugal_s = json.dumps(fcportugal.encode())
+    fcportugalX_s= json.dumps(fcportugalX.encode())
+    print fcportugal_s, fcportugalX_s
+    fcportugal=Team.decode(json.loads(fcportugal_s))
+    fcportugalX=Team.decode(json.loads(fcportugalX_s))
+    print fcportugal, fcportugalX
 

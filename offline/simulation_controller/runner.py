@@ -14,10 +14,16 @@ logging.Formatter("%(asctime)s - %(levelname)s:%(message)s")
 
 from team import *
 from match import *
+from confrontation import *
 
 def main():
-    match = Match(("fcportugalX", FCPortugal({"formation": 1})))
-    print match.result()
+    confrontation = Confrontation("fcportugalX", FCPortugal({"formation": 1}))
+    all_m = confrontation.allmatches()
+    print len(all_m)
+    print [str(x) for x in all_m]
+    confrontation.playnewmatch()
+    # match = Match(("fcportugalX", FCPortugal({"formation": 1})))
+    # print match.result()
     # match = Match(("bahia2d", FCPortugal({"formation": 1})))
     # print match.result()
     # match = Match(("wrighteagle", FCPortugal({"formation": 1})))
@@ -26,8 +32,8 @@ def main():
 if __name__ == '__main__':
 
     # clean the log file
-    with open(config.logfile,"w") as f:
-        f.truncate(0) # no need for this line because "w" already truncates...
+#    with open(config.logfile,"w") as f:
+#        f.truncate(0) # no need for this line because "w" already truncates...
 
     try:
         logging.info("----------- '%s' started  ----------", sys.argv[0])

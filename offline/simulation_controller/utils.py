@@ -1,13 +1,14 @@
 #! /usr/bin/env python
 
 __all__ = ["runcommand", "fake_runcommand", "write_script", "allrcgs",
-        "allmatchesids", "theid" ]
+        "allmetadata", "allmatchesids", "theid" , "confrontation_name"]
 
 import logging
 import time
 import os
 import stat
 import glob
+import re
 
 def runcommand(command):
     logging.debug("running command: {0}".format(command))
@@ -55,17 +56,36 @@ def allrcgs(confrontationdir):
 
     return sorted(possible_files, key=theid)
 
-# TODO - use metadata?
+def allmetadata(confrontationdir):
+    """search for all the metadata files in "confrontationdir" directory
+    """
+
+    logging.info("searching all metadata files in {confrontationdir}".format(**locals()))
+
+    # the matches files are the games logs (end in .rcg.gz)
+    possible_files = glob.glob(os.path.join(confrontationdir,"*_metadata.json"))
+
+    return sorted(possible_files, key=theid)
+
 def allmatchesids(confrontationdir):
     """search for all the matches ids in "confrontationdir" directory
     (from the rcg files...)"""
 
-    possible_files = allrcgs(confrontationdir)
-    ids = map(theid, possible_files)
+    possible_rcgs = allrcgs(confrontationdir)
+    possible_metadata = allrcgs(confrontationdir)
+    # TODO - use metadata
+
+    ids = map(theid, possible_rcgs)
 
     # check that all the ids have the correct length
     correct_len = 12
     assert all(map(lambda x: len(x) == correct_len, ids))
 
-    return sorted(justids)
+    return sorted(ids)
+
+def confrontation_name(teamA,teamB):
+    lower_str = lambda obj: str(obj).lower()
+    teams = sorted((teamA,teamB), key=lower_str)
+    name = "{0}__vs__{1}".format(teams[0],teams[1])
+    return name
 

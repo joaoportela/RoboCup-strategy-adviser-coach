@@ -3,6 +3,10 @@
 __all__ = ["Confrontation"]
 
 import config
+import os
+import logging
+import random
+
 from utils import *
 from match import *
 
@@ -12,15 +16,12 @@ class ConfrontationError(Exception):
 
 
 class Confrontation(object):
-    def __init__(self, teamA, TeamB):
-        lower_str = lambda obj: str(obj).lower()
-        teams = tuple(sorted((teamA,teamB), key=lower_str))
-        self.name = "{0}__vs__{1}".format(teams[0],teams[1])
+    def __init__(self, teamA, teamB):
+        self.name = confrontation_name(teamA,teamB)
         self.confrontationdir = os.path.join(config.matchesdir, self.name)
         self.teamA=teamA
         self.teamB=teamB
-        # TODO
-        # create the dir and whatever...
+        # create the dir
         if os.path.exists(self.confrontationdir):
             if os.path.isdir(self.confrontationdir):
                 dbgmsg = "confrontation directory {0} already exists, no need to create".format(self.confrontationdir)
@@ -50,5 +51,5 @@ class Confrontation(object):
         """force the teams to play a new match"""
         teams=(self.teamA,self.teamB)
         #random.shuffle(teams)
-        Match(teams,self.confrontationdir)
+        Match(teams=teams,matchdir=self.confrontationdir)
 

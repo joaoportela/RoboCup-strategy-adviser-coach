@@ -130,8 +130,8 @@ class Team(object):
     @staticmethod
     def decode(lst):
         """decode a team from a json compatible object (list to be specific)"""
-        class_ = json[0]
-        params = json[1]
+        class_ = lst[0]
+        params = lst[1]
         if class_ in Team.decoders:
             return Team.decoders[class_](*params)
         else:

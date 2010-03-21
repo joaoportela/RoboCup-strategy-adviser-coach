@@ -7,6 +7,7 @@ import os
 import xml.dom.minidom as minidom
 import re
 import json
+import glob
 
 import config
 from team import Team
@@ -83,6 +84,8 @@ class Match(object):
         # do the initial checks..
         if teams is None and matchid is None:
             raise MatchError("either teams or matchid must be supplied.")
+        if teams is None and matchdir is None:
+            raise MatchError("no way to find out the matchdir")
 
         if teams is not None:
             team_l = teams[0]
@@ -92,37 +95,41 @@ class Match(object):
                 team_l = Team(team_l)
             if isinstance(team_r, basestring):
                 team_r = Team(team_r)
+        else:
+            team_l = None
+            team_r = None
 
         # assign the variables
         self._id = matchid
+        self._statistics = None
+        self._result = None
+        self.matchdir = matchdir
+        self.team_l=team_l
+        self.team_r=team_r
 
-        if self._id is not None:
-            # load the relevant data...
-            self._load_metadata()
-        else:
-            self.team_l = team_l
-            self.team_r = team_r
-
-        # match name...
-        lower_str = lambda obj: str(obj).lower()
-        teams = tuple(sorted((team_l,team_r), key=lower_str))
-        self.name = "{0}__vs__{1}".format(teams[0],teams[1])
-
-
-        if matchdir is None:
+        if self.matchdir is None and teams is not None:
+            # needs match name...
+            self.name=confrontation_name(self.team_l,self.team_r)
             logging.warning("matchdir not provided to the match instance.")
             # the matchdir
             self.matchdir = os.path.join(config.matchesdir, self.name)
+            # TODO - more logging...
+            if not os.path.isdir(self.matchdir):
+                os.mkdir(self.matchdir)
 
-        # initialize some more variables...
-        self._statistics = None
-        self._result = None
+        if self._id is not None:
+            # needs match dir...
+            # load the relevant data...
+            self._load_metadata()
+            # self.team_* are now instantiated...
+            # find out the name
+            self.name=confrontation_name(self.team_l,self.team_r)
 
         self._play()
 
         # logging
         logging.info("Match object instanciated { teams: ('%s', '%s') }",
-                team_l, team_r)
+                self.team_l, self.team_r)
 
     def _play(self):
 
@@ -200,15 +207,16 @@ class Match(object):
         assert self._id not in allids
 
         # TODO
-        # check that the match runned fine
-        # (none of that null in the name)
+        #-check that the match runned fine
+        # (none of that null in the rcg name)
+        #-tar outputs...
 
     def result(self):
         return self._result
 
     def _metadata_fname(self):
         basename = str(self._id) + "_metadata.json"
-        fname = os.path.join(self.matchdir,basename)
+        fname = os.path.join(self.matchdir, basename)
         return fname
 
     def _dump_metadata(self):
@@ -218,8 +226,8 @@ class Match(object):
         data['team_r'] = self.team_r.encode()
 
         fname = self._metadata_fname()
-        with open(fname) as f:
-            json.dump(data,f)
+        with open(fname, "w") as f:
+            json.dump(data, f, sort_keys=True, indent=4)
 
     def _load_metadata(self):
         fname = self._metadata_fname()
@@ -238,13 +246,25 @@ class Match(object):
 
         return self._statistics
 
-    def rcg():
-        """return my rcg name"""
-        fname_part="{0}*.rcg.gz".format(self._id)
+    def rcg(self):
+        """return my rcg file name"""
+        fnamepart="{0}*.rcg.gz".format(self._id)
         possible_files = glob.glob(os.path.join(self.matchdir,fnamepart))
+
+        # do not include the converted ones...
+        dont_include_convert = lambda fname: not fname.endswith("_convert.rcg.gz")
+        possible_files = filter(dont_include_convert, possible_files)
+
         # matchid thingy is unique
         assert len(possible_files) == 1
         return possible_files[0]
+
+    def __str__(self):
+        res = self.result()
+        return "{res[0][0]} ({res[0][1]}) vs {res[1][0]} ({res[1][1]})".format(**locals())
+#
+#    def __repr__(self):
+#        pass
 
     @staticmethod
     def teamnames(rcg):

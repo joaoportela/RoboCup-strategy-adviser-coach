@@ -8,6 +8,8 @@ import config
 import xml.dom.minidom as minidom
 from functools import wraps
 
+__all__ = ["Statistics", "create_from_rcg"]
+
 STATISTICS_SCRIPT="""#! /bin/bash
 
 scriptsdir="{scriptsdir}"
@@ -45,7 +47,7 @@ def _converted_name(rcg):
     rcgc = bname + "_convert" + ext
     return rcgc
 
-def create_from_rcg(rcg):
+def create_from_rcg(rcg, *args,**kwds):
     scriptsdir=config.scripts_dir
     dirname=os.path.dirname(rcg)
     rcgconvert = config.rcgconvert
@@ -64,7 +66,7 @@ def create_from_rcg(rcg):
         logging.debug(dbg)
         runcommand(script_name)
 
-    return Statistics(xml)
+    return Statistics(xml=xml,*args,**kwds)
 
 ##
 # statistics mega class
@@ -78,13 +80,14 @@ def accept_side(fn):
     @wraps(fn)
     def wrapper(self, side=None, *args, **kwds):
         # validate side argument.
-        assert side == "left" or side == "right" or side is None, "%s is invalid" % (side,)
+        assert side in self.valid_magic, "%s is invalid" % (side,)
 
         # backup the self.side variable
         backup = self.side
+
         # set the self.side variable
         if side is not None:
-            self.side = side
+            self.magic_side=side
 
         # self.side should be valid by now...
         if self.side is None:
@@ -103,23 +106,86 @@ def accept_side(fn):
     return wrapper
 
 class Statistics(object):
+    SIDES=["left","right"]
+
     def __init__(self, xml, side=None):
         if not os.path.exists(xml):
             raise StatisticsError('{0} not found'.format(xml))
-        self.dom = minidom.parse(xml)
-        assert side == "left" or side == "right" or side is None, "%s is invalid" % (side,)
-        self.side = side
+        self._xml=xml
+        self._dom = minidom.parse(xml)
+        self._teams = Statistics.teamnames(xml)
+        self.magic_side = side
+
+        if "left" in self.teams or "right" in self.teams:
+            warn = "the team names are '{0}' '{1}', this is sh*t prone!".format(*self.teams)
+            logging.warning(warn)
+
+    @property
+    def dom(self):
+        return self._dom
+
+    @property
+    def valid_magic(self):
+        return Statistics.SIDES+list(self.teams)+[None]
+
+    def magic_side(self,value):
+        if value not in self.valid_magic:
+            raise StatisticsError("side not specified")
+
+        # guess if the value is the side or the team
+        if value in Statistics.SIDES:
+            self.side = value
+        elif value in self.teams:
+            self.team = value
+        elif value is None:
+            self.side = value
+
+    magic_side=property(fset=magic_side)
+
+    @property
+    def xml(self):
+        """the xml file where the statistics are extracted"""
+        return self._xml
+
+    @property
+    def teams(self):
+        """the match teams (extracted from the xml file name)"""
+        return self._teams
+
+    @property
+    def team(self):
+        """the default team when no team/side argument is supplied.
+
+        note: this argument is quite strange since it is not the same as the
+        name used to create the team, it is the actual in game team name (when
+        in doubt check Statistics.teams method)
+        ps-currently thinking of a solution"""
+        return self._team
+
+    @team.setter
+    def team(self,value):
+        assert value in self.teams or value is None, "%s is invalid" % (value,)
+        self._team = value
+        if value is not None:
+            self._side=Statistics.SIDES[self.teams.index(value)]
+        else:
+            self._side=None
 
     @property
     def side(self):
-        """ the default side when the side argument is ommited in some methods.
+        """ the default side when, in some methods, the side argument is
+        ommited.
         """
         return self._side
 
     @side.setter
     def side(self,value):
-        assert value == "left" or value == "right" or value is None, "%s is invalid" % (value,)
+        assert value in Statistics.SIDES or value is None, "%s is invalid" % (value,)
         self._side = value
+        if value is not None:
+            self._team = self.teams[Statistics.SIDES.index(value)]
+        else:
+            self._team=None
 
     @staticmethod
     def teamnames(fname):
@@ -166,11 +232,16 @@ class Statistics(object):
         """ get the number of goals. can accept the side, and the kick area as optional
         arguments.
 
-	use named arguments for the 'side' and 'kick_area' arguments, plz.
+        sorry for the function signature not being clear. should be:
+            goals(self, side=None, kick_area=None)
 
-        giving the side argument will override the default side.
-        the kick area argument will only return the number of goals scored from that
-        area. (the valid areas are: "GOAL_AREA", "PENALTY_AREA", "FAR_SHOT")
+	to avoid confusion use named arguments.
+
+        side - the side argument will overrides the default side.
+        kick_area - the kick area argument will only return the number of goals
+        scored from that area. (the valid areas are: "GOAL_AREA",
+        "PENALTY_AREA", "FAR_SHOT"), None returns the number of goals from any
+        area.
         """
         KICK_AREAS = ["GOAL_AREA", "PENALTY_AREA", "FAR_SHOT"]
 

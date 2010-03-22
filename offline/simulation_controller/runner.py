@@ -17,11 +17,17 @@ from match import *
 from confrontation import *
 
 def main():
-    confrontation = Confrontation("fcportugalX", FCPortugal({"formation": 1}))
-    all_m = confrontation.allmatches()
+    fcpX_vs_fcpD = Confrontation("fcportugalX", FCPortugal({"formation": 1}))
+    all_m = fcpX_vs_fcpD.allmatches()
     print len(all_m)
-    print [str(x) for x in all_m]
-    confrontation.playnewmatch()
+    print "\n".join([str(x) for x in all_m])
+    teams_stat = fcpX_vs_fcpD.statistics("fcportugalX")
+    print "--calculating goals:--"
+    teams_stat.team = "fcportugalD-formation_1"
+    print "avg goals for {1} team {0}".format(teams_stat.goals(), teams_stat.team)
+    print "avg goals for {1} team {0}".format(teams_stat.goals("FCPortugalX"), "FCPortugalX")
+    # confrontation.playnewmatch()
+
     # match = Match(("fcportugalX", FCPortugal({"formation": 1})))
     # print match.result()
     # match = Match(("bahia2d", FCPortugal({"formation": 1})))
@@ -32,8 +38,8 @@ def main():
 if __name__ == '__main__':
 
     # clean the log file
-#    with open(config.logfile,"w") as f:
-#        f.truncate(0) # no need for this line because "w" already truncates...
+    with open(config.logfile,"w") as f:
+        f.truncate(0) # no need for this line because "w" already truncates...
 
     try:
         logging.info("----------- '%s' started  ----------", sys.argv[0])

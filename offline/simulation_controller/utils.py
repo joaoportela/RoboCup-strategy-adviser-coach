@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-__all__ = ["runcommand", "fake_runcommand", "write_script", "allrcgs",
+__all__ = ["all_equal", "runcommand", "fake_runcommand", "write_script", "allrcgs",
         "allmetadata", "allmatchesids", "theid" , "confrontation_name"]
 
 import logging
@@ -9,6 +9,15 @@ import os
 import stat
 import glob
 import re
+
+def all_equal(l):
+    if l:
+        il=iter(l)
+        first = il.next()
+        for e in il:
+            if e != first:
+                return False
+    return True
 
 def runcommand(command):
     logging.debug("running command: {0}".format(command))
@@ -36,9 +45,9 @@ def write_script(script_name, content):
     mask = stat.S_IRWXU | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH
     os.chmod(script_name, mask)
 
-# from the filename (basename) get the numbers in the beggining (the date)
-
 def theid(name):
+    """from the filename (basename) get the numbers in the beggining (the
+    date)"""
     NUMBERS_PATTERN = re.compile(r'\d+')
     return NUMBERS_PATTERN.match(os.path.basename(name)).group(0)
 

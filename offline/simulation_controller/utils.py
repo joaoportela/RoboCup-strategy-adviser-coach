@@ -1,7 +1,8 @@
 #! /usr/bin/env python
 
-__all__ = ["all_equal", "runcommand", "fake_runcommand", "write_script", "allrcgs",
-        "allmetadata", "allmatchesids", "theid" , "confrontation_name"]
+__all__ = ["all_equal", "runcommand", "fake_runcommand", "write_script",
+        "allrcgs", "allmetadata", "allmatchesids", "theid",
+        "confrontation_name", "same_team"]
 
 import logging
 import time
@@ -18,6 +19,24 @@ def all_equal(l):
             if e != first:
                 return False
     return True
+
+def same_team(nameA,nameB):
+    """method to check if the two team names (nameA and nameB)
+    can refer to the same team
+
+    this method is based only on experience and may fail."""
+
+    for i in range(2):
+        if nameA.lower().startswith(nameB.lower()):
+            return True
+        # known special cases:
+        if nameA == "lishang" and nameB == "HfutEngine2D":
+            return True
+
+        # switch and try again...
+        nameA,nameB=nameB,nameA
+
+    return False
 
 def runcommand(command):
     logging.debug("running command: {0}".format(command))
@@ -65,32 +84,76 @@ def allrcgs(confrontationdir):
 
     return sorted(possible_files, key=theid)
 
-def allmetadata(confrontationdir):
-    """search for all the metadata files in "confrontationdir" directory
+def allstatisticsxml(confrontationdir):
+    """search for all the statistics xml files in "confrontationdir" directory
     """
+
+    logging.info("searching all statistics xml files in {confrontationdir}".format(**locals()))
+
+    # the matches files are the games logs (end in .rcg.gz)
+    possible_files=glob.glob(os.path.join(confrontationdir,"*_convert.rcg.gz.xml"))
+
+    return sorted(possible_files, key=theid)
+
+def allmetadata(confrontationdir):
+    """search for all the metadata files in "confrontationdir" directory"""
 
     logging.info("searching all metadata files in {confrontationdir}".format(**locals()))
 
-    # the matches files are the games logs (end in .rcg.gz)
+    # the metadata files are json files
     possible_files = glob.glob(os.path.join(confrontationdir,"*_metadata.json"))
 
     return sorted(possible_files, key=theid)
 
 def allmatchesids(confrontationdir):
-    """search for all the matches ids in "confrontationdir" directory
-    (from the rcg files...)"""
+    """search for all the matches ids in "confrontationdir" directory (from the
+    rcg files...)"""
 
     possible_rcgs = allrcgs(confrontationdir)
-    possible_metadata = allrcgs(confrontationdir)
-    # TODO - use metadata
+#    possible_statisticsxml = allstatisticsxml(confrontationdir)
+    possible_metadata = allmetadata(confrontationdir)
 
-    ids = map(theid, possible_rcgs)
+    rcg_ids = map(theid, possible_rcgs)
+#    stat_ids = map(theid, possible_statisticsxml)
+    meta_ids = map(theid, possible_metadata)
+
+    # only return if the metadata files also exist
+    ids = filter(lambda x: x in meta_ids, rcg_ids)
 
     # check that all the ids have the correct length
     correct_len = 12
     assert all(map(lambda x: len(x) == correct_len, ids))
 
     return sorted(ids)
+
+def matchfiles(confrontationdir,matchid):
+    files={}
+
+    # check if the file x has the id 'matchdid'
+    matchingid=lambda x: theid(x) == matchid
+
+    # get the all files names
+    rcg=allrcgs(confrontationdir)
+    statistics=allstatisticsxml(confrontationdir)
+    metadata=allmetadata(confrontationdir)
+
+    # filter by matching the match id
+    rcg=filter(matchingid,rcg)
+    statistics=filter(matchingid,statistics)
+    metadata=filter(matchingid,metadata)
+
+    # the number of results can only be 0 or 1
+    for var in [rcg,statistics,metadata]:
+        assert len(var) < 2
+
+    if rcg:
+        files['rcg'] = rcg[0]
+    if statistics:
+        files['statistics'] = statistics[0]
+    if metadata:
+        files['metadata'] = metadata[0]
+
+    return files
 
 def confrontation_name(teamA,teamB):
     lower_str = lambda obj: str(obj).lower()

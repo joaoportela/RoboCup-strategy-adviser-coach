@@ -16,26 +16,36 @@ matchhost = "127.0.0.1"
 # fcportugal_dynamic
  # strategy file to modify
 base_strategy="base_strategy.conf"
- # folder to put the generated strategy files.
+# folder to put the generated strategy files.
 strategy_folder = "strategies/"
 strategy_data = {
         "formation":
-                 # valid values...
-                 [1,  # 433OPEN
-                  2,  # 442OPEN
-                  3,  # 443OPEN11Players
-                  4,  # 343
-                  8,  # TUDOAMONTE
-                  9,  # 433OPENDef
-                  12] # 4213 RiOne
-#        ,
-#        "mentality":
-#                 [0,
-#                  1,
-#                  2,
-#                  3,
-#                  4]
-}
+        [
+            #1,  # 433OPEN
+            2,  # 442OPEN
+            #3,  # 443OPEN11Players
+            #4,  # 343
+            #8,  # TUDOAMONTE
+            #9,  # 433OPENDef
+            #12  # 4213 RiOne
+            ]
+        ,
+        "mentality":
+        [
+            #0,
+            #1,
+            2,
+            #3
+            ]
+        ,
+        "gamepace":
+        [
+            #0,
+            #1,
+            2,
+            #3
+            ]
+        }
 
 # scripts...
 scripts_dir=os.getcwd()

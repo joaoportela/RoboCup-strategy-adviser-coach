@@ -8,36 +8,12 @@ import xml.dom.minidom as minidom
 import re
 import json
 import glob
+import tarfile
 
 import config
 from team import Team
 import statistics
 from utils import *
-
-#match.rb, resumo:
-# def initialize team_l, team_r, results_csv, tournament_log_dir, config
-#     @team_l = team_l
-#     @team_l_config = YAML::load_file File.join(team_l, "team.yml")
-#     @team_r = team_r
-#     @team_r_config = YAML::load_file File.join(team_r, "team.yml")
-#     @results = results_csv
-#     @log_dir = Match.current_match_dir tournament_log_dir
-#     @config = config
-# end
-# def start
-#     setup
-#     make_start_scripts
-#     start_rcssserver
-#     stop_teams
-#     write_configuration File.join(@log_dir, "match.yml")
-#     save_results
-#     convert_results if @config.robocup2flash
-#     save_logging "l", @team_l if @config.save_logging
-#     save_logging "r", @team_r if @config.save_logging
-#     statistics if @config.statistics
-#     cleanup
-#     Match.increment_match_index
-# end
 
 MATCH_START_SCRIPT = """#!/bin/bash
 
@@ -206,10 +182,28 @@ class Match(object):
         # the id must be new...
         assert self._id not in allids
 
-        # TODO
+
         #-check that the match runned fine
-        # (none of that null in the rcg name)
-        #-tar outputs...
+        (team_l,team_r) = self.teamnames_from_rcg(self.rcg())
+        if team_l.lower() == "null" or team_r.lower() == "null":
+            err="the match file ({0}) indicates that the match did not run successfully"
+            raise MatchError(err.format(self.rcg()))
+
+        # check that the match teams are the expected ones. this logs an error
+        # but does not stop execution because it can be an error with the
+        # same_team function
+        if not same_team(team_l,self.team_l.name):
+            err="{0} is not the same as {1}"
+            logging.error(err.format(team_l,self.team_l.name))
+        if not same_team(team_r,self.team_r.name):
+            err="{0} is not the same as {1}"
+            logging.error(err.format(team_r,self.team_r.name))
+
+        # call the statistics method to force the files to be generated
+        self.statistics()
+
+        # archive and delete the logs and other outputs
+        self._archive_outputs()
 
     def result(self):
         return self._result
@@ -242,7 +236,7 @@ class Match(object):
         if self._statistics is not None:
             return self._statistics
 
-        self._statistics = statistics.create_from_rcg(self.rcg())
+        self._statistics = statistics.create_from_rcg(self.rcg(), teams=self.teamnames)
 
         return self._statistics
 
@@ -259,6 +253,33 @@ class Match(object):
         assert len(possible_files) == 1
         return possible_files[0]
 
+    def _archive_outputs(self):
+        # tar outputs (for future checking if necessary)
+        filestotar=[]
+        filestotar+=glob.glob(os.path.join(self.matchdir,"*-output.log"))
+        filestotar+=glob.glob(os.path.join(self.matchdir,"*-error.log"))
+        filestotar+=glob.glob(os.path.join(self.matchdir,"out.csv"))
+        logging.debug("archiving {0}.".format(filestotar))
+
+        assert self._id is not None
+
+        tarname="{0}_archive.tar.gz".format(self._id)
+        tarname=os.path.join(self.matchdir,tarname)
+        tar = tarfile.open(tarname,'w:gz')
+        try:
+            for name in filestotar:
+                tar.add(name)
+        finally:
+            tar.close()
+
+        # files are safely stored in tar file..  remove them.
+        for f in filestotar:
+            os.remove(f)
+
+    @property
+    def teamnames(self):
+        return (self.team_l.name, self.team_r.name)
+
     def __str__(self):
         res = self.result()
         return "{res[0][0]} ({res[0][1]}) vs {res[1][0]} ({res[1][1]})".format(**locals())
@@ -267,8 +288,8 @@ class Match(object):
 #        pass
 
     @staticmethod
-    def teamnames(rcg):
+    def teamnames_from_rcg(rcg):
         """find the teams names from the rcg name"""
         #(re)use the statistics method that does just this...
-        statistics.Statistics.teamnames(rcg+".xml")
+        return statistics.Statistics.teamnames_from_xml(rcg+".xml")
 

@@ -12,6 +12,10 @@ from utils import *
 from match import *
 from statistics import *
 
+class StatisticsAgregatorError(Exception):
+    def __init__(self, msg='Unspecified'):
+        Exception.__init__(self, msg)
+
 class ConfrontationError(Exception):
     def __init__(self, msg='Unspecified'):
         Exception.__init__(self, msg)
@@ -20,34 +24,45 @@ class StatisticsAgregator(object):
     """class that agregates statistics objects"""
 
     def __init__(self, statistics, team=None):
+        """ constructor for the StatisticsAgregator object.
+
+        statistics - the statistics list to agregate.
+        teams - if provided should be a tuple containing the teams names
+        team - if provided should be the name of the team selected by default
+        """
         self.statistics = statistics
-        self._teams = statistics[0].teams
+        self._validate_teams_in_statistics()
+        self._teams=statistics[0].teams
         self.team=team
 
     @property
     def teams(self):
         return self._teams
 
+    def _validate_teams_in_statistics():
+        std=self.statistics[0].teams
+        for s in self.statistics:
+            if (s.teams[0],s.teams[1]) == (std[0], std[1]):
+                continue
+            if (s.teams[1],s.teams[0]) == (std[0], std[1]):
+                continue
+            errmsg="Teams {0} are not valid according to the standard {1}".format(s.teams,std)
+            raise StatisticsAgregatorError(errmsg)
+
     @property
     def team(self):
-        """gets or sets the team to be used as default in the statistics
-
-        this is very strange because the expected name is the one from the
-        statistics filename and not the same as used to instanciate the
-        teams (will try to guess if not accurate)"""
+        """gets or sets the team to be used as default in the statistics """
         return self._team
 
     @team.setter
     def team(self, value):
         if value is not None and value not in self.teams:
-            if value.lower().startswith(self.teams[0].lower()):
+            if same_team(value,self.teams[0]):
                 value=self.teams[0]
-            elif value.lower().startswith(self.teams[1].lower()):
+            if same_team(value,self.teams[1]):
                 value=self.teams[1]
             else:
-                raise ConfrontationError("Could not recognize the team %s"%(value,))
-        # TODO -method to check that the teams are coherent (remember that
-        # s0.teams[0] == s1.teams[1] and s0.team[1] == s1.teams[0] is valid)
+                raise StatisticsAgregatorError("Could not recognize the team %s"%(value,))
         for s in self.statistics:
             s.team=value
         self._team = value
@@ -61,7 +76,7 @@ class StatisticsAgregator(object):
 
         # the team must be set by now...
         if self.team is None:
-            raise ConfrontationError("team must be set before calling these methods")
+            raise StatisticsAgregatorError("team must be set before calling these methods")
 
         results = [func(s,*args,**kwargs) for s in self.statistics]
         sum_ = sum(results,0.0)
@@ -79,44 +94,12 @@ class StatisticsAgregator(object):
             meth = getattr(Statistics, name)
             return functools.partial(self._average, meth)
 
-        """nevermindthis:
-        # don't check the statistics objects for private or protected methods...
-        if not name.startswith("_"):
-            # when we don't know which attribute is, try to return whatever the
-            # statistics objects would return but check that the result is the same
-            if "statistics" in self.__dict__ and all([hasattr(s,name) for s in self.statistics]):
-                res=[getattr(s, name) for s in self.statistics]
-                assert all_equal(res), "Statistics objects are not consistent %s" % (res,)
-                return res[0]
-        """
-
         raise AttributeError("%r object has no attribute %r" % (type(self).__name__, name))
 
-    def __setattr__(self,name,value):
-        # note: the "statistics" atribute is very special...
-
-        """nevermindthis:
-        # don't check the statistics objects for private or protected methods
-        # or for the statistics atribute
-        if not (name.startswith("_") or name == "statistics"):
-            # only set existing attributes new atributes are for the default
-            # behaviour
-            if all([hasattr(s,name) for s in self.statistics]):
-                res = [setattr(s, name, value) for s in self.statistics]
-                # the return value should not be important, but ok!
-                assert all_equal(res), "Statistics objects are not consistent %s" % (res,)
-                return res[0]
-        """
-
-        # default behaviour
-        object.__setattr__(self, name, value)
-
-
-
     # I really should really implement this correctly
-    # naaa
-    def __dir__(self):
-        pass
+    # naaa...
+    # def __dir__(self):
+    #     pass
 
 class Confrontation(object):
     def __init__(self, teamA, teamB):
@@ -151,9 +134,16 @@ class Confrontation(object):
         all_statistics = [match.statistics() for match in self.allmatches()]
         return StatisticsAgregator(all_statistics, team=team)
 
+    @property
+    def teamnames(self):
+        return (teamA.name,teamB.name)
+
     def playnewmatch(self):
         """force the teams to play a new match"""
         teams=(self.teamA,self.teamB)
         #random.shuffle(teams)
         Match(teams=teams,matchdir=self.confrontationdir)
+
+    def __str__(self):
+        return "{self.teamA} vs {self.teamB}".format(**locals())
 

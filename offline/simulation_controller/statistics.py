@@ -108,17 +108,37 @@ def accept_side(fn):
 class Statistics(object):
     SIDES=["left","right"]
 
-    def __init__(self, xml, side=None):
+    def __init__(self, xml, side=None, teams=None):
         if not os.path.exists(xml):
             raise StatisticsError('{0} not found'.format(xml))
         self._xml=xml
         self._dom = minidom.parse(xml)
-        self._teams = Statistics.teamnames(xml)
+        if teams is None:
+            self._teams = Statistics.teamnames_from_xml(self.xml)
+            logging.warning("calculating team names from the xml file")
+        else:
+            self._teams = teams
+            self._validate_teams()
+
         self.magic_side = side
 
-        if "left" in self.teams or "right" in self.teams:
-            warn = "the team names are '{0}' '{1}', this is sh*t prone!".format(*self.teams)
-            logging.warning(warn)
+        for team in self.teams:
+            if team in Statistics.SIDES:
+                warn = "there is a team named '{0}'. this is sh*t prone!".format(team)
+                logging.warning(warn)
+
+        dbg="statistics object instanciated. ( xml: '{0}' teams: '{1}', side: '{2}')"
+        logging.debug(dbg.format(self.xml,self.teams, self.team))
+
+
+    def _validate_teams(self):
+        teams=Statistics.teamnames_from_xml(self.xml)
+        valid=(same_team(self.teams[0], teams[0]) and
+                same_team(self.teams[1],teams[1]))
+        if not valid:
+            errmsg = "teams {0} are not valid according to the xml file name"
+            errmsg = "{1} {2}"
+            raise StatisticsError(errmsg.format(self.teams,self.xml,teams))
 
     @property
     def dom(self):
@@ -140,6 +160,9 @@ class Statistics(object):
         elif value is None:
             self.side = value
 
+        assert self.side in Statistics.SIDES or self.side is None
+        assert self.team in self.teams or self.team is None
+
     magic_side=property(fset=magic_side)
 
     @property
@@ -149,21 +172,19 @@ class Statistics(object):
 
     @property
     def teams(self):
-        """the match teams (extracted from the xml file name)"""
+        """the match teams (provided by constructor argument or extracted from the xml file name)"""
         return self._teams
 
     @property
     def team(self):
         """the default team when no team/side argument is supplied.
-
-        note: this argument is quite strange since it is not the same as the
-        name used to create the team, it is the actual in game team name (when
-        in doubt check Statistics.teams method)
-        ps-currently thinking of a solution"""
+        """
+        assert self._team in self.teams or self._team is None
         return self._team
 
     @team.setter
     def team(self,value):
+        # TODO - maibe this should raise an exception instead
         assert value in self.teams or value is None, "%s is invalid" % (value,)
         self._team = value
         if value is not None:
@@ -171,15 +192,19 @@ class Statistics(object):
         else:
             self._side=None
 
+        assert self._team in self.teams or self._team is None
+
     @property
     def side(self):
         """ the default side when, in some methods, the side argument is
         ommited.
         """
+        assert self._side in Statistics.SIDES or self._side is None
         return self._side
 
     @side.setter
     def side(self,value):
+        # TODO - maibe this should raise an exception instead
         assert value in Statistics.SIDES or value is None, "%s is invalid" % (value,)
         self._side = value
         if value is not None:
@@ -187,8 +212,10 @@ class Statistics(object):
         else:
             self._team=None
 
+        assert self._side in Statistics.SIDES or self._side is None
+
     @staticmethod
-    def teamnames(fname):
+    def teamnames_from_xml(fname):
         """find the teams names from the xml file name
         """
         TEAMNAMESPATTERN = re.compile(r'^\d+-(.*)(?:_\d+)-vs-(.*)(?:_\d+)(?:_convert)?\.rcg\.gz\.xml$')

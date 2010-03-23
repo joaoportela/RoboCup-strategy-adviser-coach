@@ -19,25 +19,30 @@ def fcpd_configurations(data=config.strategy_data):
         yield args
 
 # definition
-OPPONENTS=["fcportugalX"]
-MIN_MATCHES=2
+OPPONENTS=["nemesis", "kickofftug"]
+MIN_MATCHES=1
 
 # typical duration of a match
-DURATION=timedelta(minutes=12)
+DURATION=datetime.timedelta(minutes=12)
 
-def main():
-    data = config.strategy_data
+def duration(data, printinfo=True):
     # calculate the expected output size
     nconfigs = reduce(lambda x,y: x*len(y), data.values(),1)
 
-    # print usefull information
-    print "{0} configurations.".format(nconfigs)
-    print "{0} opponents".format(len(OPPONENTS))
-    print "{0} matches per configuration/opponent combination".format(MIN_MATCHES)
-    print "{0} expected match duration".format(DURATION)
-    totalduration=DURATION*nconfigs*len(OPPONENTS)*MIN_MATCHES
-    print "{0} expected total time if no match is cached.".format(totalduration)
+    # TODO check the matches that where already played and other stuffs, to
+    # give a more precise result
 
+    # print usefull information
+    if printinfo:
+        print "{0} configurations.".format(nconfigs)
+        print "{0} opponents".format(len(OPPONENTS))
+        print "{0} matches per configuration/opponent combination".format(MIN_MATCHES)
+        print "{0} expected match duration".format(DURATION)
+
+    totalduration=DURATION*nconfigs*len(OPPONENTS)*MIN_MATCHES
+    return finish
+
+def runmatches(data):
     for opponent in OPPONENTS:
         for conf in fcpd_configurations(data):
 
@@ -55,13 +60,20 @@ def main():
             logging.debug(dbgmsg.format(n_played_matches,MIN_MATCHES,fcpD_vs_opp))
 
             while n_played_matches < MIN_MATCHES:
-                dbgmsg="{2} - {0} of {1} matches played. playing another match."
+                dbgmsg="{2} - {0} of {1} matches played, playing new match."
                 logging.debug(dbgmsg.format(n_played_matches, MIN_MATCHES,
-                    fcpD_vs_opp))
+                          fcpD_vs_opp))
 
                 fcpD_vs_opp.playnewmatch()
                 n_played_matches=len(fcpD_vs_opp.allmatches())
 
+def main():
+    data = config.strategy_data
+    totalduration=duration(data)
+    print "{0} expected total time if no match is cached.".format(totalduration)
+    finish=datetime.datetime.now()+totalduration
+    print "expected to finish @ {0}".format(finish)
+    runmatches(data)
 
 
 if __name__ == "__main__":

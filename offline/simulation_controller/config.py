@@ -21,13 +21,13 @@ strategy_folder = "strategies/"
 strategy_data = {
         "formation":
         [
-            #1,  # 433OPEN
+            1,  # 433OPEN
             2,  # 442OPEN
-            #3,  # 443OPEN11Players
-            #4,  # 343
-            #8,  # TUDOAMONTE
-            #9,  # 433OPENDef
-            #12  # 4213 RiOne
+            3,  # 443OPEN11Players
+            4,  # 343
+            8,  # TUDOAMONTE
+            9,  # 433OPENDef
+            12  # 4213 RiOne
             ]
         ,
         "mentality":

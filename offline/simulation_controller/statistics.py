@@ -223,6 +223,7 @@ class Statistics(object):
         (t1, t2) = TEAMNAMESPATTERN.match(bname).groups()
         return (t1,t2)
 
+    @property
     @accept_side
     def side_id(self):
         if self.side == "left":
@@ -238,21 +239,74 @@ class Statistics(object):
         if self.side == "right":
             return "left"
 
+    @staticmethod
+    def _timeofhalf(half=None):
+        if half is None:
+            # this is probably stupid, but ok.
+            return (1, 6000)
+
+        if half == 1 or half == "1st":
+            return (1,3000)
+        if half == 2 or half == "2nd":
+            return (3001,6000)
+
+        errmsg="unrecognized 'half' argument({0})"
+        raise StatisticsError( errmsg.format(half))
+    ###
+    # statistics extraction starts here.
+    ##
     @accept_side
-    def passes(self):
-        return int(self.dom.getElementsByTagName("passes")[0].getAttribute(side))
+    def passes(self, half=None):
+        # half is not set. return all passes
+        if half is None:
+            return int(self.dom.getElementsByTagName("passes")[0].getAttribute(self.side))
+
+        starttime, endtime = Statistics._timeofhalf(half)
+
+        passes_tag=self.dom.getElementsByTagName("passes")[0]
+        passes_count=0
+        for pass_ in passes_tag.getElementsByTagName("pass"):
+            # not my team... move along
+            if pass_.getAttribute("team") != self.side_id:
+                continue
+
+            kick_t = int(pass_.getElementsByTagName("kick").getAttribute("time"))
+            reception_t = pass_.getElementsByTagName("reception")
+            # time window is valid
+            if kick_t >= starttime and reception_t <= endtime:
+                passes_count+=1
+
+        return passes_count
 
     @accept_side
     def passmisses(self):
-        return int(dom.getElementsByTagName("passmisses")[0].getAttribute(side))
+        # half is not set. return all passmisses
+        if half is None:
+            return int(dom.getElementsByTagName("passmisses")[0].getAttribute(self.side))
+
+        starttime, endtime = Statistics._timeofhalf(half)
+
+        misses_tag=self.dom.getElementsByTagName("passmisses")[0]
+        misses_count=0
+        for miss in passes_tag.getElementsByTagName("passmiss"):
+            # not my team... move along
+            if pass_.getAttribute("team") != self.side_id:
+                continue
+
+            kick_t = int(miss.getElementsByTagName("kick").getAttribute("time"))
+            # time window is valid
+            if kick_t >= starttime and kick_t <= endtime:
+                misses_count+=1
+
+        return misses_count
 
     @accept_side
     def passchains(self):
-        pass
+        raise NotImplementedError()
 
     @accept_side
     def wingchanges(self):
-        pass
+        raise NotImplementedError()
 
     @accept_side
     def goals(self, kick_area=None):
@@ -291,27 +345,27 @@ class Statistics(object):
 
     @accept_side
     def goalmisses(self):
-        pass
+        raise NotImplementedError()
 
     @accept_side
     def goalssuffered(self):
-        pass
+        raise NotImplementedError()
 
     @accept_side
     def goalopportunities(self):
-        pass
+        raise NotImplementedError()
 
     @accept_side
     def favouritezones(self):
-        pass
+        raise NotImplementedError()
 
     @accept_side
     def zonedominance(self):
-        pass
+        raise NotImplementedError()
 
     @accept_side
     def attacks(self):
-        pass
+        raise NotImplementedError()
 
 ####
 # functions that provide easier access to the statistics data

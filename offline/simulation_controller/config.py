@@ -33,7 +33,7 @@ strategy_data = {
         "mentality":
         [
             #0,
-            #1,
+            1,
             2,
             #3
             ]
@@ -41,7 +41,7 @@ strategy_data = {
         "gamepace":
         [
             #0,
-            #1,
+            1,
             2,
             #3
             ]

@@ -103,6 +103,8 @@ class StatisticsAgregator(object):
 
 class Confrontation(object):
     def __init__(self, teamA, teamB):
+        self._allmatches=None
+        self._nmatches=None
         self.name = confrontation_name(teamA,teamB)
         self.confrontationdir = os.path.join(config.matchesdir, self.name)
         self.teamA=teamA
@@ -125,9 +127,13 @@ class Confrontation(object):
 
     def allmatches(self):
         """ return all the matches for these two teams"""
-        matchesids = allmatchesids(self.confrontationdir)
-        newmatch = lambda mid: Match(matchid=mid, matchdir=self.confrontationdir)
-        return [newmatch(mid) for mid in matchesids]
+        # if not already cached...
+        if self._allmatches is None:
+            matchesids = allmatchesids(self.confrontationdir)
+            newmatch = lambda mid: Match(matchid=mid, matchdir=self.confrontationdir)
+            self._allmatches=[newmatch(mid) for mid in matchesids]
+
+        return self._allmatches
 
     def statistics(self, team=None):
         """list of the matches statistics"""
@@ -144,6 +150,32 @@ class Confrontation(object):
         #random.shuffle(teams)
         Match(teams=teams,matchdir=self.confrontationdir)
 
+        # reset the allmatches cache because it is no longer valid
+        self._allmatches=None
+
+        # if i already have a number matches cache, increment it by one
+        if self._nmatches is not None:
+            self._nmatches+=1
+
     def __str__(self):
         return "{self.teamA} vs {self.teamB}".format(**locals())
+
+    def __repr_(self):
+        return "Confrontation({0}, {1})".format(repr(self.teamA),
+                repr(self.teamB))
+
+    def __len__(self):
+        if self._nmatches is None:
+            self._nmatches=len(self.allmatches())
+
+        return self._nmatches
+
+    def __nonzero__(self):
+        """ nonzero always returns true.
+
+        this is the expected behaviour for most classes. Had to be implemented
+        because the len method would conflict with this (when len(obj) == 0,
+        obj is considered False)
+        """
+        return True
 

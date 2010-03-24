@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 
 import itertools
-from datetime import timedelta
+import datetime
 import logging
 
 import runner # to initialize the logger
@@ -11,6 +11,14 @@ from confrontation import *
 import report
 import sys
 
+# definition
+OPPONENTS=["nemesis", "kickofftug", "wrighteagle", "bahia2d"]
+MIN_MATCHES=3
+
+# typical duration of a match
+DURATION=datetime.timedelta(minutes=12)
+
+
 def fcpd_configurations(data=config.strategy_data):
     for values in itertools.product(*data.values()):
         args={}
@@ -18,63 +26,70 @@ def fcpd_configurations(data=config.strategy_data):
             args[key] = values[i]
         yield args
 
-# definition
-OPPONENTS=["nemesis", "kickofftug"]
-MIN_MATCHES=1
-
-# typical duration of a match
-DURATION=datetime.timedelta(minutes=12)
-
-def duration(data, printinfo=True):
-    # calculate the expected output size
-    nconfigs = reduce(lambda x,y: x*len(y), data.values(),1)
-
-    # TODO check the matches that where already played and other stuffs, to
-    # give a more precise result
-
-    # print usefull information
-    if printinfo:
-        print "{0} configurations.".format(nconfigs)
-        print "{0} opponents".format(len(OPPONENTS))
-        print "{0} matches per configuration/opponent combination".format(MIN_MATCHES)
-        print "{0} expected match duration".format(DURATION)
-
-    totalduration=DURATION*nconfigs*len(OPPONENTS)*MIN_MATCHES
-    return finish
-
-def runmatches(data):
-    for opponent in OPPONENTS:
+def confrontations(data=config.strategy_data,opponents=OPPONENTS):
+    for opponent in opponents:
         for conf in fcpd_configurations(data):
+                # initialize the teams...
+                fcpD = FCPortugal(conf)
+                opp = Team(opponent)
 
-            logging.debug("using config({0}) against {1}".format(conf,opponent))
-            # initialize the teams...
-            fcpD = FCPortugal(conf)
-            opp = Team(opponent)
+                # instantiate the confrontation
+                fcpD_vs_opp = Confrontation(fcpD, opp)
 
-            # instantiate the confrontation
-            fcpD_vs_opp = Confrontation(fcpD, opp)
+                yield fcpD_vs_opp
 
+def duration(confrontations=confrontations(), min_matches=MIN_MATCHES, matchduration=DURATION):
+    """calculates the duration of generating the required matches
+
+    confrontations - confrontations to be runned
+    min_matches - minimum number of matches per confrontation
+    matchduration - average match duration"""
+    runsmissing=0
+    for fcpD_vs_opp in confrontations:
             # play the required number of matches
-            n_played_matches=len(fcpD_vs_opp.allmatches())
-            dbgmsg="{2} - {0} of {1} matches played."
-            logging.debug(dbgmsg.format(n_played_matches,MIN_MATCHES,fcpD_vs_opp))
+            n_played_matches=len(fcpD_vs_opp)
+            if n_played_matches < min_matches:
+                runsmissing+=(min_matches-n_played_matches)
 
-            while n_played_matches < MIN_MATCHES:
-                dbgmsg="{2} - {0} of {1} matches played, playing new match."
-                logging.debug(dbgmsg.format(n_played_matches, MIN_MATCHES,
-                          fcpD_vs_opp))
+    print "{0} runs estimated to be missing".format(runsmissing)
+    totalduration=matchduration*runsmissing
+    return totalduration
 
-                fcpD_vs_opp.playnewmatch()
-                n_played_matches=len(fcpD_vs_opp.allmatches())
+def runmatches(confrontations=confrontations(), min_matches=MIN_MATCHES):
+    """confrontations with the matches that have to be run
+
+    confrontations - confrontations to be runned
+    min_matches - minimum number of matches per confrontation
+    """
+    for fcpD_vs_opp in confrontations:
+        # play the required number of matches
+        n_played_matches=len(fcpD_vs_opp)
+        dbgmsg="{2} - {0} of {1} matches played."
+        logging.debug(dbgmsg.format(n_played_matches,min_matches,fcpD_vs_opp))
+
+        while n_played_matches < min_matches:
+            dbgmsg="{2} - {0} of {1} matches played, playing new match."
+            logging.debug(dbgmsg.format(n_played_matches, min_matches,
+                fcpD_vs_opp))
+
+            fcpD_vs_opp.playnewmatch()
+            n_played_matches=len(fcpD_vs_opp)
 
 def main():
-    data = config.strategy_data
-    totalduration=duration(data)
-    print "{0} expected total time if no match is cached.".format(totalduration)
+    cfs=list(confrontations())
+    totalduration=duration(cfs)
+    print "{0} expected total time.".format(totalduration)
     finish=datetime.datetime.now()+totalduration
     print "expected to finish @ {0}".format(finish)
-    runmatches(data)
+    runmatches(cfs)
 
+#def naive():
+#    nconfigs=reduce(lambda x,y: x*len(y), config.strategy_data, 1)
+#    print "number of configs is", nconfigs
+#    print "number of opponents is", len(OPPONENTS)
+#    print "avg match duration is", DURATION
+#    print "configs*opponents is", len(OPPONENTS)*nconfigs
+#    return DURATION*MIN_MATCHES*len(OPPONENTS)*nconfigs
 
 if __name__ == "__main__":
     # clean the log file
@@ -90,5 +105,5 @@ if __name__ == "__main__":
         raise
     finally:
         # always report
-        report.report("upload","sound","eject")
+        report.report("upload")
 

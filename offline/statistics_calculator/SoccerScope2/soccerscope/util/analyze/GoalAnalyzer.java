@@ -72,7 +72,7 @@ public class GoalAnalyzer extends SceneAnalyzer implements Xmling {
 	}
 
 	enum MissType {
-		GOALIE_CATCHED, OUTSIDE
+		GOALIE_CATCHED, OUTSIDE, FAR_OUTSIDE
 	};
 
 	class GoalMiss implements Xmling {
@@ -136,11 +136,9 @@ public class GoalAnalyzer extends SceneAnalyzer implements Xmling {
 
 		@Override
 		public void xmlElement(XMLBuilder builder) {
-			builder.elem("kick")
-					.attr("player", String.valueOf(this.unum))
-					.attr("time", String.valueOf(this.time))
-					.attr("team", Team.name(this.team))
-					.attr("zone", this.kickZone());
+			builder.elem("kick").attr("player", String.valueOf(this.unum))
+					.attr("time", String.valueOf(this.time)).attr("team",
+							Team.name(this.team)).attr("zone", this.kickZone());
 		}
 	}
 
@@ -282,15 +280,21 @@ public class GoalAnalyzer extends SceneAnalyzer implements Xmling {
 			Vector2f ballvel = new Vector2f(prev.ball.vel);
 			next_ball_pos.add(ballvel); // update ball position
 			// we know it wasn't a goal because we are in a goal kick and
-			// we opted to count as an attempt a shot at the goal that misses
-			// until the double of the goal width (Param.GOAL_WIDTH is not
-			// dividing by 2)
+			// we opted to count as an attempted shot at the goal, a goal that
+			// misses by less than double of the goal width (Param.GOAL_WIDTH is
+			// not dividing by 2)
 			if (this.crossedLine(prev.ball.pos, next_ball_pos,
 					relevantGoalLine, Param.GOAL_WIDTH)) {
 				Kicker k = getKickFault(prev.time);
 				// kicker must be in the correct team
 				if (k.team == missedGoalTeam)
 					this.goalMissed(k, MissType.OUTSIDE, scene.time);
+			}else if(this.crossedLine(prev.ball.pos, next_ball_pos,
+					relevantGoalLine, 34.0f)) {
+				Kicker k = getKickFault(prev.time);
+				// kicker must be in the correct team
+				if (k.team == missedGoalTeam)
+					this.goalMissed(k, MissType.FAR_OUTSIDE, scene.time);
 			}
 		}
 		return ge;

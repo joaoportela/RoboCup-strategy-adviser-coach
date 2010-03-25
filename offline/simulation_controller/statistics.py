@@ -251,14 +251,23 @@ class Statistics(object):
             return (3001,6000)
 
         errmsg="unrecognized 'half' argument({0})"
-        raise StatisticsError( errmsg.format(half))
+        raise StatisticsError(errmsg.format(half))
+
     ###
     # statistics extraction starts here.
     ##
     @accept_side
-    def passes(self, half=None):
-        # half is not set. return all passes
-        if half is None:
+    def passes(self, half=None, offensive=None, breakpass=None):
+        # validate arguments...
+        if offensive not in [True, False, None]:
+            errmsg="unrecognized 'offensive' argument({0})"
+            raise StatisticsError(errmsg.format(offensive))
+        if breakpass not in [True, False, None]:
+            errmsg="unrecognized 'breakpass' argument({0})"
+            raise StatisticsError(errmsg.format(breakpass))
+
+        # no special options. return all passes
+        if half is None and offensive is None and breakpass is None:
             return int(self.dom.getElementsByTagName("passes")[0].getAttribute(self.side))
 
         starttime, endtime = Statistics._timeofhalf(half)
@@ -266,20 +275,49 @@ class Statistics(object):
         passes_tag=self.dom.getElementsByTagName("passes")[0]
         passes_count=0
         for pass_ in passes_tag.getElementsByTagName("pass"):
+            valid_half=False
+            valid_offensive=False
+            valid_breakpass=False
+
             # not my team... move along
             if pass_.getAttribute("team") != self.side_id:
                 continue
 
-            kick_t = int(pass_.getElementsByTagName("kick").getAttribute("time"))
-            reception_t = pass_.getElementsByTagName("reception")
-            # time window is valid
-            if kick_t >= starttime and reception_t <= endtime:
+            # of the desired half
+            if half is None:
+                valid_half=True
+            else:
+                kick_t = int(pass_.getElementsByTagName("kick")[0].getAttribute("time"))
+                reception_t = pass_.getElementsByTagName("reception")
+                # time window is valid
+                if kick_t >= starttime and reception_t <= endtime:
+                    valid_half=True
+
+            # of the desired offensive/defensive type
+            if offensive is None:
+                valid_offensive=True
+            else:
+                off_pass=str2bool(pass_.getAttribute("offensive"))
+                # is of the same type as the pass
+                if offensive==off_pass:
+                    valid_offensive=True
+
+            # of the desired breakpass/not breakpass type
+            if breakpass is None:
+                valid_breakpass=True
+            else:
+                break_pass=str2bool(pass_.getAttribute("breakpass"))
+                if breakpass == break_pass:
+                    valid_breakpass=True
+
+            # if all conditions are met
+            if valid_half and valid_offensive and valid_breakpass:
                 passes_count+=1
 
         return passes_count
 
     @accept_side
-    def passmisses(self):
+    def passmisses(self, half=None):
         # half is not set. return all passmisses
         if half is None:
             return int(dom.getElementsByTagName("passmisses")[0].getAttribute(self.side))
@@ -288,12 +326,15 @@ class Statistics(object):
 
         misses_tag=self.dom.getElementsByTagName("passmisses")[0]
         misses_count=0
-        for miss in passes_tag.getElementsByTagName("passmiss"):
+
+        for miss in misses_tag.getElementsByTagName("passmiss"):
+
             # not my team... move along
-            if pass_.getAttribute("team") != self.side_id:
+            if miss.getAttribute("team") != self.side_id:
                 continue
 
-            kick_t = int(miss.getElementsByTagName("kick").getAttribute("time"))
+            # of the desired half
+            kick_t = int(miss.getElementsByTagName("kick")[0].getAttribute("time"))
             # time window is valid
             if kick_t >= starttime and kick_t <= endtime:
                 misses_count+=1
@@ -316,7 +357,7 @@ class Statistics(object):
         sorry for the function signature not being clear. should be:
             goals(self, side=None, kick_area=None)
 
-	to avoid confusion use named arguments.
+        to avoid confusion use named arguments.
 
         side - the side argument will overrides the default side.
         kick_area - the kick area argument will only return the number of goals

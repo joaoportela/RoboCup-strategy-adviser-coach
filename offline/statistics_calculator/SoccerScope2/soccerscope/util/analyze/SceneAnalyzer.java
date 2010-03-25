@@ -127,6 +127,11 @@ public abstract class SceneAnalyzer {
 	public TableModel getTableModel() {
 		count(0, lastTime);
 		TableModel dataModel = new AbstractTableModel() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			public String getColumnName(int col) {
 				switch (col) {
 				case ROW_NAME:

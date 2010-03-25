@@ -2,7 +2,7 @@
 
 __all__ = ["all_equal", "runcommand", "fake_runcommand", "write_script",
         "allrcgs", "allmetadata", "allmatchesids", "theid",
-        "confrontation_name", "same_team"]
+        "confrontation_name", "same_team", "str2bool"]
 
 import logging
 import time
@@ -10,6 +10,13 @@ import os
 import stat
 import glob
 import re
+
+def str2bool(s):
+    if s.strip().lower() in ["true","t","1"]:
+        return True
+    if s.strip().lower() in ["false","f","0"]:
+        return False
+    raise ValueError("cannot determine if {0} is true or false".format(s))
 
 def all_equal(l):
     if l:
@@ -110,11 +117,9 @@ def allmatchesids(confrontationdir):
     rcg files...)"""
 
     possible_rcgs = allrcgs(confrontationdir)
-#    possible_statisticsxml = allstatisticsxml(confrontationdir)
     possible_metadata = allmetadata(confrontationdir)
 
     rcg_ids = map(theid, possible_rcgs)
-#    stat_ids = map(theid, possible_statisticsxml)
     meta_ids = map(theid, possible_metadata)
 
     # only return if the metadata files also exist

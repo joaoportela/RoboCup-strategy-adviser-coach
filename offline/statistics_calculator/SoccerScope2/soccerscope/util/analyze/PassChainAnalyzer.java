@@ -250,6 +250,11 @@ public class PassChainAnalyzer extends SceneAnalyzer implements Xmling {
 
 	public TableModel getTableModel() {
 		TableModel dataModel = new AbstractTableModel() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			public String getColumnName(int col) {
 				switch (col) {
 				case 0:

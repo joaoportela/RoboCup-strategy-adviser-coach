@@ -14,16 +14,41 @@
 
 package soccerscope.util.analyze;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import com.jamesmurty.utils.XMLBuilder;
+
 import soccerscope.model.GameEvent;
 import soccerscope.model.PlayMode;
 import soccerscope.model.Scene;
+import soccerscope.model.Team;
 
-public class KickInAnalyzer extends SceneAnalyzer {
+public class KickInAnalyzer extends SceneAnalyzer implements Xmling {
 
 	public static String NAME = "Kick in";
 
 	public String getName() {
 		return NAME;
+	}
+
+	private List<KickIn> kicksinList = new LinkedList<KickIn>();
+
+	public static class KickIn implements Xmling {
+		public int side;
+		public int time;
+
+		public KickIn(int side, int time) {
+			this.side = side;
+			this.time = time;
+		}
+
+		@Override
+		public void xmlElement(XMLBuilder builder) {
+			builder.elem("kickin")
+			.attr("side", String.valueOf(this.side))
+			.attr("time", String.valueOf(this.time));
+		}
 	}
 
 	public GameEvent analyze(Scene scene, Scene prev) {
@@ -32,14 +57,35 @@ public class KickInAnalyzer extends SceneAnalyzer {
 		/* ���å�����⡼�ɤϻ��郎�ߤޤ�ʤ����ᡢprev�򸫤ơ����å�����⡼�ɤˤʤä��ִ֤����򡢼����� */
 		if (prev != null) {
 			if (isPlayModeChanged(scene, prev, PlayMode.PM_KickIn_Left)) {
-				countUpLeft(scene.time);
+				countUp(Team.LEFT_SIDE, scene.time);
 				ge = new GameEvent(scene.time, GameEvent.KICK_IN);
 			}
 			if (isPlayModeChanged(scene, prev, PlayMode.PM_KickIn_Right)) {
-				countUpRight(scene.time);
+				countUp(Team.RIGHT_SIDE, scene.time);
 				ge = new GameEvent(scene.time, GameEvent.KICK_IN);
 			}
 		}
 		return ge;
+	}
+
+	@Override
+	public void countUp(int side, int time) {
+		this.kicksinList.add(new KickIn(side, time));
+		if (side == Team.LEFT_SIDE)
+			this.countUpLeft(time);
+		if (side == Team.RIGHT_SIDE)
+			this.countUpRight(time);
+	}
+
+	@Override
+	public void xmlElement(XMLBuilder builder) {
+		XMLBuilder kicksin = builder.elem("kicksin").attr("left",
+				String.valueOf(this.lcount)).attr("right",
+				String.valueOf(this.rcount));
+
+		for (KickIn k : this.kicksinList) {
+			k.xmlElement(kicksin);
+		}
+
 	}
 }

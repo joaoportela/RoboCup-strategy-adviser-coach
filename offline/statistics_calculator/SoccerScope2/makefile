@@ -19,4 +19,5 @@ soccerscope: $(OBJECTS)
 
 clean:
 	rm -vf $(OBJECTS)
+	find . -type f -name "*.class" -delete
 

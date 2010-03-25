@@ -9,7 +9,6 @@
 
 package soccerscope.util.analyze;
 
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -54,39 +53,53 @@ public class PassMissAnalyzer extends SceneAnalyzer implements Xmling {
 					+ receiver.time + ": " + receiver.unum;
 		}
 
+		public boolean inOffensiveField() {
+			// pass is offensive if it is on the opponent side
+			return this.zone.side != this.side;
+		}
+
 		@Override
 		public void xmlElement(XMLBuilder builder) {
 			XMLBuilder passmiss = builder.elem("passmiss").attr("team",
-					Team.name(this.side));
+					Team.name(this.side)).attr("offensive",
+					String.valueOf(this.inOffensiveField()));
 			this.sender.xmlElement(passmiss.elem("kick"));
 			this.receiver.xmlElement(passmiss.elem("target"));
 		}
 	}
 
+	/* START - zones stuffs */
 	public class Zone {
 		Rectangle2f area;
 		int countLeft;
 		int countRight;
 
-		String name;
+		int side; // side of the field where the zone is...
 
-		public Zone(String name, Rectangle2f a) {
+		public Zone(int side, Rectangle2f a) {
 			area = a;
-			this.name = name;
+			this.side = side;
 			this.countLeft = 0;
 			this.countRight = 0;
 		}
+
+		public boolean contains(Point2f p) {
+			return this.area.contains(p);
+		}
 	}
 
-	AbstractList<Zone> fieldZones;
+	ArrayList<Zone> fieldZones;
 
 	private void initZones() {
 		this.fieldZones = new ArrayList<Zone>(2);
-		this.fieldZones.add(new Zone("LeftField", new Rectangle2f(new Point2f(
-				-52.5f, -34f), 52.5f, 68f)));
-		this.fieldZones.add(new Zone("RightField", new Rectangle2f(new Point2f(0.0f,
-				-34f), 52.5f, 68f)));
+		this.fieldZones.add(new Zone(Team.LEFT_SIDE, new Rectangle2f(
+				new Point2f(-52.5f, -34f), 52.5f, 68f)));
+		this.fieldZones.add(new Zone(Team.RIGHT_SIDE, new Rectangle2f(
+				new Point2f(0.0f, -34f), 52.5f, 68f)));
+
 	}
+
+	/* END - zones stuffs */
 
 	public void init() {
 		super.init();
@@ -103,6 +116,7 @@ public class PassMissAnalyzer extends SceneAnalyzer implements Xmling {
 	public class Kicker implements Xmling {
 		public int time;
 		public int unum;
+		public boolean offside;
 		public Point2f position;
 
 		public Kicker() {
@@ -111,10 +125,11 @@ public class PassMissAnalyzer extends SceneAnalyzer implements Xmling {
 			position = null;
 		}
 
-		public Kicker(int time, int unum, Point2f position) {
+		public Kicker(int time, int unum, Point2f position, boolean offside) {
 			this.time = time;
 			this.unum = unum;
 			this.position = position;
+			this.offside = offside;
 		}
 
 		public String toString() {
@@ -124,7 +139,8 @@ public class PassMissAnalyzer extends SceneAnalyzer implements Xmling {
 		@Override
 		public void xmlElement(XMLBuilder builder) {
 			builder.attr("player", String.valueOf(this.unum)).attr("time",
-					String.valueOf(this.time));
+					String.valueOf(this.time))
+					.attr("offside",String.valueOf(this.offside));
 
 		}
 	}
@@ -146,7 +162,7 @@ public class PassMissAnalyzer extends SceneAnalyzer implements Xmling {
 				|| isPlayModeChanged(scene, prev, PlayMode.PM_Back_Pass_Right)
 				|| isPlayModeChanged(scene, prev,
 						PlayMode.PM_Free_Kick_Fault_Right)) {
-			left = new Kicker(scene.time, 0, null);
+			left = new Kicker(scene.time, 0, null, false);
 		} else if (isPlayModeChanged(scene, prev, PlayMode.PM_FreeKick_Right)
 				|| isPlayModeChanged(scene, prev, PlayMode.PM_KickIn_Right)
 				|| isPlayModeChanged(scene, prev, PlayMode.PM_GoalKick_Right)
@@ -155,7 +171,7 @@ public class PassMissAnalyzer extends SceneAnalyzer implements Xmling {
 				|| isPlayModeChanged(scene, prev, PlayMode.PM_Back_Pass_Left)
 				|| isPlayModeChanged(scene, prev,
 						PlayMode.PM_Free_Kick_Fault_Left)) {
-			right = new Kicker(scene.time, 0, null);
+			right = new Kicker(scene.time, 0, null, false);
 		} else if (scene.pmode.pmode != PlayMode.PM_PlayOn) {
 			leftKicker = null;
 			rightKicker = null;
@@ -181,7 +197,7 @@ public class PassMissAnalyzer extends SceneAnalyzer implements Xmling {
 					|| (scene.player[i].isTackling() && prev.player[i]
 							.canTackle(prev.ball.pos))) {
 				left = new Kicker(scene.time, scene.player[i].unum,
-						scene.player[i].pos);
+						scene.player[i].pos, scene.player[i].offside);
 			}
 		}
 		for (int i = Param.MAX_PLAYER; i < Param.MAX_PLAYER * 2; i++) {
@@ -193,7 +209,7 @@ public class PassMissAnalyzer extends SceneAnalyzer implements Xmling {
 					|| (scene.player[i].isTackling() && prev.player[i]
 							.canTackle(prev.ball.pos))) {
 				right = new Kicker(scene.time, scene.player[i].unum,
-						scene.player[i].pos);
+						scene.player[i].pos, scene.player[i].offside);
 			}
 		}
 
@@ -291,7 +307,8 @@ public class PassMissAnalyzer extends SceneAnalyzer implements Xmling {
 						return null;
 					else
 						return new Kicker(scene.time + n, scene.player[i
-								+ start].unum, scene.player[i + start].pos);
+								+ start].unum, scene.player[i + start].pos,
+								scene.player[i + start].offside);
 				}
 			}
 			tmpp.add(tmpv); // update ball position

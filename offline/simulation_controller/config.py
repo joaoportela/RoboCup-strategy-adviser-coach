@@ -2,6 +2,7 @@
 
 import os
 import logging
+import datetime
 
 # DATA START
 running_dir = "/home/joao/autorun/"
@@ -25,9 +26,9 @@ strategy_data = {
             2,  # 442OPEN
             3,  # 443OPEN11Players
             4,  # 343
-            8,  # TUDOAMONTE
+            #8,  # TUDOAMONTE
             9,  # 433OPENDef
-            12  # 4213 RiOne
+            #12  # 4213 RiOne
             ]
         ,
         "mentality":
@@ -70,12 +71,6 @@ s_files = ["serverbin", "rcgconvert"]
 special_dirs = ["running_dir", "scripts_dir"]
 other = ["matchhost"]
 # metadata end
-
-# configure log file
-FORMAT = "%(asctime)s %(levelname)s: %(message)s"
-LOG_FILENAME = os.path.join(config.logfile)
-logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG,format=FORMAT)
-logging.Formatter("%(asctime)s - %(levelname)s:%(message)s")
 
 class ConfigurationError(Exception):
     def __init__(self, msg='Unspecified'):
@@ -136,6 +131,14 @@ def config():
             errmsg = "'{var}'({value}) is not a dir".format(**locals())
             logging.error(errmsg)
             raise ConfigurationError(errmsg)
+
+
+    # configure log file
+    FORMAT = "%(asctime)s %(levelname)s: %(message)s"
+    LOG_FILENAME = logfile
+    logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG,format=FORMAT)
+    logging.Formatter("%(asctime)s - %(levelname)s:%(message)s")
+
 
 def validate_strategy(data):
     for param_name, value in data.items():

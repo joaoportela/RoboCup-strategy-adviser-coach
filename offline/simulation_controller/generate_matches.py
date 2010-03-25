@@ -51,9 +51,9 @@ def duration(confrontations=confrontations(), min_matches=config.min_matches, ma
 def naive_prediction(data=config.strategy_data, opponents=config.opponents,
         min_matches=config.min_matches, matchduration=config.duration):
     """predicts the number of matches missing."""
-    nconfigs=reduce(lambda x,y: x*len(y), data, 1)
+    nconfigs=reduce(lambda x,y: x*len(y), data.values(), 1)
     nruns=min_matches*len(opponents)*nconfigs
-    d=duration*nruns
+    d=matchduration*nruns
     return (d, nruns)
 
 def runmatches(confrontations=confrontations(), min_matches=config.min_matches,
@@ -89,10 +89,13 @@ def runmatches(confrontations=confrontations(), min_matches=config.min_matches,
 def main():
     cfs=list(confrontations())
     totalduration=duration(cfs)
+    (naive_duration, nmatches)=naive_prediction()
+    print "naive prediction: {1} runs, {0} duration".format(naive_duration,
+            nmatches)
     print "{0} expected total time.".format(totalduration)
     finish=datetime.datetime.now()+totalduration
     print "expected to finish @ {0}".format(finish)
-    runmatches(cfs,n_missing=naive_prediction())
+    runmatches(cfs,n_missing=nmatches)
 
 if __name__ == "__main__":
     # clean the log file

@@ -6,12 +6,6 @@ import os
 import config
 import report
 
-# configure log file
-FORMAT = "%(asctime)s %(levelname)s: %(message)s"
-LOG_FILENAME = os.path.join(config.logfile)
-logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG,format=FORMAT)
-logging.Formatter("%(asctime)s - %(levelname)s:%(message)s")
-
 from team import *
 from match import *
 from confrontation import *

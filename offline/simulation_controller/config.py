@@ -14,7 +14,7 @@ teamsdir = "teams/"
 matchhost = "127.0.0.1"
 
 # fcportugal_dynamic
- # strategy file to modify
+# strategy file to modify
 base_strategy="base_strategy.conf"
 # folder to put the generated strategy files.
 strategy_folder = "strategies/"
@@ -32,20 +32,26 @@ strategy_data = {
         ,
         "mentality":
         [
-            #0,
+            0,
             1,
             2,
-            #3
+            3
             ]
         ,
         "gamepace":
         [
-            #0,
+            0,
             1,
             2,
-            #3
+            3
             ]
         }
+
+#match generation
+opponents=["nemesis", "kickofftug", "wrighteagle", "bahia2d"]
+min_matches=3
+# typical duration of a match (used for time prediction)
+duration=datetime.timedelta(minutes=12)
 
 # scripts...
 scripts_dir=os.getcwd()
@@ -64,6 +70,12 @@ s_files = ["serverbin", "rcgconvert"]
 special_dirs = ["running_dir", "scripts_dir"]
 other = ["matchhost"]
 # metadata end
+
+# configure log file
+FORMAT = "%(asctime)s %(levelname)s: %(message)s"
+LOG_FILENAME = os.path.join(config.logfile)
+logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG,format=FORMAT)
+logging.Formatter("%(asctime)s - %(levelname)s:%(message)s")
 
 class ConfigurationError(Exception):
     def __init__(self, msg='Unspecified'):

@@ -2,7 +2,7 @@ include classfiles
 JPATH=.:java-xmlbuilder-0.3.jar
 JAR_FILE=soccerscope.jar
 
-.PHONY: all soccerscope build
+.PHONY: all soccerscope build clean
 
 all: soccerscope
 
@@ -20,4 +20,5 @@ soccerscope: $(OBJECTS)
 clean:
 	rm -vf $(OBJECTS)
 	find . -type f -name "*.class" -delete
+	rm -vf $(JAR_FILE)
 

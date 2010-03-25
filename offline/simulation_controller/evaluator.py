@@ -5,68 +5,30 @@ evaluators are also defined. the evaluators are not to be used
 intermixedly(?) (due to the return values not beeing in the same scale)
 """
 
-import xml.dom.minidom as minidom
-import statistics as st
+from statistics import *
+
+class EvaluatorError(Exception):
+    def __init__(self, msg='Unspecified'):
+        Exception.__init__(self, msg)
+
 
 class BaseEvaluator(object):
-    def __init__(self, statistics_file, myside="left"):
-        assert myside == "left" or myside == "right", "%s is invalid" % (myside,)
-        self._myside=myside
-        self._dom = minidom.parse(statistics_file)
+    def __init__(self, statistics, myteam):
+        self.statistics
+        self.statistics.team = myteam
 
     def value():
         raise NotImplementedError( "Must implement the 'value' method")
 
-    def change_side(self,side):
-        self._myside=myside
-
-    def switch_match(self, statistics_file):
-        self._dom = minidom.parse(statistics_file)
-
-    def myside(self):
-        myside=self._myside
-        assert myside == "left" or myside == "right", "%s is invalid" % (myside,)
-        return myside
-
-    def opponent(self):
-        myside = self.myside()
-        assert myside == "left" or myside == "right", "%s is invalid" % (myside,)
-        if myside == "left":
-            return "right"
-        if myside == "right":
-            return "left"
-
-    @staticmethod
-    def sideid(side):
-        assert side == "left" or side == "right", "%s is invalid" % (side,)
-        if side == "left":
-            return "LEFT_SIDE"
-        if side == "right":
-            return "RIGHT_SIDE"
-
-    def mysideid(self):
-        BaseEvaluator.sideid(self.myside())
-
-    def opponentid(self):
-        BaseEvaluator.sideid(self.opponent())
-
-    # most functions from here on are just wrappers
-    # the functions in the 'statistics' module
-    def goals(self):
-        return st.goals(self.myside(),self._dom)[0][1]
-
-    def goalssuffered(self):
-        return goalssuffered(self.myside(),self._dom)[0][1]
-
-
 class BasicEvaluator(BaseEvaluator):
     """ evaluates a team performance in a match similar to the soccer rules (0
     - loss, 1 - draw, 3 - victory) """
-    def __init__(self, statistics_file, myside="left"):
-        BaseEvaluator.__init__(self, statistics_file, myside)
+    def __init__(self, statistics_file, myteam):
+        BaseEvaluator.__init__(self, statistics_file, myteam)
 
-    def value():
-        diff = self.goals-self.goalssuffered()
+    def value(self):
+        s=self.statistics
+        diff = s.goals()-s.goalssuffered()
         if diff > 0: # victory
             return 3
         elif diff < 0: # loss
@@ -77,30 +39,81 @@ class BasicEvaluator(BaseEvaluator):
 class GoalDifferenceEvaluator(BaseEvaluator):
     """ evaluates a team performance in a match based on the goal difference
     """
-    def __init__(self, statistics_file, myside="left"):
-        BaseEvaluator.__init__(self, statistics_file, myside)
+    def __init__(self, statistics_file, myteam):
+        BaseEvaluator.__init__(self, statistics_file, myteam)
 
-    def value():
-        return self.goals()-self.goalssuffered()
-
-class MARSEvaluator(BaseEvaluator):
-    """ evaluates a team performance in a match according to the rules
-    discoreved using the MARS algorithm
-    """
-    def __init__(self, myside="left"):
-        BaseEvaluator.__init__(self,myside)
+    def value(self):
+        s=self.statistics
+        return s.goals()-s.goalssuffered()
 
 class ReliefEvaluator(BaseEvaluator):
-    """ evaluates a team performance in a match according to the rules
-    discoreved using the Relief algorithm
+    """ evaluates a team performance in a match according to the evaluation
+    function discoreved using the Relief algorithm
     """
-    def __init__(self, myside="left"):
-        BaseEvaluator.__init__(self,myside)
+    def __init__(self, myteam):
+        BaseEvaluator.__init__(self,myteam)
+
+    def value(self):
+        """The function:
+
+        0.1085678173*1-GoodPassTot+ 0.0333793177*1-GoodDef+
+        0.0796453572*2-GoodPassTot+ 0.0128294878*2-GoodDef+
+        0.0083693729*2-GoodOff+ 0.0274159181*1-BadDefDefensive+
+        0.0708654848*2-BadPassTot+ 0.0448306355*2-BadDef+
+        0.0577098364*1-Shoot+ 0.0481160484*1-IntShoot+
+        0.0018519818*1-ShootTarget+ 0.0098023028*2-Shoot+
+        0.0099133630*2-IntShoot+ 0.0828931087*2-ShootTarget+
+        0.2604277820* GoalsTot+ 0.1799456998*2-Goals+
+        0.0273404987* PenBoxBack+ 0.2173460194* PenArea+
+        0.0976643308* OutPenArea+ 0.1052917803*1-Corner+
+        0.0734638367*1-ThrowIn+ 0.0593205483*2-Corner+
+        0.0309027898*2-OffInt+ 0.0064832968* BroAtt+ 0.0173590182* MedAtt+
+        0.0845213352* AttTot+ 0.0091394370* 2-LeftBposs-Def+
+        0.0761864554*3-LeftBposs-Attack+ 0.0366654265* 2-MiddBposs-Def+
+        0.0458992625*4-MiddBposs-Attack+0.0759206186*1-RightBposs-Def+
+        0.0009476703*2-RightBposs-Def+ 0.0599595746* GoalsOpp
+        """
+        raise NotImplementedError("ReliefEvaluator is incomplete")
+
+class MARSEvaluator(BaseEvaluator):
+    """ evaluates a team performance in a match according to the evaluation
+    function discoreved using the MARS algorithm
+    """
+    def __init__(self, myteam):
+        BaseEvaluator.__init__(self,myteam)
+
+    def value(self):
+        """the function:
+
+        8.38818
+        +    1.644371 * pmax(0,               2007 -                Ano)
+        -   0.3069785 * pmax(0,    `1-GoodPassTot` -                 28)
+        +   0.5093597 * pmax(0,        `1-GoodDef` -                 45)
+        -   0.2746145 * pmax(0,                 45 -        `1-GoodDef`)
+        +   0.4722099 * pmax(0,        `1-GoodOff` -                 13)
+        -   0.1705543 * pmax(0,        `1-GoodOff` -                 21)
+        -  0.05941206 * pmax(0,        `2-GoodDef` -                 22)
+        +   0.1417468 * pmax(0,                 38 -     `1-BadPassTot`)
+        +   0.5710572 * pmax(0,     `2-BadPassTot` -                 38)
+        -   0.5607114 * pmax(0,         `2-BadDef` -                 23)
+        -   0.7210807 * pmax(0,                  1 -       `2-IntShoot`)
+        +    1.087935 * pmax(0,           GoalsTot -                  2)
+        -    1.516579 * pmax(0,                  2 -           GoalsTot)
+        -   0.2664058 * pmax(0,                  6 -        `1-ThrowIn`)
+        -    1.154919 * pmax(0,                  1 -         `1-OffInt`)
+        -    1.654616 * pmax(0,                  2 -             FasAtt)
+        -   0.6579848 * pmax(0,                  6 -             AttTot)
+        -    11.67972 * pmax(0,          0.1489362 -  `1-LeftBposs-Def`)
+        -    41.80000 * pmax(0,          0.1439394 -  `2-LeftBposs-Def`)
+        -    29.29008 * pmax(0,          0.1794171 -  `2-MiddBposs-Def`)
+        +    3.418717 * pmax(0,           0.564728 - `2-RightBposs-Def`)
+        """
+        raise NotImplementedError("MARSEvaluator is incomplete")
 
 class MixedEvalutator(BaseEvaluator):
     """ evaluates a team performance in a match using by mixing the results of
     other evaluators
     """
-    def __init__(self, myside="left"):
-        BaseEvaluator.__init__(self,myside)
+    def __init__(self, myteam):
+        BaseEvaluator.__init__(self,myteam)
 

@@ -177,15 +177,16 @@ class Statistics(object):
 
     @property
     def team(self):
-        """the default team when no team/side argument is supplied.
-        """
+        """the default team when the team/side argument is not explicitly
+        supplied to the methods."""
         assert self._team in self.teams or self._team is None
         return self._team
 
     @team.setter
     def team(self,value):
-        # TODO - maibe this should raise an exception instead
-        assert value in self.teams or value is None, "%s is invalid" % (value,)
+        if value not in self.teams or value is not None:
+            raise StatisticsError("team {0} is invalid".format(value))
+
         self._team = value
         if value is not None:
             self._side=Statistics.SIDES[self.teams.index(value)]

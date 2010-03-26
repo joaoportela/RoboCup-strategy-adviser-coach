@@ -27,7 +27,6 @@ class StatisticsAgregator(object):
         """ constructor for the StatisticsAgregator object.
 
         statistics - the statistics list to agregate.
-        teams - if provided should be a tuple containing the teams names
         team - if provided should be the name of the team selected by default
         """
         self.statistics = statistics
@@ -39,7 +38,7 @@ class StatisticsAgregator(object):
     def teams(self):
         return self._teams
 
-    def _validate_teams_in_statistics():
+    def _validate_teams_in_statistics(self):
         std=self.statistics[0].teams
         for s in self.statistics:
             if (s.teams[0],s.teams[1]) == (std[0], std[1]):
@@ -56,13 +55,18 @@ class StatisticsAgregator(object):
 
     @team.setter
     def team(self, value):
+        """sets the team to be the value provided in the argument. argument
+        can be None to deselect. if name is not exactly as expected will try to
+        guess anyway.
+        """
         if value is not None and value not in self.teams:
             if same_team(value,self.teams[0]):
                 value=self.teams[0]
-            if same_team(value,self.teams[1]):
+            elif same_team(value,self.teams[1]):
                 value=self.teams[1]
             else:
-                raise StatisticsAgregatorError("Could not recognize the team %s"%(value,))
+                errmsg="Could not recognize the team {0} expected one of {1}"
+                raise StatisticsAgregatorError(errmsg.format(value, self.teams))
         for s in self.statistics:
             s.team=value
         self._team = value

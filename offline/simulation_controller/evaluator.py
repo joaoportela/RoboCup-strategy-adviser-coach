@@ -5,16 +5,16 @@ evaluators are also defined. the evaluators are not to be used
 intermixedly(?) (due to the return values not beeing in the same scale)
 """
 
-from statistics import *
+__all__ = ["BasicEvaluator", "GoalDifferenceEvaluator", "ReliefEvaluator",
+        "MARSEvaluator"]
 
 class EvaluatorError(Exception):
     def __init__(self, msg='Unspecified'):
         Exception.__init__(self, msg)
 
-
 class BaseEvaluator(object):
     def __init__(self, statistics, myteam):
-        self.statistics
+        self.statistics=statistics
         self.statistics.team = myteam
 
     def value():
@@ -22,9 +22,10 @@ class BaseEvaluator(object):
 
 class BasicEvaluator(BaseEvaluator):
     """ evaluates a team performance in a match similar to the soccer rules (0
-    - loss, 1 - draw, 3 - victory) """
-    def __init__(self, statistics_file, myteam):
-        BaseEvaluator.__init__(self, statistics_file, myteam)
+    - loss, 1 - draw, 3 - victory)
+    """
+    def __init__(self, statistics, myteam):
+        BaseEvaluator.__init__(self, statistics, myteam)
 
     def value(self):
         s=self.statistics
@@ -50,8 +51,8 @@ class ReliefEvaluator(BaseEvaluator):
     """ evaluates a team performance in a match according to the evaluation
     function discoreved using the Relief algorithm
     """
-    def __init__(self, myteam):
-        BaseEvaluator.__init__(self,myteam)
+    def __init__(self, statistics, myteam):
+        BaseEvaluator.__init__(self, statistics, myteam)
 
     def value(self):
         """The function:
@@ -62,6 +63,7 @@ class ReliefEvaluator(BaseEvaluator):
         0.0708654848*2-BadPassTot+ 0.0448306355*2-BadDef+
         0.0577098364*1-Shoot+ 0.0481160484*1-IntShoot+
         0.0018519818*1-ShootTarget+ 0.0098023028*2-Shoot+
+
         0.0099133630*2-IntShoot+ 0.0828931087*2-ShootTarget+
         0.2604277820* GoalsTot+ 0.1799456998*2-Goals+
         0.0273404987* PenBoxBack+ 0.2173460194* PenArea+
@@ -73,11 +75,36 @@ class ReliefEvaluator(BaseEvaluator):
         0.0458992625*4-MiddBposs-Attack+0.0759206186*1-RightBposs-Def+
         0.0009476703*2-RightBposs-Def+ 0.0599595746* GoalsOpp
         """
+        first_half_passes=self.statistics.passes(half=1)
+        first_half_defensive_passes=self.statistics.passes(half=1,offensive=False)
+
+        second_half_passes=self.statistics.passes(half=2)
+        second_half_defensive_passes=self.statistics.passes(half=2,offensive=False)
+
+        second_half_offensive_passes=self.statistics.passes(half=2,offensive=True)
+        first_half_defensive_passmisses=self.statistics.passmisses(half=1,offensive=False)
+
+        second_half_passmisses=self.statistics.passmisses(half=2)
+        second_half_defensive_passmisses=self.statistics.passmisses(half=2,offensive=False)
+
+        first_half_goalmiss_faroutside=self.statistics.goalmisses(half=1,misstype="FAR_OUTSIDE")
+        first_half_goalmiss_intercepted=self.statistics.goalmisses(half=1,misstype="GOALIE_CATCHED")
+
+        first_half_goalmiss_outside=self.statistics.goalmisses(half=1,misstype="OUTSIDE")
+        second_half_goalmiss_faroutside=self.statistics.goalmisses(half=2,misstype="FAR_OUTSIDE")
+
+        filtor = lambda x: x.startswith("first") or x.startswith("second")
+        loprintzor=filter(filtor,["{0}=>{1}".format(k,v) for k,v in locals().items()])
+        print "--"
+        print "\n".join(loprintzor)
+        print "--"
+        return 0
         raise NotImplementedError("ReliefEvaluator is incomplete")
 
 class MARSEvaluator(BaseEvaluator):
     """ evaluates a team performance in a match according to the evaluation
-    function discoreved using the MARS algorithm
+    function discoreved using the MARS (Multivariate Additive Regression
+    Splines) algorithm
     """
     def __init__(self, myteam):
         BaseEvaluator.__init__(self,myteam)

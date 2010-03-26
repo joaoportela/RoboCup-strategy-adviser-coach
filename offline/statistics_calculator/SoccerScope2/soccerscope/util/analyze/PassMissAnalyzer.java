@@ -255,6 +255,8 @@ public class PassMissAnalyzer extends SceneAnalyzer implements Xmling {
 
 	public void countUpLeft(Kicker sender, Kicker receiver) {
 		Zone zone = whichZone(this.fieldZones, sender.position);
+		if (zone == null) // outside know zones, skip
+			return;
 		PassMiss pass = new PassMiss(Team.LEFT_SIDE, sender, receiver, zone);
 		this.passMissList.add(pass);
 
@@ -266,6 +268,8 @@ public class PassMissAnalyzer extends SceneAnalyzer implements Xmling {
 
 	public void countUpRight(Kicker sender, Kicker receiver) {
 		Zone zone = whichZone(this.fieldZones, sender.position);
+		if (zone == null) // outside know zones, skip
+			return;
 		PassMiss pass = new PassMiss(Team.RIGHT_SIDE, sender, receiver, zone);
 		this.passMissList.add(pass);
 

@@ -51,6 +51,6 @@ if __name__ == '__main__':
         raise
     finally:
         # always report
-        report.report("eject")
+        report.report("upload")
 
 

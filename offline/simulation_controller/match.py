@@ -28,13 +28,15 @@ include={serverconf}
 team_l_start={team_l_command}
 team_r_start={team_r_command}
 
+libpath="/usr/local/lib/"
+
 cd ${{matchdir}}
 
 # version that does not start the teams...
 # ${{serverbin}} include="${{include}}" > server-output.log 2> server-error.log
 
 # start the server and it starts the teams
-${{serverbin}} include="${{include}}" server::team_l_start = "${{team_l_start}}" server::team_r_start = "${{team_r_start}}" > server-output.log 2> server-error.log
+LD_LIBRARY_PATH=${{libpath}} ${{serverbin}} include="${{include}}" server::team_l_start = "${{team_l_start}}" server::team_r_start = "${{team_r_start}}" > server-output.log 2> server-error.log
 
 """
 

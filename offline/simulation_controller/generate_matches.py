@@ -88,14 +88,14 @@ def runmatches(confrontations=confrontations(), min_matches=config.min_matches,
 
 def main():
     cfs=list(confrontations())
-    totalduration=duration(cfs)
     (naive_duration, nmatches)=naive_prediction()
     print "naive prediction: {1} runs, {0} duration".format(naive_duration,
             nmatches)
+    totalduration=duration(cfs)
     print "{0} expected total time.".format(totalduration)
     finish=datetime.datetime.now()+totalduration
     print "expected to finish @ {0}".format(finish)
-    runmatches(cfs,n_missing=nmatches)
+    #runmatches(cfs,n_missing=nmatches)
 
 if __name__ == "__main__":
     # clean the log file

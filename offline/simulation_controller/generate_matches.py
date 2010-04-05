@@ -95,7 +95,7 @@ def main():
     print "{0} expected total time.".format(totalduration)
     finish=datetime.datetime.now()+totalduration
     print "expected to finish @ {0}".format(finish)
-    #runmatches(cfs,n_missing=nmatches)
+    runmatches(cfs,n_missing=nmatches)
 
 if __name__ == "__main__":
     # clean the log file

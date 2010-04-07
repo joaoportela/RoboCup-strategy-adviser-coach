@@ -8,6 +8,7 @@ import runner # to initialize the logger
 import config
 from team import *
 from confrontation import *
+from utils import *
 import report
 import sys
 
@@ -31,7 +32,8 @@ def confrontations(data=config.strategy_data,opponents=config.opponents):
 
                 yield fcpD_vs_opp
 
-def duration(confrontations=confrontations(), min_matches=config.min_matches, matchduration=config.duration):
+def smart_prediction(confrontations=confrontations(), min_matches=config.min_matches,
+        matchduration=config.duration, matchsize=config.size):
     """calculates the duration of generating the required matches
 
     confrontations - confrontations to be runned
@@ -46,15 +48,18 @@ def duration(confrontations=confrontations(), min_matches=config.min_matches, ma
 
     print "{0} runs estimated to be missing".format(runsmissing)
     totalduration=matchduration*runsmissing
-    return totalduration
+    totalsize=matchsize*runsmissing
+    return (runsmissing, totalduration, totalsize)
 
 def naive_prediction(data=config.strategy_data, opponents=config.opponents,
-        min_matches=config.min_matches, matchduration=config.duration):
+        min_matches=config.min_matches, matchduration=config.duration,
+        matchsize=config.size):
     """predicts the number of matches missing."""
     nconfigs=reduce(lambda x,y: x*len(y), data.values(), 1)
     nruns=min_matches*len(opponents)*nconfigs
-    d=matchduration*nruns
-    return (d, nruns)
+    duration=matchduration*nruns
+    disk_space=matchsize*nruns
+    return (nruns, duration, disk_space)
 
 def runmatches(confrontations=confrontations(), min_matches=config.min_matches,
         n_missing=0):
@@ -66,7 +71,7 @@ def runmatches(confrontations=confrontations(), min_matches=config.min_matches,
     progress
     """
     if n_missing:
-        total_matches_played=0
+        total_played=0
 
     for fcpD_vs_opp in confrontations:
         # play the required number of matches
@@ -83,17 +88,18 @@ def runmatches(confrontations=confrontations(), min_matches=config.min_matches,
             n_played_matches=len(fcpD_vs_opp)
 
         if n_missing:
-            total_matches_played+=min_matches
-            print "progress {0}/{1}".format(total_matches_played, n_missing)
+            total_played+=min_matches
+            now=datetime.datetime.now()
+            print "{2} progress {0}/{1}".format(total_played, n_missing, now)
 
 def main():
+    (nmatches, naive_duration, naive_size)=naive_prediction()
+    print "naive prediction: {1} runs, {0} duration".format(naive_duration, nmatches)
     cfs=list(confrontations())
-    (naive_duration, nmatches)=naive_prediction()
-    print "naive prediction: {1} runs, {0} duration".format(naive_duration,
-            nmatches)
-    totalduration=duration(cfs)
-    print "{0} expected total time.".format(totalduration)
-    finish=datetime.datetime.now()+totalduration
+    (nmatches, duration, size)=smart_prediction(cfs)
+    print "{0} expected duration time.".format(duration)
+    print "{0} expected size.".format(human_size(size))
+    finish=datetime.datetime.now()+duration
     print "expected to finish @ {0}".format(finish)
     runmatches(cfs,n_missing=nmatches)
 

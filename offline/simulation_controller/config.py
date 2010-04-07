@@ -53,6 +53,7 @@ opponents=["kickofftug", "wrighteagle", "bahia2d"]# "nemesis",
 min_matches=4
 # typical duration of a match (used for time prediction)
 duration=datetime.timedelta(minutes=12)
+size=26*(1024**2)#26MB
 
 # scripts...
 scripts_dir=os.getcwd()

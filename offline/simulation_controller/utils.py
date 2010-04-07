@@ -2,7 +2,7 @@
 
 __all__ = ["all_equal", "runcommand", "fake_runcommand", "write_script",
         "allrcgs", "allmetadata", "allmatchesids", "theid",
-        "confrontation_name", "same_team", "str2bool"]
+        "confrontation_name", "same_team", "str2bool", "human_size"]
 
 import logging
 import time
@@ -165,4 +165,44 @@ def confrontation_name(teamA,teamB):
     teams = sorted((teamA,teamB), key=lower_str)
     name = "{0}__vs__{1}".format(teams[0],teams[1])
     return name
+
+def human_size(size, a_kilobyte_is_1024_bytes=True):
+    '''Convert a file size to human-readable form.
+
+    Keyword arguments:
+    size -- file size in bytes
+    a_kilobyte_is_1024_bytes -- if True (default), use multiples of 1024
+                                if False, use multiples of 1000
+
+    Returns: string
+
+    adapted from: http://diveintopython3.org/your-first-python-program.html
+
+    Examples:
+    >>> human_size(1024)
+    '1.0 KiB'
+    >>> human_size(1000,False)
+    '1.0 KB'
+    >>> human_size(1024**2)
+    '1.0 MiB'
+    >>> human_size(1000**2,False)
+    '1.0 MB'
+    '''
+    SUFFIXES = {1000: ['KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
+                1024: ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB']}
+
+    if size < 0:
+        raise ValueError('number must be non-negative')
+
+    multiple = 1024 if a_kilobyte_is_1024_bytes else 1000
+    for suffix in SUFFIXES[multiple]:
+        size /= multiple
+        if size < multiple:
+            break
+
+    return '{0:.1f} {1}'.format(size, suffix)
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
 

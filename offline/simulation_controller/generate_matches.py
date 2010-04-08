@@ -87,6 +87,7 @@ def runmatches(confrontations=confrontations(), min_matches=config.min_matches,
             fcpD_vs_opp.playnewmatch()
             n_played_matches=len(fcpD_vs_opp)
 
+        print "ping"
         if n_missing:
             total_played+=min_matches
             now=datetime.datetime.now()

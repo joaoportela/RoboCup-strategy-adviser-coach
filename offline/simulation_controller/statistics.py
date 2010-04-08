@@ -68,10 +68,6 @@ def create_from_rcg(rcg, *args,**kwds):
 
     return Statistics(xml=xml,*args,**kwds)
 
-##
-# statistics mega class
-##
-
 class StatisticsError(Exception):
     def __init__(self, msg='Unspecified'):
         Exception.__init__(self, msg)
@@ -112,6 +108,10 @@ def accept_side(fn):
 
     # return the awesome function
     return wrapper
+
+##
+# statistics mega class
+##
 
 class Statistics(object):
     SIDES=["left","right"]
@@ -338,52 +338,55 @@ class Statistics(object):
         return passes_count
 
     @accept_side
-    def passmisses(self, half=None, offensive=None):
+    def passmisses(self, half=None, offensive=None, receiver_offside=True):
         """ passes misses.
-        the arguments are filteres, None does not filter.
+        the arguments are filters, None does not filter.
 
         half - filter the number of passes by game half (1 or 2)
         """
         # no filters set. return all passmisses
-        if half is None and offensive is None:
+        if half is None and offensive is None and receiver_offside is None:
             return int(dom.getElementsByTagName("passmisses")[0].getAttribute(self.side))
 
         starttime, endtime = Statistics._timeofhalf(half)
+        # validate filters
+        if offensive not in [True, False, None]:
+            errmsg="unrecognized 'offensive' argument({0})"
+            raise StatisticsError(errmsg.format(offensive))
+        if receiver_offside not in [True, False, None]:
+            errmsg="unrecognized 'receiver_offside' argument({0})"
+            raise StatisticsError(errmsg.format(receiver_offside))
 
         misses_tag=self.dom.getElementsByTagName("passmisses")[0]
         misses_count=0
-
         for miss in misses_tag.getElementsByTagName("passmiss"):
-
-            # initialize flags
-            valid_half=False
-            valid_offensive=False
 
             # not my team... move along
             if miss.getAttribute("team") != self.side_id:
                 continue
 
-            if half is None:
-                valid_half=True
-            else:
+            if half is not None:
                 # of the desired half
                 kick_t = int(miss.getElementsByTagName("kick")[0].getAttribute("time"))
-                # time window is valid
-                if kick_t >= starttime and kick_t <= endtime:
-                    valid_half=True
+                if not(kick_t >= starttime and kick_t <= endtime):
+                    # time window is not valid
+                    continue
 
-            # of the desired offensive/defensive type
-            if offensive is None:
-                valid_offensive=True
-            else:
+            if offensive is not None:
                 off_pass=str2bool(miss.getAttribute("offensive"))
-                # is of the same type as the pass
-                if offensive==off_pass:
-                    valid_offensive=True
+                if off_pass != offensive:
+                    # is not of the desired offensive/defensive type
+                    continue
 
-            # check if all the filters are valid
-            if all([valid_half, valid_offensive]):
-                misses_count+=1
+            if receiver_offside is not None:
+                rcv_off=str2bool(miss.getElementsByTagName("target")[0].getAttribute("offside"))
+                print self.side_id, rcv_off
+                if rcv_off != receiver_offside:
+                    # is not of the desired receiver offside/not offside
+                    continue
+
+            # we got this far. its valid!
+            misses_count+=1
 
         return misses_count
 
@@ -396,40 +399,60 @@ class Statistics(object):
         raise NotImplementedError()
 
     @accept_side
-    def goals(self, kick_area=None):
-        """ get the number of goals. can accept the side, and the kick area as optional
-        arguments.
+    def goals(self, half=None, kick_area=None):
+        """ get the number of goals. can accept the side, and the kick area as
+        optional arguments.
 
         sorry for the function signature not being clear. should be:
-            goals(self, side=None, kick_area=None)
+            goals(self, side=None, half=None, kick_area=None)
 
         to avoid confusion use named arguments.
 
-        side - the side argument will overrides the default side.
+        side - the side argument will override the default side.
         kick_area - the kick area argument will only return the number of goals
+        half - filter the goals by game half
         scored from that area. (the valid areas are: "GOAL_AREA",
         "PENALTY_AREA", "FAR_SHOT"), None returns the number of goals from any
         area.
+
+        note: goals inside the GOAL_AREA (smaller one) are not considered to be
+        inside the PENALTY_AREA (although it would be correct to assume that).
         """
         KICK_AREAS = ["GOAL_AREA", "PENALTY_AREA", "FAR_SHOT"]
 
         dom_goals = self.dom.getElementsByTagName("goals")[0]
-        if kick_area is None:
-            # no area specified, return all goals (for that team)
-            n = int(dom_goals.getAttribute(self.side))
-        else:
-            # validate argument
-            if kick_area not in KICK_AREAS:
-                raise StatisticsError("unkown kick area {0}".format(kick_area))
-            n=0
-            # if we want to filter by kick area we have to check every kick...
-            for kick in dom_goals.getElementsByTagName("kick"):
-                # check if the kick was made by my team
-                if kick.getAttribute("team") != self.side_id():
+        if half is None and kick_area is None:
+            # no filters, return all goals (for that team)
+            return int(dom_goals.getAttribute(self.side))
+
+
+        # validate argument
+        if kick_area not in KICK_AREAS+[None]:
+            raise StatisticsError("unkown kick area {0}".format(kick_area))
+        starttime, endtime = Statistics._timeofhalf(half)
+
+        n=0
+        # if we want to filter by kick area we have to check every kick...
+        for kick in dom_goals.getElementsByTagName("kick"):
+            # check if the kick was made by my team
+            if kick.getAttribute("team") != self.side_id:
+                continue
+
+            if half is not None:
+                # of the desired half
+                kick_t = int(kick.getAttribute("time"))
+                if not(kick_t >= starttime and kick_t <= endtime):
+                    # invalid time window, move along
                     continue
-                # if its the area we are looking for
-                if kick.getAttribute("zone") == kick_area:
-                    n+=1
+
+            if kick_area is not None:
+                # if it is not the area we are looking for
+                if kick.getAttribute("zone") != kick_area:
+                    continue
+
+            # we got this far, all conditions are met
+            n+=1
+
         return n
 
     @accept_side
@@ -448,7 +471,7 @@ class Statistics(object):
         starttime, endtime = Statistics._timeofhalf(half)
 
         # validate argument
-        if misstype not in MISS_TYPES:
+        if misstype not in MISS_TYPES + [None]:
             raise StatisticsError("unkown miss type {0}".format(misstype))
         n=0
         # for every goal miss
@@ -465,11 +488,55 @@ class Statistics(object):
                     # invalid time window, move along
                     continue
 
-            if goalmiss.getAttribute("type") != misstype:
-                # invalid type of goal miss, move along
-                continue
+            if misstype is not None:
+                if goalmiss.getAttribute("type") != misstype:
+                    # invalid type of goal miss, move along
+                    continue
 
             # we got this far, all conditions are met
+            n+=1
+
+        return n
+
+    @accept_side
+    def attacks(self,half=None, attacktype=None):
+        """gets the number of attacks for a team
+
+        the arguments are filters.
+        half - the game half
+        attacktype - the type of attack, one of ["BROKEN","SLOW","MEDIUM", "FAST"]
+        """
+        ATTACK_TYPES=["BROKEN", "SLOW", "MEDIUM", "FAST"]
+        attacks_dom = self.dom.getElementsByTagName("attacks")[0]
+
+        if half is None and attacktype is None:
+            # no filters, easy :)
+            return int(attacks_dom.getAttribute(self.side))
+
+        # validate argument
+        if attacktype not in ATTACK_TYPES+[None]:
+            raise StatisticsError("unkown attack type {0}".format(attacktype))
+        starttime, endtime = Statistics._timeofhalf(half)
+
+        # 'do the math'
+        n=0
+        for attack in attacks_dom.getElementsByTagName("attack"):
+            if attack.getAttribute("side") != self.side:
+                continue
+
+            if attacktype is not None:
+                if attack.getAttribute("type") != attacktype:
+                    continue
+
+            if half is not None:
+                # of the desired half
+                start_t = int(attack.getAttribute("start"))
+                end_t = int(attack.getAttribute("end"))
+                if not(start_t >= starttime and end_t <= endtime):
+                    # invalid time window, move along
+                    continue
+
+            # we got this far, its valid!
             n+=1
 
         return n
@@ -488,10 +555,6 @@ class Statistics(object):
 
     @accept_side
     def zonedominance(self):
-        raise NotImplementedError()
-
-    @accept_side
-    def attacks(self):
         raise NotImplementedError()
 
 ####

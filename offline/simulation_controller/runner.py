@@ -21,13 +21,13 @@ def main():
     while len(fcpD_vs_fcpX) <  1:
         fcpD_vs_fcpX.playnewmatch()
 
-    beval=BasicEvaluator(fcpD_vs_fcpX.statistics(),"fcportugald")
+    beval=BasicEvaluator(fcpD_vs_fcpX.statistics(),"fcportugalD")
     print "according to the basic evaluator the score is: ", beval.value()
 
-    gdiff=GoalDifferenceEvaluator(fcpD_vs_fcpX.statistics(),"fcportugald")
+    gdiff=GoalDifferenceEvaluator(fcpD_vs_fcpX.statistics(),"fcportugalD")
     print "according to the goal difference evaluator the score is: ", gdiff.value()
 
-    reval=ReliefEvaluator(fcpD_vs_fcpX.statistics(),"fcportugald")
+    reval=ReliefEvaluator(fcpD_vs_fcpX.statistics(),"fcportugalD")
     reval_v=reval.value()
     print "relief evaluator score (zero for now)... ", reval_v
 

@@ -62,7 +62,7 @@ def naive_prediction(data=config.strategy_data, opponents=config.opponents,
     return (nruns, duration, disk_space)
 
 def runmatches(confrontations=confrontations(), min_matches=config.min_matches,
-        n_missing=0):
+        n_missing=0, matchduration=config.duration):
     """confrontations with the matches that have to be run
 
     confrontations - confrontations to be runned
@@ -90,7 +90,9 @@ def runmatches(confrontations=confrontations(), min_matches=config.min_matches,
         if n_missing:
             total_played+=min_matches
             now=datetime.datetime.now()
-            print "{2} progress {0}/{1}".format(total_played, n_missing, now)
+            etime=now+n_missing*matchduration
+            print "{2} progress {0}/{1} - finish @ {3}".format(total_played,
+                    n_missing, now, etime)
 
 def main():
     (nmatches, naive_duration, naive_size)=naive_prediction()

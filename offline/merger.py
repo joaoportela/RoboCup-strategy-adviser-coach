@@ -13,12 +13,13 @@ def is_compressed(file_):
 def compress(file_):
     file_new=file_+".new"
     # compress file_ to file_new
-    print "compressing ", file_
+    print "compressing ", file_,
     with open(file_, 'rb') as f_in:
         f_out = gzip.open(file_new, 'wb', compresslevel=2)
         f_out.writelines(f_in)
         f_out.close()
 
+    print "done"
     # replace file_ with the compressed version
     os.rename(file_new,file_)
 
@@ -31,4 +32,12 @@ def fixfiles(dir_):
                 compress(file_)
 
 if __name__ == '__main__':
-    fixfiles('/home/joao/autorun/matches')
+    import sys
+    if len(sys.argv) == 2 and os.path.isdir(sys.argv[1]):
+        print "fixing files in {sys.argv[1]}".format(**locals())
+        fixfiles(sys.argv[1])
+    else:
+        print "running doctest"
+        import doctest
+        doctest.testmod()
+

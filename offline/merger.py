@@ -3,6 +3,7 @@
 import os
 import gzip
 import subprocess
+import sys
 
 def is_compressed(file_):
     command = "/usr/bin/file -i {file_}".format(**locals())
@@ -14,8 +15,9 @@ def compress(file_):
     file_new=file_+".new"
     # compress file_ to file_new
     print "compressing ", file_,
+    sys.stdout.flush()
     with open(file_, 'rb') as f_in:
-        f_out = gzip.open(file_new, 'wb', compresslevel=2)
+        f_out = gzip.open(file_new, 'wb', compresslevel=5)
         f_out.writelines(f_in)
         f_out.close()
 
@@ -32,7 +34,6 @@ def fixfiles(dir_):
                 compress(file_)
 
 if __name__ == '__main__':
-    import sys
     if len(sys.argv) == 2 and os.path.isdir(sys.argv[1]):
         print "fixing files in {sys.argv[1]}".format(**locals())
         fixfiles(sys.argv[1])

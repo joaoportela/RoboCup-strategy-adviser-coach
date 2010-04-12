@@ -25,7 +25,7 @@ def compress(file_):
     # replace file_ with the compressed version
     os.rename(file_new,file_)
 
-def fixfiles(dir_):
+def fix_uncompressed(dir_):
     for root, dirs, files in os.walk(dir_):
         gzfiles = filter(lambda x: x.endswith(".gz"),files)
         for file_ in gzfiles:
@@ -34,9 +34,14 @@ def fixfiles(dir_):
                 compress(file_)
 
 if __name__ == '__main__':
-    if len(sys.argv) == 2 and os.path.isdir(sys.argv[1]):
-        print "fixing files in {sys.argv[1]}".format(**locals())
-        fixfiles(sys.argv[1])
+    if len(sys.argv) > 2 and os.path.isdir(sys.argv[1]):
+        target_dir=sys.argv[1]
+        source_dirs=sys.argv[2:]
+        if not all(map(os.path.isdir, source_dirs)):
+            raise "fail"
+        print "target_dir: ", target_dir
+        print "source_dirs: ", source_dirs
+        print "doing nothing, for now!"
     else:
         print "running doctest"
         import doctest

@@ -157,7 +157,8 @@ class FCPortugal(Team):
     def __init__(self, strategy_params):
         # changed while trying to track a problem
         Team.__init__(self, "fcportugalD")
-        self.strategy_params=strategy_params
+        self.strategy_params=config.strategy_default
+        self.strategy_params.update(strategy_params)
         config.validate_strategy(self.strategy_params)
         # generate the strategy file
         strategy_fname = self._gen_strategy_file()

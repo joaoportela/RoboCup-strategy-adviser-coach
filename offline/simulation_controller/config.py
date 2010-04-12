@@ -19,6 +19,7 @@ matchhost = "127.0.0.1"
 base_strategy="base_strategy.conf"
 # folder to put the generated strategy files.
 strategy_folder = "strategies/"
+strategy_default={"formation": 1, "mentality": 2, "gamepace":2 }
 strategy_data = {
         "formation":
         [
@@ -53,7 +54,7 @@ opponents=["kickofftug", "wrighteagle", "bahia2d"]# "nemesis",
 min_matches=4
 # typical duration of a match (used for time prediction)
 duration=datetime.timedelta(minutes=12)
-size=26*(1024**2)#26MB
+size=9.5*(1024**2)#9.5MiB
 
 # scripts...
 scripts_dir=os.getcwd()

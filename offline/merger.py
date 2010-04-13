@@ -4,6 +4,7 @@ import os
 import gzip
 import subprocess
 import sys
+import re
 
 def is_compressed(file_):
     command = "/usr/bin/file -i {file_}".format(**locals())
@@ -33,6 +34,28 @@ def fix_uncompressed(dir_):
             if not is_compressed(file_):
                 compress(file_)
 
+def special_move(directory,source,target):
+    """moves the directory from source to target assuming some special
+    conditions related to the problem at hand
+    """
+    NUMBERS_PATTERN = re.compile(r'\d+')
+    # return NUMBERS_PATTERN.match(os.path.basename(name)).group(0)
+    files_to_move = os.listdir(os.path.join())
+
+    # filter to only include files that have ids...
+
+    # create the dir...
+    # check for name clashing...
+    # apply resolution techniques...
+    # do the actual move...
+
+def merge(target,sources):
+    for source in sources:
+        directories = os.listdir(source)
+        for directory in directories:
+            merge(directory, source, target)
+
+
 if __name__ == '__main__':
     if len(sys.argv) > 2 and os.path.isdir(sys.argv[1]):
         target_dir=sys.argv[1]
@@ -41,7 +64,7 @@ if __name__ == '__main__':
             raise "fail"
         print "target_dir: ", target_dir
         print "source_dirs: ", source_dirs
-        print "doing nothing, for now!"
+        premerge(target_dir,source_dirs)
     else:
         print "running doctest"
         import doctest

@@ -83,6 +83,7 @@ def migrate(source,target, move=False):
 
             id_=str(newid)
             target_transform = lambda x: x.replace(oldid, id_, 1)
+            print >> sys.stderr, "converted", oldid, "to", id_
         else:
             target_transform = lambda x: x
 
@@ -104,12 +105,13 @@ def migrate(source,target, move=False):
         # the id is now on the target
         target_ids.add(id_)
 
-def merge(target,sources, move):
+def merge(target,sources, move=False):
+    j=os.path.join
     for source in sources:
+        print "processing source", source
         directories = os.listdir(source)
         for directory in directories:
-            j=os.path.join
-            print "processing ", directory
+            print "\tprocessing directory ", directory
             migrate(j(source,directory), j(target,directory), move=move)
 
 

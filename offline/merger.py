@@ -5,6 +5,8 @@ import gzip
 import subprocess
 import sys
 import re
+import glob
+import shutil
 
 def is_compressed(file_):
     command = "/usr/bin/file -i {file_}".format(**locals())
@@ -33,27 +35,82 @@ def fix_uncompressed(dir_):
             file_=os.path.join(root,file_)
             if not is_compressed(file_):
                 compress(file_)
+def theid(name):
+    """from the filename (basename) get the numbers in the beggining (the
+    date)"""
+    NUMBERS_PATTERN = re.compile(r'\d+')
+    match = NUMBERS_PATTERN.match(os.path.basename(name))
+    if match and len(match.group(0)) == 12:
+        return match.group(0)
+    return None
 
-def special_move(directory,source,target):
-    """moves the directory from source to target assuming some special
+def dict_by_id(list_):
+    id_dict={}
+    for f in list_:
+        key=theid(f)
+        id_dict.setdefault(key,[]).append(f)
+    return id_dict
+
+def migrate(source,target, move=False):
+    """copies/moves the directory from source to target assuming some special
     conditions related to the problem at hand
     """
-    NUMBERS_PATTERN = re.compile(r'\d+')
-    # return NUMBERS_PATTERN.match(os.path.basename(name)).group(0)
-    files_to_move = os.listdir(os.path.join())
 
-    # filter to only include files that have ids...
+    # if necessary, create the target dir.
+    if not os.path.isdir(target):
+        os.mkdir(target)
 
-    # create the dir...
-    # check for name clashing...
-    # apply resolution techniques...
-    # do the actual move...
+    files_to_move = os.listdir(source)
+    # only include files that have ids
+    files_to_move = filter(theid, files_to_move)
+    # get all the diferent ids
+    source_dict=dict_by_id(files_to_move)
 
-def merge(target,sources):
+    # get the files and ids that exist in the target
+    files_in_target=filter(theid, os.listdir(target))
+    target_ids = set(map(theid, files_in_target))
+
+    # check for name clashing
+    for id_, fnames in source_dict.iteritems():
+        if id_ in target_ids:
+            # apply resolution techniques...
+            oldid=id_
+
+            # find an id that does not clash
+            newid=int(id_)
+            while str(newid) in target_ids:
+                newid+=1
+
+            id_=str(newid)
+            target_transform = lambda x: x.replace(oldid, id_, 1)
+        else:
+            target_transform = lambda x: x
+
+        if move:
+            action = shutil.move
+        else:
+            action = shutil.copyfile
+
+        for fname in fnames:
+            src=os.path.join(source, fname)
+
+            # the target may require transformation
+            fname=target_transform(fname)
+            dst=os.path.join(target,fname)
+
+            # do the actual copy/move...
+            action(src,dst)
+
+        # the id is now on the target
+        target_ids.add(id_)
+
+def merge(target,sources, move):
     for source in sources:
         directories = os.listdir(source)
         for directory in directories:
-            merge(directory, source, target)
+            j=os.path.join
+            print "processing ", directory
+            migrate(j(source,directory), j(target,directory), move=move)
 
 
 if __name__ == '__main__':
@@ -64,7 +121,7 @@ if __name__ == '__main__':
             raise "fail"
         print "target_dir: ", target_dir
         print "source_dirs: ", source_dirs
-        premerge(target_dir,source_dirs)
+        merge(target_dir,source_dirs,move=True)
     else:
         print "running doctest"
         import doctest

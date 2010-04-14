@@ -110,6 +110,8 @@ def merge(target,sources, move=False):
     for source in sources:
         print "processing source", source
         directories = os.listdir(source)
+        # filter out non-directories
+        directories = filter(os.path.isdir, directories)
         for directory in directories:
             print "\tprocessing directory ", directory
             migrate(j(source,directory), j(target,directory), move=move)

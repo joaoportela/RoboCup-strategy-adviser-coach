@@ -70,6 +70,12 @@ def migrate(source,target, move=False):
     if not os.path.isdir(target):
         os.mkdir(target)
 
+    # decided action...
+    if move:
+        action = mymove
+    else:
+        action = mycopy
+
     files_to_move = os.listdir(source)
     # only include files that have ids
     files_to_move = filter(theid, files_to_move)
@@ -96,11 +102,6 @@ def migrate(source,target, move=False):
             print >> sys.stderr, "converted", oldid, "to", id_
         else:
             target_transform = lambda x: x
-
-        if move:
-            action = mymove
-        else:
-            action = mycopy
 
         for fname in fnames:
             src=os.path.join(source, fname)

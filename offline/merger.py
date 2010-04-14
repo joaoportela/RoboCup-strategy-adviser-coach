@@ -51,6 +51,16 @@ def dict_by_id(list_):
         id_dict.setdefault(key,[]).append(f)
     return id_dict
 
+def mycopy(src,dst):
+    assert os.path.isfile(src)
+    assert not os.path.exists(dst)
+    return shutil.copyfile(src,dst)
+
+def mymove(src,dst):
+    assert os.path.isfile(src)
+    assert not os.path.exists(dst)
+    return shutil.move(src,dst)
+
 def migrate(source,target, move=False):
     """copies/moves the directory from source to target assuming some special
     conditions related to the problem at hand
@@ -76,7 +86,7 @@ def migrate(source,target, move=False):
             # apply resolution techniques...
             oldid=id_
 
-            # find an id that does not clash
+             find an id that does not clash
             newid=int(id_)
             while str(newid) in target_ids:
                 newid+=1
@@ -87,9 +97,9 @@ def migrate(source,target, move=False):
             target_transform = lambda x: x
 
         if move:
-            action = shutil.move
+            action = mymove
         else:
-            action = shutil.copyfile
+            action = mycopy
 
         for fname in fnames:
             src=os.path.join(source, fname)

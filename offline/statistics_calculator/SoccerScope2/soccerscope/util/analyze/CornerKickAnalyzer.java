@@ -44,7 +44,7 @@ public class CornerKickAnalyzer extends SceneAnalyzer implements Xmling {
 		@Override
 		public void xmlElement(XMLBuilder builder) {
 			builder.elem("corner")
-				.attr("side", Team.name(this.side))
+				.attr("team", Team.name(this.side))
 				.attr("time", String.valueOf(this.time));
 			
 		}

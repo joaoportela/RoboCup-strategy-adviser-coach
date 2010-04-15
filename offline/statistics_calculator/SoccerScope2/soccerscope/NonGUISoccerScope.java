@@ -48,6 +48,7 @@ public class NonGUISoccerScope {
 	private static void printXML(SceneSet sceneSet, String xmlFilename)
 			throws Exception {
 		XMLBuilder builder = XMLBuilder.create("analysis");
+		builder.attr("version", "1.0");
 		
 		Scene fscene = WorldModel.getInstance().getSceneSet().iterator().next();
 		XMLBuilder left = builder.elem("leftteam").attr("name",fscene.left.name);

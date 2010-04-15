@@ -55,7 +55,7 @@ public class GoalOpportunityAnalyzer extends SceneAnalyzer implements Xmling {
 
 		@Override
 		public void xmlElement(XMLBuilder builder) {
-			builder.elem("opportunity").attr("side", Team.name(side)).attr(
+			builder.elem("opportunity").attr("team", Team.name(side)).attr(
 					"start", String.valueOf(stime)).attr("player",
 					String.valueOf(player_unum)).attr("end",
 					String.valueOf(etime));

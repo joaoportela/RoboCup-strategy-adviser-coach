@@ -146,8 +146,15 @@ if __name__ == '__main__':
     if len(sys.argv) > 2 and os.path.isdir(sys.argv[1]):
         target_dir=sys.argv[1]
         source_dirs=sys.argv[2:]
+
+        # validate source_dirs
         if not all(map(os.path.isdir, source_dirs)):
-            raise "fail"
+            raise Exception("One of the source dirs is not a directory")
+        for s in source_dirs:
+            dname=(s.rstrip("/")).rpartition("/")[-1]
+            if dname != "matches":
+                raise Exception("matches dir is probably invalid", dname)
+
         print "target_dir: ", target_dir
         print "source_dirs: ", source_dirs
         merge(target_dir,source_dirs, move=move)

@@ -13,6 +13,7 @@ from evaluator import *
 
 def main():
     fcpD = FCPortugal({"formation" : 1})
+    print fcpD
     fcpX = Team("fcportugalX")
     fcpD_vs_fcpX = Confrontation(fcpD, fcpX)
     print len(fcpD_vs_fcpX)

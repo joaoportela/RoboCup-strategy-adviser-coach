@@ -90,9 +90,10 @@ class StatisticsAgregator(object):
         self.team=backup
         return average
 
-    FUNCS_TO_AVERAGE=["passes", "passmisses", "passchains", "wingchanges", "goals",
-            "goalmisses", "goalssuffered", "goalopportunities",
-            "favouritezones", "zonedominance", "attacks"]
+    FUNCS_TO_AVERAGE=["passes", "passmisses", "passchains", "wingchanges",
+            "goals", "goalmisses", "goalssuffered", "goalopportunities",
+            "favouritezones", "zonedominance", "attacks", "corners",
+            "kicks_in", "ballpossession"]
     def __getattr__(self,name):
         if name in StatisticsAgregator.FUNCS_TO_AVERAGE:
             meth = getattr(Statistics, name)

@@ -189,9 +189,16 @@ class FCPortugal(Team):
 
     def params_summary(self):
         dynamic_part = []
-        for name, value in self.strategy_params.items():
-            value = str(value)
+        # hack - because at first the data was not in alphabetic order...
+        # and after generating a lot of data I have to use it like this.
+        PREDEFINED_ORDER=["formation", "mentality", "gamepace"]
+        for name in PREDEFINED_ORDER:
+            value = str(self.strategy_params[name])
             dynamic_part.append("{name}{value}".format(**locals()))
+        for name, value in sorted(self.strategy_params.items()):
+            if name not in PREDEFINED_ORDER: # this is part of the hack too
+                value = str(value)
+                dynamic_part.append("{name}{value}".format(**locals()))
         return "_".join(dynamic_part)
 
     def encode(self):

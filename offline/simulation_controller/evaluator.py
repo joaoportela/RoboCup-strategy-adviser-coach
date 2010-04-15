@@ -1,6 +1,5 @@
 #! /usr/bin/env python
-"""
-file where the base evaluator is defined and several other
+"""file where the base evaluator is defined and several other
 evaluators are also defined. the evaluators are not to be used
 intermixedly(?) (due to the return values not beeing in the same scale)
 """
@@ -53,6 +52,8 @@ class ReliefEvaluator(BaseEvaluator):
     """
     def __init__(self, statistics, myteam):
         BaseEvaluator.__init__(self, statistics, myteam)
+        # the evaluation function was calculated with a strange zone definition
+        self.statistics.strange_zones=True
 
     def value(self):
         """The function:
@@ -70,7 +71,6 @@ class ReliefEvaluator(BaseEvaluator):
         0.0734638367*1-ThrowIn+ 0.0593205483*2-Corner+
         0.0309027898*2-OffInt+ 0.0064832968* BroAtt+ 0.0173590182* MedAtt+
         0.0845213352* AttTot+ 0.0091394370* 2-LeftBposs-Def+
-
         0.0761864554*3-LeftBposs-Attack+ 0.0366654265* 2-MiddBposs-Def+
         0.0458992625*4-MiddBposs-Attack+0.0759206186*1-RightBposs-Def+
         0.0009476703*2-RightBposs-Def+ 0.0599595746* GoalsOpp
@@ -104,18 +104,36 @@ class ReliefEvaluator(BaseEvaluator):
         goal_area_goals=self.statistics.goals(kick_area="GOAL_AREA")
 
         outside_penalty_area_goals=self.statistics.goals(kick_area="FAR_SHOT")
-        # first_half_corners=self.statistics.corners(half=1)
+        first_half_corners=self.statistics.corners(half=1)
 
-        # first_half_kickin=self.statistics.kick_in(half=1)
-        # second_half_corners=self.statistics.corners(half=2)
+        first_half_kicksin=self.statistics.kicks_in(half=1)
+        second_half_corners=self.statistics.corners(half=2)
 
         second_half_passmisses_offside=self.statistics.passmisses(half=2,receiver_offside=True)
         broken_attacks=self.statistics.attacks(attacktype="BROKEN")
         medium_attacks=self.statistics.attacks(attacktype="MEDIUM")
 
         total_attacks=self.statistics.attacks()
-        # 2-LeftBposs-Def   <- cena manhosa de zonas... TODO
+        leftwing_2ndquarter_possession=self.statistics.ballpossession(zone="leftwing_2ndquarter")
 
+        leftwing_3rdquarter_possession=self.statistics.ballpossession(zone="leftwing_3rdquarter")
+        middlewing_2ndquarter_possession=self.statistics.ballpossession(zone="middlewing_2ndquarter")
+
+        middlewing_4thquarter_possession=self.statistics.ballpossession(zone="middlewing_4thquarter")
+        rightwing_1stquarter_possession=self.statistics.ballpossession(zone="rightwing_1stquarter")
+
+        rightwing_2ndquarter_possession=self.statistics.ballpossession(zone="rightwing_2ndquarter")
+        total_goal_opportunities=self.statistics.goalopportunities()
+
+
+        # TODO - the zones are wrong, of that I am sure!!!
+        # TODO 2 - multiply...
+        """
+        0.0091394370* 2-LeftBposs-Def+
+        0.0761864554*3-LeftBposs-Attack+ 0.0366654265* 2-MiddBposs-Def+
+        0.0458992625*4-MiddBposs-Attack+0.0759206186*1-RightBposs-Def+
+        0.0009476703*2-RightBposs-Def+ 0.0599595746* GoalsOpp
+        """
         filtor = lambda x: not x.startswith("_")
         loprintzor=filter(filtor,["{0}=>{1}".format(k,v) for k,v in locals().items()])
         print "--"
@@ -131,6 +149,8 @@ class MARSEvaluator(BaseEvaluator):
     """
     def __init__(self, myteam):
         BaseEvaluator.__init__(self,myteam)
+        # the evaluation function was calculated with a strange zone definition
+        self.statistics.strange_zones=True
 
     def value(self):
         """the function:
@@ -166,4 +186,6 @@ class MixedEvalutator(BaseEvaluator):
     """
     def __init__(self, myteam):
         BaseEvaluator.__init__(self,myteam)
+        # the evaluation function was calculated with a strange zone definition
+        self.statistics.strange_zones=True
 

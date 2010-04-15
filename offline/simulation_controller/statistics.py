@@ -117,6 +117,7 @@ class Statistics(object):
     SIDES=["left","right"]
 
     def __init__(self, xml, side=None, teams=None):
+        self.strange_zones=False
         if not os.path.exists(xml):
             raise StatisticsError('{0} not found'.format(xml))
         self._xml=xml
@@ -244,12 +245,51 @@ class Statistics(object):
         return None
 
     @property
-    @accept_side
     def opponent_side(self):
         if self.side == "left":
             return "right"
         if self.side == "right":
             return "left"
+
+    @property
+    @accept_side
+    def zones(self):
+        if self.side == "left":
+            return {
+                    "leftwing_1stquarter": "TopLeftleft",
+                    "leftwing_2ndquarter": "TopLeftright",
+                    "middlewing_1stquarter": "MiddleLeftleft",
+                    "middlewing_2ndquarter": "MiddleLeftright",
+                    "rightwing_1stquarter": "BottomLeftleft",
+                    "rightwing_2ndquarter": "BottomLeftright",
+                    "leftwing_3rdquarter": "TopRightleft",
+                    "leftwing_4thquarter": "TopRightright",
+                    "middlewing_3rdquarter": "MiddleRightleft",
+                    "middlewing_4thquarter": "MiddleRightright",
+                    "rightwing_3rdquarter": "BottomRightleft",
+                    "rightwing_4thquarter": "BottomRightright"
+                    }
+        elif side == "right":
+            if self.strange_zones:
+                # some evalutators have the zones defined
+                # in a strange way.
+                # TODO
+                raise NotImplementedError()
+            else:
+                return {
+                        "rightwing_4thquarter": "TopLeftleft",
+                        "rightwing_3rdquarter": "TopLeftright",
+                        "middlewing_4thquarter": "MiddleLeftleft",
+                        "middlewing_3rdquarter": "MiddleLeftright",
+                        "leftwing_4thquarter": "BottomLeftleft",
+                        "leftwing_3rdquarter": "BottomLeftright",
+                        "rightwing_2ndquarter": "TopRightleft",
+                        "rightwing_1stquarter": "TopRightright",
+                        "middlewing_2ndquarter": "MiddleRightleft",
+                        "middlewing_1stquarter": "MiddleRightright",
+                        "leftwing_2ndquarter": "BottomRightleft",
+                        "leftwing_1stquarter": "BottomRightright"
+                        }
 
     @staticmethod
     def _timeofhalf(half=None):
@@ -380,7 +420,6 @@ class Statistics(object):
 
             if receiver_offside is not None:
                 rcv_off=str2bool(miss.getElementsByTagName("target")[0].getAttribute("offside"))
-                print self.side_id, rcv_off
                 if rcv_off != receiver_offside:
                     # is not of the desired receiver offside/not offside
                     continue
@@ -389,14 +428,6 @@ class Statistics(object):
             misses_count+=1
 
         return misses_count
-
-    @accept_side
-    def passchains(self):
-        raise NotImplementedError()
-
-    @accept_side
-    def wingchanges(self):
-        raise NotImplementedError()
 
     @accept_side
     def goals(self, half=None, kick_area=None):
@@ -521,7 +552,7 @@ class Statistics(object):
         # 'do the math'
         n=0
         for attack in attacks_dom.getElementsByTagName("attack"):
-            if attack.getAttribute("side") != self.side:
+            if attack.getAttribute("team") != self.side_id:
                 continue
 
             if attacktype is not None:
@@ -546,16 +577,106 @@ class Statistics(object):
         return self.goals(side=self.opponent_side)
 
     @accept_side
+    def corners(self, half=None):
+        """return the number of corners. half filters the number of corners by
+        half"""
+        corners_dom=self.dom.getElementsByTagName("corners")[0]
+        if half is None:
+            # no filters, easy :)
+            return int(corners_dom.getAttribute(self.side))
+
+        # validate argument
+        starttime, endtime = Statistics._timeofhalf(half)
+
+        n=0
+        for corner in corners_dom.getElementsByTagName("corner"):
+            if corner.getAttribute("team") != self.side:
+                # not my team, move along
+                continue
+
+            if half is not None:
+                # of the desired half
+                c_time = int(corner.getAttribute("time"))
+                if not(starttime <= c_time and c_time <= endtime):
+                    # invalid time window, move along
+                    continue
+
+            # we got this far, its valid!
+            n+=1
+
+        return n
+
+    def kicks_in(self, half=None):
+        """return the number of kicks in(?). 'half' filters it by game half"""
+        kicksin_dom=self.dom.getElementsByTagName("kicksin")[0]
+        if half is None:
+            # no filters, easy :)
+            return int(kicksin_dom.getAttribute(self.side))
+
+        # validate argument
+        starttime, endtime = Statistics._timeofhalf(half)
+
+        n=0
+        for kickin in kicksin_dom.getElementsByTagName("corner"):
+            if kickin.getAttribute("team") != self.side_id:
+                continue
+
+            if half is not None:
+                # of the desired half
+                k_time = int(kickin.getAttribute("time"))
+                if not(starttime <= k_time and k_time <= endtime):
+                    # invalid time window, move along
+                    continue
+
+            # we got this far, its valid!
+            n+=1
+
+        return n
+
+    @accept_side
+    def ballpossession(self, zone=None):
+        """get the number of cicles with ball possession.
+        zone - only give the number of cicles for that zone"""
+
+        bpos_dom = self.dom.getElementsByTagName("ballpossession")[0]
+        if zone is None:
+            # filters defined, easy
+            return int(bpos_dom.getAttribute(self.side))
+
+        # validate the zone argument
+        if zone not in self.zones:
+            raise StatisticsError("unkown zone {0}".format(zone))
+
+        n=0
+        for zone_dom in bpos_dom.getElementsByTagName("zone"):
+            # is it the zone we are looking for?
+            if zone_dom.getAttribute("name") == self.zones[zone]:
+                for possession in zone_dom.getElementsByTagName("possession"):
+                    if possession.getAttribute("team") != self.side_id:
+                        # wrong team, skip
+                        continue
+
+                    # we got this far, its valid
+                    n+=int(possession.getAttribute("time"))
+
+        return n
+
+
+
+    @accept_side
+    def passchains(self):
+        raise NotImplementedError()
+
+    @accept_side
+    def wingchanges(self):
+        raise NotImplementedError()
+
+    @accept_side
     def goalopportunities(self):
-        raise NotImplementedError()
+        """number of goal opportunities"""
+        goal_opp_dom = self.dom.getElementsByTagName("goalopportunities")[0]
 
-    @accept_side
-    def favouritezones(self):
-        raise NotImplementedError()
-
-    @accept_side
-    def zonedominance(self):
-        raise NotImplementedError()
+        return int(goal_opp_dom.getAttribute(self.side))
 
 ####
 # functions that provide easier access to the statistics data

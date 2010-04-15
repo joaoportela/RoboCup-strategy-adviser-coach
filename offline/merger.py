@@ -62,11 +62,13 @@ def dict_by_id(list_):
 def mycopy(src,dst):
     assert os.path.isfile(src)
     assert not os.path.exists(dst)
+    print "copying {0} to {1}".format(src,dst)
     return shutil.copyfile(src,dst)
 
 def mymove(src,dst):
     assert os.path.isfile(src)
     assert not os.path.exists(dst)
+    print "moving {0} to {1}".format(src,dst)
     return shutil.move(src,dst)
 
 def migrate(source,target, move=False):
@@ -130,9 +132,10 @@ def merge(target,sources, move=False):
         print "processing source", source
         directories = os.listdir(source)
         # filter out non-directories
-        directories = filter(os.path.isdir, directories)
+        isdir = lambda d: os.path.isdir(j(source,d))
+        directories = filter(isdir, directories)
         for directory in directories:
-            print "\tprocessing directory ", directory
+            print "\tprocessing confrontation dir", directory
             migrate(j(source,directory), j(target,directory), move=move)
 
 
@@ -146,8 +149,15 @@ if __name__ == '__main__':
     if len(sys.argv) > 2 and os.path.isdir(sys.argv[1]):
         target_dir=sys.argv[1]
         source_dirs=sys.argv[2:]
+
+        # validate source_dirs
         if not all(map(os.path.isdir, source_dirs)):
-            raise "fail"
+            raise Exception("One of the source dirs is not a directory")
+        for s in source_dirs:
+            dname=(s.rstrip("/")).rpartition("/")[-1]
+            if dname != "matches":
+                raise Exception("matches dir is probably invalid", dname)
+
         print "target_dir: ", target_dir
         print "source_dirs: ", source_dirs
         merge(target_dir,source_dirs, move=move)

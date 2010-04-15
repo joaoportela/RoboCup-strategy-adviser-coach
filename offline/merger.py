@@ -136,7 +136,7 @@ if __name__ == '__main__':
             raise "fail"
         print "target_dir: ", target_dir
         print "source_dirs: ", source_dirs
-        merge(target_dir,source_dirs,move=True)
+        merge(target_dir,source_dirs,move=False)
     else:
         print "running doctest"
         import doctest

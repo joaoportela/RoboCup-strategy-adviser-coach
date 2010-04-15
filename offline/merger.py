@@ -8,6 +8,14 @@ import re
 import glob
 import shutil
 
+
+def usage():
+    str_="usage: python {0} [OPTIONS] <TARGET_MATCHESDIR> <SOURCE_MATCHESDIR>...\n\n"
+    str_+="copy/move the matches data from multiple SOURCE matches "
+    str_+="directories to the TARGET directory"
+    str_+="OPTIONS\n\t--move - moves the files instead of copying"
+    return str_.format(sys.argv[0])
+
 def is_compressed(file_):
     command = "/usr/bin/file -i {file_}".format(**locals())
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
@@ -92,7 +100,7 @@ def migrate(source,target, move=False):
             # apply resolution techniques...
             oldid=id_
 
-             find an id that does not clash
+            # find an id that does not clash
             newid=int(id_)
             while str(newid) in target_ids:
                 newid+=1
@@ -129,6 +137,12 @@ def merge(target,sources, move=False):
 
 
 if __name__ == '__main__':
+    move=False
+    for i,arg in enumerate(sys.argv):
+        if arg == "--move":
+            move=True
+            del sys.argv[i]
+
     if len(sys.argv) > 2 and os.path.isdir(sys.argv[1]):
         target_dir=sys.argv[1]
         source_dirs=sys.argv[2:]
@@ -136,9 +150,10 @@ if __name__ == '__main__':
             raise "fail"
         print "target_dir: ", target_dir
         print "source_dirs: ", source_dirs
-        merge(target_dir,source_dirs,move=False)
+        merge(target_dir,source_dirs, move=move)
     else:
-        print "running doctest"
+        print usage()
+        # print "running doctest"
         import doctest
         doctest.testmod()
 

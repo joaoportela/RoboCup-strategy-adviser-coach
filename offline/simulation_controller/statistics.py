@@ -271,10 +271,22 @@ class Statistics(object):
                     }
         elif side == "right":
             if self.strange_zones:
-                # some evalutators have the zones defined
-                # in a strange way.
-                # TODO
-                raise NotImplementedError()
+                # some evaluators have the zones defined
+                # in a strange way. (but the left side is the same)
+                return {
+                        "leftwing_4thquarter": "TopLeftleft",
+                        "leftwing_3rdquarter": "TopLeftright",
+                        "middlewing_4thquarter": "MiddleLeftleft",
+                        "middlewing_3rdquarter": "MiddleLeftright",
+                        "rightwing_4thquarter": "BottomLeftleft",
+                        "rightwing_3rdquarter": "BottomLeftright",
+                        "leftwing_2ndquarter": "TopRightleft",
+                        "leftwing_1stquarter": "TopRightright",
+                        "middlewing_2ndquarter": "MiddleRightleft",
+                        "middlewing_1stquarter": "MiddleRightright",
+                        "rightwing_2ndquarter": "BottomRightleft",
+                        "rightwing_1stquarter": "BottomRightright"
+                        }
             else:
                 return {
                         "rightwing_4thquarter": "TopLeftleft",

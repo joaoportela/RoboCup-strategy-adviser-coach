@@ -661,7 +661,12 @@ class Statistics(object):
 
         return n
 
+    @accept_side
+    def goalopportunities(self):
+        """number of goal opportunities"""
+        goal_opp_dom = self.dom.getElementsByTagName("goalopportunities")[0]
 
+        return int(goal_opp_dom.getAttribute(self.side))
 
     @accept_side
     def passchains(self):
@@ -670,13 +675,6 @@ class Statistics(object):
     @accept_side
     def wingchanges(self):
         raise NotImplementedError()
-
-    @accept_side
-    def goalopportunities(self):
-        """number of goal opportunities"""
-        goal_opp_dom = self.dom.getElementsByTagName("goalopportunities")[0]
-
-        return int(goal_opp_dom.getAttribute(self.side))
 
 ####
 # functions that provide easier access to the statistics data

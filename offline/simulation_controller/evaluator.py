@@ -125,30 +125,49 @@ class ReliefEvaluator(BaseEvaluator):
         rightwing_2ndquarter_possession=self.statistics.ballpossession(zone="rightwing_2ndquarter")
         total_goal_opportunities=self.statistics.goalopportunities()
 
-
-        # TODO - the zones are wrong, of that I am sure!!!
-        # TODO 2 - multiply...
-        """
-        0.0091394370* 2-LeftBposs-Def+
-        0.0761864554*3-LeftBposs-Attack+ 0.0366654265* 2-MiddBposs-Def+
-        0.0458992625*4-MiddBposs-Attack+0.0759206186*1-RightBposs-Def+
-        0.0009476703*2-RightBposs-Def+ 0.0599595746* GoalsOpp
-        """
-        filtor = lambda x: not x.startswith("_")
-        loprintzor=filter(filtor,["{0}=>{1}".format(k,v) for k,v in locals().items()])
-        print "--"
-        print "\n".join(loprintzor)
-        print "--"
-        return 0
-        raise NotImplementedError("ReliefEvaluator is incomplete")
+        # I think someone might cry when they see this line...
+        # I personally think it is scary.
+        return (0.1085678173*first_half_passes+
+                0.0333793177*first_half_defensive_passes+
+                0.0796453572*second_half_passes+
+                0.0128294878*second_half_defensive_passes+
+                0.0083693729*second_half_offensive_passes+
+                0.0274159181*first_half_defensive_passmisses+
+                0.0708654848*second_half_passmisses+
+                0.0448306355*second_half_defensive_passmisses+
+                0.0577098364*first_half_goalmiss_faroutside+
+                0.0481160484*first_half_goalmiss_intercepted+
+                0.0018519818*first_half_goalmiss_outside+
+                0.0098023028*second_half_goalmiss_faroutside+
+                0.0099133630*second_half_goalmiss_intercepted+
+                0.0828931087*second_half_goalmiss_outside+
+                0.2604277820*total_goals+
+                0.1799456998*second_half_goals+
+                0.0273404987*penalty_area_goals+
+                0.2173460194*goal_area_goals+
+                0.0976643308*outside_penalty_area_goals+
+                0.1052917803*first_half_corners+
+                0.0734638367*first_half_kicksin+
+                0.0593205483*second_half_corners+
+                0.0309027898*second_half_passmisses_offside+
+                0.0064832968*broken_attacks+
+                0.0173590182*medium_attacks+
+                0.0845213352*total_attacks+
+                0.0091394370*leftwing_2ndquarter_possession+
+                0.0761864554*leftwing_3rdquarter_possession+
+                0.0366654265*middlewing_2ndquarter_possession+
+                0.0458992625*middlewing_4thquarter_possession+
+                0.0759206186*rightwing_1stquarter_possession+
+                0.0009476703*rightwing_2ndquarter_possession+
+                0.0599595746*total_goal_opportunities)
 
 class MARSEvaluator(BaseEvaluator):
     """ evaluates a team performance in a match according to the evaluation
     function discoreved using the MARS (Multivariate Additive Regression
     Splines) algorithm
     """
-    def __init__(self, myteam):
-        BaseEvaluator.__init__(self,myteam)
+    def __init__(self, statistics, myteam):
+        BaseEvaluator.__init__(self, statistics, myteam)
         # the evaluation function was calculated with a strange zone definition
         self.statistics.strange_zones=True
 
@@ -178,7 +197,46 @@ class MARSEvaluator(BaseEvaluator):
         -    29.29008 * pmax(0,          0.1794171 -  `2-MiddBposs-Def`)
         +    3.418717 * pmax(0,           0.564728 - `2-RightBposs-Def`)
         """
-        raise NotImplementedError("MARSEvaluator is incomplete")
+
+        first_half_passes=self.statistics.passes(half=1)
+        first_half_defensive_passes=self.statistics.passes(half=1,offensive=False)
+        first_half_offensive_passes=self.statistics.passes(half=1,offensive=True)
+        second_half_defensive_passes=self.statistics.passes(half=2,offensive=False)
+        first_half_passmisses=self.statistics.passmisses(half=1)
+        second_half_passmisses=self.statistics.passmisses(half=2)
+        second_half_defensive_passmisses=self.statistics.passmisses(half=2,offensive=False)
+        second_half_goalmiss_intercepted=self.statistics.goalmisses(half=2,misstype="GOALIE_CATCHED")
+        total_goals=self.statistics.goals()
+        first_half_kicksin=self.statistics.kicks_in(half=1)
+        first_half_passmisses_offside=self.statistics.passmisses(half=1,receiver_offside=True)
+        fast_attacks=self.statistics.attacks(attacktype="FAST")
+        total_attacks=self.statistics.attacks()
+        leftwing_1stquarter_possession=self.statistics.ballpossession(zone="leftwing_1stquarter")
+        leftwing_2ndquarter_possession=self.statistics.ballpossession(zone="leftwing_2ndquarter")
+        middlewing_2ndquarter_possession=self.statistics.ballpossession(zone="middlewing_2ndquarter")
+        rightwing_2ndquarter_possession=self.statistics.ballpossession(zone="rightwing_2ndquarter")
+
+        return (8.38818
+                - 0.3069785 * max(0, first_half_passes - 28)
+                + 0.5093597 * max(0, first_half_defensive_passes - 45)
+                - 0.2746145 * max(0, 45 - first_half_defensive_passes)
+                + 0.4722099 * max(0, first_half_offensive_passes - 13)
+                - 0.1705543 * max(0, first_half_offensive_passes - 21)
+                - 0.05941206 * max(0, second_half_defensive_passes - 22)
+                + 0.1417468 * max(0, 38 - first_half_passmisses)
+                + 0.5710572 * max(0, second_half_passmisses - 38)
+                - 0.5607114 * max(0, second_half_defensive_passmisses - 23)
+                - 0.7210807 * max(0, 1 - second_half_goalmiss_intercepted)
+                + 1.087935 * max(0, total_goals - 2)
+                - 1.516579 * max(0, 2 - total_goals)
+                - 0.2664058 * max(0, 6 - first_half_kicksin)
+                - 1.154919 * max(0, 1 - first_half_passmisses_offside)
+                - 1.654616 * max(0, 2 - fast_attacks)
+                - 0.6579848 * max(0, 6 - total_attacks)
+                - 11.67972 * max(0, 0.1489362 - leftwing_1stquarter_possession)
+                - 41.80000 * max(0, 0.1439394 - leftwing_2ndquarter_possession)
+                - 29.29008 * max(0, 0.1794171 - middlewing_2ndquarter_possession)
+                + 3.418717 * max(0, 0.564728 - rightwing_2ndquarter_possession) )
 
 class MixedEvalutator(BaseEvaluator):
     """ evaluates a team performance in a match using by mixing the results of

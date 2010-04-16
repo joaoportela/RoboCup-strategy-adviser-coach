@@ -30,7 +30,11 @@ def main():
 
     reval=ReliefEvaluator(fcpD_vs_fcpX.statistics(),"fcportugalD")
     reval_v=reval.value()
-    print "relief evaluator score (zero for now)... ", reval_v
+    print "relief evaluator score ", reval_v
+
+    marseval=MARSEvaluator(fcpD_vs_fcpX.statistics(),"fcportugalD")
+    marseval_v=marseval.value()
+    print "MARS evaluator score ", marseval_v
 
 
 if __name__ == '__main__':

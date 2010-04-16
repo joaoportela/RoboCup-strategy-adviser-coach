@@ -216,8 +216,6 @@ class Statistics(object):
     def side(self,value):
         if not(value in Statistics.SIDES or value is None):
             raise StatisticsError("side {0} is invalid".format(value))
-        # TODO - maibe this should raise an exception instead
-        assert value in Statistics.SIDES or value is None, "%s is invalid" % (value,)
         self._side = value
         if value is not None:
             self._team = self.teams[Statistics.SIDES.index(value)]

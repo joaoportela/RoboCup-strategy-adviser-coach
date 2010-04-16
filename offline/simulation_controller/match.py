@@ -91,9 +91,11 @@ class Match(object):
             logging.warning("matchdir not provided to the match instance.")
             # the matchdir
             self.matchdir = os.path.join(config.matchesdir, self.name)
-            # TODO - more logging...
             if not os.path.isdir(self.matchdir):
                 os.mkdir(self.matchdir)
+                warnmsg="matchdir had to be created by match class. this should"
+                warnmsg+="have been done by the confrontation class."
+                logging.warning(warnmsg)
 
         if self._id is not None:
             # needs match dir...

@@ -75,7 +75,10 @@ def theid(name):
     """from the filename (basename) get the numbers in the beggining (the
     date)"""
     NUMBERS_PATTERN = re.compile(r'\d+')
-    return NUMBERS_PATTERN.match(os.path.basename(name)).group(0)
+    match = NUMBERS_PATTERN.match(os.path.basename(name))
+    if match and len(match.group(0)) == 12:
+        return match.group(0)
+    return None
 
 def allrcgs(confrontationdir):
     """search for all the rcgs in "confrontationdir" directory

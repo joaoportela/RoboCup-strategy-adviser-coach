@@ -124,7 +124,7 @@ class Team(object):
         return "Team('{0}')".format(self.name)
 
     def encode(self):
-        """encode the team from a json compatible object (tuple to be specific)"""
+        """encode the team to a json compatible object (tuple to be specific)"""
         return ("Team",[self.name])
 
     @staticmethod

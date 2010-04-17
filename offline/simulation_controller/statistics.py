@@ -136,6 +136,9 @@ class Statistics(object):
                 warn = "there is a team named '{0}'. this is sh*t prone!".format(team)
                 logging.warning(warn)
 
+        # TODO - if the statistics analysis is of the wrong version, try to
+        # recreate..
+
         dbg="statistics object instanciated. ( xml: '{0}' teams: '{1}', side: '{2}')"
         logging.debug(dbg.format(self.xml,self.teams, self.team))
 

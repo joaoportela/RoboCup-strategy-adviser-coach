@@ -38,6 +38,24 @@ MYCLASSPATH="${{scriptsdir}}/soccerscope.jar:${{scriptsdir}}/java-xmlbuilder-0.3
 CLASSPATH="${{MYCLASSPATH}}" java ${{jclass}} --batch "${{rcgc}}" "${{xml}}" > ${{sout}} 2> ${{serr}}
 """
 
+STATISTICS_SCRIPT_NO_CONVERT="""#! /bin/bash
+
+scriptsdir="{scriptsdir}"
+dirname="{dirname}"
+rcg="{rcg}"
+xml="{xml}"
+
+cd ${{dirname}}
+
+jclass="soccerscope.SoccerScope"
+sout="${{dirname}}/statistics-output.log"
+serr="${{dirname}}/statistics-error.log"
+
+# generate the statistics
+MYCLASSPATH="${{scriptsdir}}/soccerscope.jar:${{scriptsdir}}/java-xmlbuilder-0.3.jar"
+CLASSPATH="${{MYCLASSPATH}}" java ${{jclass}} --batch "${{rcg}}" "${{xml}}" > ${{sout}} 2> ${{serr}}
+"""
+
 # convert the rcg to a supported version
 def _converted_name(rcg):
     bname, ext = os.path.splitext(rcg)
@@ -47,25 +65,45 @@ def _converted_name(rcg):
     rcgc = bname + "_convert" + ext
     return rcgc
 
-def create_from_rcg(rcg, *args,**kwds):
+def valid_version(xml):
+    with open(xml,"r") as f:
+        dom=minidom.parse(xml)
+        version=dom.getElementsByTagName("analysis")[0].getAttribute("version")
+        return version==config.statistics_version
+
+def rcgtoxml(rcg,convert=False):
     scriptsdir=config.scripts_dir
     dirname=os.path.dirname(rcg)
-    rcgconvert = config.rcgconvert
-    rcgc=_converted_name(rcg)
-    xml=rcgc+".xml"
-
-    if os.path.isfile(xml):
-        dbg="statistics file for {0} already exists".format(rcg)
-        logging.debug(dbg)
+    if convert:
+        script=STATISTICS_SCRIPT
+        rcgconvert=config.rcgconvert
+        rcgc=_converted_name(rcg)
+        xml=rcgc+".xml"
     else:
-        script_name = "calculate_statistics.sh"
-        script_name = os.path.join(dirname,script_name)
-        content = STATISTICS_SCRIPT.format(**locals())
-        write_script(script_name, content)
-        dbg="converting {0} and creating statistics xml".format(rcg)
-        logging.debug(dbg)
-        runcommand(script_name)
+        script=STATISTICS_SCRIPT_NO_CONVERT
+        xml=rcg+".xml"
+    if os.path.isfile(xml):
+        if valid_version(xml):
+            dbg="statistics file for {0} already exists and is valid".format(rcg)
+            logging.debug(dbg)
+            return xml
+        else:
+            dbg="statistics file for {0} already exists but its version is wrong".format(rcg)
+            logging.debug(dbg)
 
+    script_name = "calculate_statistics.sh"
+    script_name = os.path.join(dirname,script_name)
+    content = script.format(**locals())
+    write_script(script_name, content)
+    dbg="creating statistics xml from {0}".format(rcg)
+    logging.debug(dbg)
+    runcommand(script_name)
+
+    return xml
+
+
+def create_from_rcg(rcg, *args,**kwds):
+    xml=rcgtoxml(rcg,convert=True)
     return Statistics(xml=xml,*args,**kwds)
 
 class StatisticsError(Exception):
@@ -119,7 +157,18 @@ class Statistics(object):
     def __init__(self, xml, side=None, teams=None):
         self.strange_zones=False
         if not os.path.exists(xml):
+            # TODO maibe try to recover by finding the rcg
             raise StatisticsError('{0} not found'.format(xml))
+        if not valid_version(xml):
+            rcg, ext = os.path.splitext(xml)
+            if os.path.isfile(rcg):
+                warnmsg="xml version was not valid. recreating from {0}.".format(rcg)
+                logging.warn(warnmsg)
+                xml=rcgtoxml(rcg,convert=False)
+            else:
+                errmsg="invalid xml version. "
+                errmsg+="rcg file to recreate was not found."
+                raise StatisticsError(errmsg)
         self._xml=xml
         self._dom = minidom.parse(xml)
         if teams is None:

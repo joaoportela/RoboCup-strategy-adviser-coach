@@ -45,6 +45,7 @@ def usage():
 
 if __name__ == "__main__":
     if len(sys.argv) == 2:
+        print "generating output.csv for {0}".format(sys.argv[0])
         gen_csv(sys.argv[1],"output.csv")
     else:
         print usage()

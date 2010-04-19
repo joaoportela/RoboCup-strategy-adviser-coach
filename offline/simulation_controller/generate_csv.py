@@ -7,8 +7,11 @@ import config
 import logging
 from statistics import *
 from utils import *
+import csv_data
+from evaluator import *
 import os
 import sys
+import json
 
 def walk_xmls(dir_):
     for root, dirs, files in os.walk(dir_):
@@ -48,25 +51,31 @@ def get_data(dir_):
         for side in ["left","right"]:
             teamdata={}
             s.side=side
-            # TODO construct the team data
-            # when the team is fcportugalD include its configuration
             if s.team.lower() == "fcportugald":
                 teamdata["team_config"] = discoverteamconfig(xml,side)
             else:
                 teamdata["team_config"] = ""
+
+            # the actual data
+            for name, constructor in csv_data.EVALUATORS:
+                ev=constructor(s,s.team)
+                teamdata[name]=ev.value()
+            for name, function, kwargs in csv_data.STATISTICS:
+                teamdata[name]=function(s,**kwargs)
+
             matchdata.append((s.team,teamdata))
         matches.append(matchdata)
 
     return matches
 
 def print_data(csv_name, matches):
+    # headers=matches[0][0][1].keys()
+    headers=[item[0] for item in csv_data.EVALUATORS+csv_data.STATISTICS]
+    headers.insert(0,"team_config")
     # write the file...
     with open(csv_name, 'w') as csv_file:
         # table headers
-        headers=matches[0][1].keys()
-        csv_file.write("Team;")
-        for h in headers:
-            csv_file.write(headers)
+        csv_file.write("Team; "+"; ".join(headers)+"\n")
         for match in matches:
             for team,teamdata in match:
                 csv_file.write(team+"; ")

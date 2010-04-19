@@ -56,6 +56,17 @@ MYCLASSPATH="${{scriptsdir}}/soccerscope.jar:${{scriptsdir}}/java-xmlbuilder-0.3
 CLASSPATH="${{MYCLASSPATH}}" java ${{jclass}} --batch "${{rcg}}" "${{xml}}" > ${{sout}} 2> ${{serr}}
 """
 
+ATTACK_TYPES=["BROKEN", "SLOW", "MEDIUM", "FAST"]
+GOALMISS_TYPES=["GOALIE_CATCHED", "FAR_OUTSIDE", "OUTSIDE"]
+KICK_AREAS=["GOAL_AREA", "PENALTY_AREA", "FAR_SHOT"]
+ZONES_LIST=["leftwing_1stquarter", "leftwing_2ndquarter",
+        "middlewing_1stquarter", "middlewing_2ndquarter",
+        "rightwing_1stquarter", "rightwing_2ndquarter", "leftwing_3rdquarter",
+        "leftwing_4thquarter", "middlewing_3rdquarter",
+        "middlewing_4thquarter", "rightwing_3rdquarter",
+        "rightwing_4thquarter"]
+
+
 # convert the rcg to a supported version
 def _converted_name(rcg):
     bname, ext = os.path.splitext(rcg)
@@ -319,7 +330,7 @@ class Statistics(object):
                     "rightwing_3rdquarter": "BottomRightleft",
                     "rightwing_4thquarter": "BottomRightright"
                     }
-        elif side == "right":
+        elif self.side == "right":
             if self.strange_zones:
                 # some evaluators have the zones defined
                 # in a strange way. (but the left side is the same)
@@ -511,7 +522,6 @@ class Statistics(object):
         note: goals inside the GOAL_AREA (smaller one) are not considered to be
         inside the PENALTY_AREA (although it would be correct to assume that).
         """
-        KICK_AREAS = ["GOAL_AREA", "PENALTY_AREA", "FAR_SHOT"]
 
         dom_goals = self.dom.getElementsByTagName("goals")[0]
         if half is None and kick_area is None:
@@ -554,7 +564,6 @@ class Statistics(object):
 
         misstype - type of goal miss must be one of ["GOALIE_CATCHED", "FAR_OUTSIDE", "OUTSIDE"]
         """
-        MISS_TYPES=["GOALIE_CATCHED", "FAR_OUTSIDE", "OUTSIDE"]
         dom_goalmisses=self.dom.getElementsByTagName("goalmisses")[0]
 
         if half is None and misstype is None:
@@ -564,7 +573,7 @@ class Statistics(object):
         starttime, endtime = Statistics._timeofhalf(half)
 
         # validate argument
-        if misstype not in MISS_TYPES + [None]:
+        if misstype not in GOALMISS_TYPES + [None]:
             raise StatisticsError("unkown miss type {0}".format(misstype))
         n=0
         # for every goal miss
@@ -599,7 +608,6 @@ class Statistics(object):
         half - the game half
         attacktype - the type of attack, one of ["BROKEN","SLOW","MEDIUM", "FAST"]
         """
-        ATTACK_TYPES=["BROKEN", "SLOW", "MEDIUM", "FAST"]
         attacks_dom = self.dom.getElementsByTagName("attacks")[0]
 
         if half is None and attacktype is None:
@@ -696,14 +704,23 @@ class Statistics(object):
         return n
 
     @accept_side
-    def ballpossession(self, zone=None):
+    def ballpossession(self, zone=None, ratio=False):
         """get the number of cicles with ball possession.
-        zone - only give the number of cicles for that zone"""
+        zone - only give the number of cicles for that zone
+        ratio - ratio is a boolean variable that when True makes the function return the ball
+        possession ratio instead of ball possession time"""
+
+        if ratio not in [True, False]:
+            errmsg="ratio must be boolean. got {0}".format(ration)
+            raise StatisticsError(errmsg)
 
         bpos_dom = self.dom.getElementsByTagName("ballpossession")[0]
         if zone is None:
-            # filters defined, easy
-            return int(bpos_dom.getAttribute(self.side))
+            # no filters defined, easy
+            n=int(bpos_dom.getAttribute(self.side))
+            if ratio:
+                n=n/float(bpos_dom.getAttribute("total"))
+            return n
 
         # validate the zone argument
         if zone not in self.zones:
@@ -719,7 +736,10 @@ class Statistics(object):
                         continue
 
                     # we got this far, its valid
-                    n+=int(possession.getAttribute("time"))
+                    if ratio:
+                        n+=float(possession.getAttribute("percent"))
+                    else:
+                        n+=int(possession.getAttribute("time"))
 
         return n
 
@@ -732,11 +752,37 @@ class Statistics(object):
 
     @accept_side
     def passchains(self):
-        raise NotImplementedError()
+        passchains_dom=self.dom.getElementsByTagName("passchains")[0]
+        return int(passchains_dom.getAttribute(self.side))
 
     @accept_side
-    def wingchanges(self):
-        raise NotImplementedError()
+    def wingchanges(self, totalvariation=None):
+        if totalvariation not in [True, False, None]:
+            errmsg="totalvariation must be boolean of none. was {0}"
+            raise StatisticsError(errmsg.format(totalvariation))
+
+        dom_wingchanges=self.dom.getElementsByTagName("wingchanges")[0]
+
+        if totalvariation is None:
+            # no filters, easy.
+            return int(dom_wingchanges.getAttribute(self.side))
+
+        n=0
+        for dom_wingchange in dom_wingchanges.getElementsByTagName("wingchange"):
+            wingchange_sideid=dom_wingchange.getElementsByTagName("pass")[0].getAttribute("team")
+            if wingchange_sideid != self.side_id:
+                #not my team, move along
+                continue
+
+            if totalvariation is not None:
+                tot_var=str2bool(dom_wingchange.getAttribute("totalvariation"))
+                if tot_var != totalvariation:
+                    # not the type of variation i wanted.
+                    continue
+
+            # we got this far, increment
+            n+=1
+
 
 ####
 # functions that provide easier access to the statistics data

@@ -7,10 +7,12 @@ import os
 import logging
 import random
 import functools
+import json
 
 from utils import *
 from match import *
 from statistics import *
+from team import *
 
 class StatisticsAgregatorError(Exception):
     def __init__(self, msg='Unspecified'):
@@ -128,6 +130,9 @@ class Confrontation(object):
             dbgmsg = "creating confrontation directory {0}".format(self.confrontationdir)
             logging.debug(dbgmsg)
             os.mkdir(self.confrontationdir)
+        # confrontation instanciated.
+        # dump its metadata
+        self.dump_metadata()
 
 
     def allmatches(self):
@@ -183,4 +188,43 @@ class Confrontation(object):
         obj is considered False)
         """
         return True
+
+    @staticmethod
+    def decode(data):
+        """decode a confrontation from json compatible data."""
+        teamA = Team.decode(data['team_a'])
+        teamB = Team.decode(data['team_b'])
+        return Confrontation(teamA,teamB)
+
+
+    def encode(self):
+        """endode a confrontation into json compatible data."""
+        return {'team_a':self.teamA.encode(), 'team_b':self.teamB.encode()}
+
+    @staticmethod
+    def from_metadata(metadata_fname):
+        with open(metadata_fname) as f:
+            data=json.load(f)
+
+        confront=Confrontation.decode(data)
+
+        # validations...
+        metadatadir=os.path.dirname(metadata_fname)
+        confrontationdir=confront.confrontationdir
+        if confrontationdir != metadatadir:
+            # instanciated confrontation bellongs to a diferent directory
+            # than the one where the metadata was loaded from.
+            errmsg="confrontation dir is {0} but should be {1}"
+            raise ConfrontationError(errmsg.format(confrontationdir,metadatadir))
+
+        return confront
+
+
+    def dump_metadata(self,metadata_fname=None):
+        if metadata_fname is None:
+            metadata_fname=os.path.join(self.confrontationdir,"confrontation_metadata.json")
+
+        data=self.encode()
+        with open(metadata_fname, "w") as f:
+            json.dump(data, f, sort_keys=True, indent=4)
 

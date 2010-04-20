@@ -130,7 +130,6 @@ def migrate(source,target, move=False):
 
         # the id is now on the target
         target_ids.add(id_)
-        print "target_ids",target_ids
 
 def merge(target,sources, move=False):
     global target_ids

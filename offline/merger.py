@@ -12,7 +12,7 @@ import shutil
 def usage():
     str_="usage: python {0} [OPTIONS] <TARGET_MATCHESDIR> <SOURCE_MATCHESDIR>...\n\n"
     str_+="copy/move the matches data from multiple SOURCE matches "
-    str_+="directories to the TARGET directory"
+    str_+="directories to the TARGET directory\n"
     str_+="OPTIONS\n\t--move - moves the files instead of copying"
     return str_.format(sys.argv[0])
 
@@ -145,7 +145,6 @@ if __name__ == '__main__':
         if arg == "--move":
             move=True
             del sys.argv[i]
-
     if len(sys.argv) > 2 and os.path.isdir(sys.argv[1]):
         target_dir=sys.argv[1]
         source_dirs=sys.argv[2:]
@@ -153,7 +152,7 @@ if __name__ == '__main__':
         # validate source_dirs
         if not all(map(os.path.isdir, source_dirs)):
             raise Exception("One of the source dirs is not a directory")
-        for s in source_dirs:
+        for s in [target_dir]+source_dirs:
             dname=(s.rstrip("/")).rpartition("/")[-1]
             if dname != "matches":
                 raise Exception("matches dir is probably invalid", dname)

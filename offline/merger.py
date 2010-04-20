@@ -43,6 +43,7 @@ def fix_uncompressed(dir_):
             file_=os.path.join(root,file_)
             if not is_compressed(file_):
                 compress(file_)
+
 def theid(name):
     """from the filename (basename) get the numbers in the beggining (the
     date)"""

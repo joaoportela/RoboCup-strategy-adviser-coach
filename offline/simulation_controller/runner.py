@@ -13,9 +13,10 @@ from evaluator import *
 
 def main():
     fcpD = FCPortugal({"formation" : 1})
-    print fcpD
     fcpX = Team("fcportugalX")
     fcpD_vs_fcpX = Confrontation(fcpD, fcpX)
+    # metadata_f='/home/joao/autorun/matches/fcportugalD-formation1_mentality2_gamepace2__vs__fcportugalX/confrontation_metadata.json'
+    # fcpD_vs_fcpX = Confrontation.from_metadata(metadata_f)
     print len(fcpD_vs_fcpX)
     print "matches: \n"+"\n".join([str(x) for x in fcpD_vs_fcpX.allmatches()])
 

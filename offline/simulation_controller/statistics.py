@@ -67,7 +67,7 @@ ZONES_LIST=["leftwing_1stquarter", "leftwing_2ndquarter",
         "rightwing_4thquarter"]
 
 
-# convert the rcg to a supported version
+# name that the supported version rcg will have
 def _converted_name(rcg):
     bname, ext = os.path.splitext(rcg)
     if ext == ".gz":
@@ -79,7 +79,10 @@ def _converted_name(rcg):
 def valid_version(xml):
     with open(xml,"r") as f:
         dom=minidom.parse(xml)
-        version=dom.getElementsByTagName("analysis")[0].getAttribute("version")
+        analysis_doms=dom.getElementsByTagName("analysis")
+        if len(analysis_doms) != 1:
+            return False
+        version=analysis_doms[0].getAttribute("version")
         return version==config.statistics_version
 
 def rcgtoxml(rcg,convert=False):
@@ -167,24 +170,13 @@ class Statistics(object):
 
     def __init__(self, xml, side=None, teams=None):
         self.strange_zones=False
-        if not os.path.exists(xml):
-            # TODO maibe try to recover by finding the rcg
-            raise StatisticsError('{0} not found'.format(xml))
-        if not valid_version(xml):
-            rcg, ext = os.path.splitext(xml)
-            if os.path.isfile(rcg):
-                warnmsg="xml version was not valid. recreating from {0}.".format(rcg)
-                logging.warn(warnmsg)
-                xml=rcgtoxml(rcg,convert=False)
-            else:
-                errmsg="invalid xml version. "
-                errmsg+="rcg file to recreate was not found."
-                raise StatisticsError(errmsg)
+
+        xml=self._valid_xml(xml)
         self._xml=xml
         self._dom = minidom.parse(xml)
         if teams is None:
             self._teams = Statistics.teamnames_from_xml(self.xml)
-            logging.warning("calculating team names from the xml file")
+            logging.debug("calculating team names from the xml file")
         else:
             self._teams = teams
             self._validate_teams()
@@ -193,14 +185,40 @@ class Statistics(object):
 
         for team in self.teams:
             if team in Statistics.SIDES:
-                warn = "there is a team named '{0}'. this is sh*t prone!".format(team)
+                warn = "there is a team named '{0}'. This is sh*t prone!".format(team)
                 logging.warning(warn)
 
-        # TODO - if the statistics analysis is of the wrong version, try to
-        # recreate..
-
-        dbg="statistics object instanciated. ( xml: '{0}' teams: '{1}', side: '{2}')"
+        dbg="statistics object instantiated. ( xml: '{0}' teams: '{1}', side: '{2}')"
         logging.debug(dbg.format(self.xml,self.teams, self.team))
+
+
+    def _valid_xml(self, xml):
+        """auxiliary method that checks if the XML file is valid and if it is not
+        tries to make it valid. Raises an exception when it gracefully cannot recover.
+        """
+        if not (os.path.exists(xml) and valid_version(xml)):
+            rcg, ext = os.path.splitext(xml)
+            if os.path.isfile(rcg):
+                warnmsg="xml was not valid. Recreating from {0}.".format(rcg)
+                logging.warn(warnmsg)
+                xml=rcgtoxml(rcg,convert=False)
+                if not(os.path.exists(xml) and valid_version(xml)):
+                    # we still couldn't get the right xml.
+                    errmsg="even after trying to recreate the correct xml file could"
+                    errmsg+="not be obtained."
+                    raise StatisticsError(errmsg)
+            else:
+                # print the appropriate error message when we could not have the
+                # correct version xml and could not recover.
+                if not os.path.exists(xml):
+                    errmsg="{0} not found. Could not find the rcg file to"
+                    errmsg+="recreate."
+                elif not valid_version(xml):
+                    errmsg="{0} version was wrong."
+                    errmsg+="rcg file to recreate was not found."
+                raise StatisticsError(errmsg.format(xml))
+        # when we get this far without an exception, everything is OK
+        return xml
 
 
     def _validate_teams(self):

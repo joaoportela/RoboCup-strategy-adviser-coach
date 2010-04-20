@@ -71,6 +71,15 @@ def mymove(src,dst):
     print "moving {0} to {1}".format(src,dst)
     return shutil.move(src,dst)
 
+def treeids(dir_):
+    """gives all the diferent ids of all the files that have and id (files that
+    match the pattern /(\d+).+/"""
+    treefiles=[]
+    for root, dirs, files in os.walk(dir_):
+        files_withid=filter(theid, files)
+        treefiles.extend(files_withid)
+    return set(map(theid, treefiles))
+
 def migrate(source,target, move=False):
     """copies/moves the directory from source to target assuming some special
     conditions related to the problem at hand
@@ -89,16 +98,12 @@ def migrate(source,target, move=False):
     files_to_move = os.listdir(source)
     # only include files that have ids
     files_to_move = filter(theid, files_to_move)
-    # get all the diferent ids
+    # get all the different ids
     source_dict=dict_by_id(files_to_move)
-
-    # get the files and ids that exist in the target
-    files_in_target=filter(theid, os.listdir(target))
-    target_ids = set(map(theid, files_in_target))
 
     # check for name clashing
     for id_, fnames in source_dict.iteritems():
-        if id_ in target_ids:
+        if id_ in target_ids: # if there is id clashing
             # apply resolution techniques...
             oldid=id_
 
@@ -109,7 +114,7 @@ def migrate(source,target, move=False):
 
             id_=str(newid)
             target_transform = lambda x: x.replace(oldid, id_, 1)
-            print >> sys.stderr, "converted", oldid, "to", id_
+            print >> sys.stderr, "converting", oldid, "to", id_
         else:
             target_transform = lambda x: x
 
@@ -125,8 +130,11 @@ def migrate(source,target, move=False):
 
         # the id is now on the target
         target_ids.add(id_)
+        print "target_ids",target_ids
 
 def merge(target,sources, move=False):
+    global target_ids
+    target_ids=treeids(target)
     j=os.path.join
     for source in sources:
         print "processing source", source
@@ -137,7 +145,6 @@ def merge(target,sources, move=False):
         for directory in directories:
             print "\tprocessing confrontation dir", directory
             migrate(j(source,directory), j(target,directory), move=move)
-
 
 if __name__ == '__main__':
     move=False

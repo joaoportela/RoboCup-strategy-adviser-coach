@@ -48,13 +48,14 @@ public class NonGUISoccerScope {
 	private static void printXML(SceneSet sceneSet, String xmlFilename)
 			throws Exception {
 		XMLBuilder builder = XMLBuilder.create("analysis");
-		builder.attr("version", "1.0");
+		builder.attr("version", "1.01");
 		
-		Scene fscene = WorldModel.getInstance().getSceneSet().iterator().next();
-		XMLBuilder left = builder.elem("leftteam").attr("name",fscene.left.name);
+		Scene lscene = WorldModel.getInstance().getSceneSet().lastScene();
+
+		XMLBuilder left = builder.elem("leftteam").attr("name",lscene.left.name);
 		int[] plindex = Team.firstAndLastPlayerIndexes(Team.LEFT_SIDE);
 		for(int iter = plindex[0]; iter < plindex[1]; iter++) {
-			Player p = fscene.player[iter];
+			Player p = lscene.player[iter];
 			left.elem("player")
 				.attr("unum",String.valueOf(p.unum))
 				.attr("viewQuality",p.viewStr())
@@ -62,10 +63,10 @@ public class NonGUISoccerScope {
 		}
 
 		
-		XMLBuilder right = builder.elem("rightteam").attr("name",fscene.right.name);
+		XMLBuilder right = builder.elem("rightteam").attr("name",lscene.right.name);
 		plindex = Team.firstAndLastPlayerIndexes(Team.RIGHT_SIDE);
 		for(int iter = plindex[0]; iter < plindex[1]; iter++) {
-			Player p = fscene.player[iter];
+			Player p = lscene.player[iter];
 			right.elem("player")
 				.attr("unum",String.valueOf(p.unum))
 				.attr("viewQuality",p.viewStr())

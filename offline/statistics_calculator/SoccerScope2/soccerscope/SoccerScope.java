@@ -38,8 +38,8 @@ public class SoccerScope extends JFrame {
 		if (args.length > 0) {
 			if (args[0].equals("--batch") && args.length == 3) {
 				String filename = args[1];
+				String xmlFilename = args[2];
 				try {
-					String xmlFilename = args[2];
 					NonGUISoccerScope.run(filename, xmlFilename);
 				} catch (Exception e) {
 					System.err.println("batch mode failed...");
@@ -50,7 +50,7 @@ public class SoccerScope extends JFrame {
 			} else {
 				System.out.format("invalid option %s or wrong"
 						+ " number of arguments (0 or 2)\n", args[0]);
-				System.out.println("usage [--batch inputFile]"
+				System.out.println("usage [--batch input_file output_file]"
 						+ "\nif you just want to use the GUI,"
 						+ " don't use any parameters.");
 				System.out.println("defaulting to GUI anyway.");

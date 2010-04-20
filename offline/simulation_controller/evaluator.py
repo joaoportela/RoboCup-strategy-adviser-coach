@@ -4,7 +4,7 @@ evaluators are also defined. the evaluators are not to be used
 intermixedly(?) (due to the return values not beeing in the same scale)
 """
 
-__all__ = ["BasicEvaluator", "GoalDifferenceEvaluator", "ReliefEvaluator",
+__all__ = ["PointsEvaluator", "GoalDifferenceEvaluator", "ReliefEvaluator",
         "MARSEvaluator"]
 
 class EvaluatorError(Exception):
@@ -19,7 +19,7 @@ class BaseEvaluator(object):
     def value():
         raise NotImplementedError( "Must implement the 'value' method")
 
-class BasicEvaluator(BaseEvaluator):
+class PointsEvaluator(BaseEvaluator):
     """ evaluates a team performance in a match similar to the soccer rules (0
     - loss, 1 - draw, 3 - victory)
     """

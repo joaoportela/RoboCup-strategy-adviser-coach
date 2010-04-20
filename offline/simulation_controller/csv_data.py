@@ -10,7 +10,7 @@ from evaluator import *
 
 # EVALUATORS contains the list of evaluators.
 # it is in the format: (name,constructor)
-EVALUATORS=[("BasicEvaluator", BasicEvaluator), ("GoalDifferenceEvaluator",
+EVALUATORS=[("PointsEvaluator", PointsEvaluator), ("GoalDifferenceEvaluator",
     GoalDifferenceEvaluator), ("ReliefEvaluator", ReliefEvaluator),
     ("MARSEvaluator", MARSEvaluator)]
 

@@ -65,7 +65,7 @@ public class PassChainAnalyzer extends SceneAnalyzer implements Xmling {
 	}
 
 	public List<List<Pass>> getPassChains() {
-		System.out.println("getting the pass chains!!");
+		// System.out.println("getting the pass chains!!");
 		// check if we have already calculated the pass chains
 		if (this.passChains.size() > 0) {
 			// System.out.println("pass chains already calculated!!");

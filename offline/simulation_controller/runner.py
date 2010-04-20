@@ -17,11 +17,11 @@ def dotest(confrontation):
     print len(confrontation)
     print "matches: \n"+"\n".join([str(x) for x in confrontation.allmatches()])
 
-    while len(confrontation) <  1:
+    while len(confrontation) <  2:
         confrontation.playnewmatch()
 
-    beval=BasicEvaluator(confrontation.statistics(),"fcportugalD")
-    print "according to the basic evaluator the score is: ", beval.value()
+    peval=PointsEvaluator(confrontation.statistics(),"fcportugalD")
+    print "according to the basic evaluator the score is: ", peval.value()
 
     gdiff=GoalDifferenceEvaluator(confrontation.statistics(),"fcportugalD")
     print "according to the goal difference evaluator the score is: ", gdiff.value()

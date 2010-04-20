@@ -2,7 +2,7 @@
 
 __all__ = ["all_equal", "runcommand", "fake_runcommand", "write_script",
         "allrcgs", "allmetadata", "allmatchesids", "theid",
-        "confrontation_name", "same_team", "str2bool", "human_size"]
+        "confrontation_name", "same_team", "str2bool", "human_size", "average"]
 
 import logging
 import time
@@ -10,6 +10,11 @@ import os
 import stat
 import glob
 import re
+
+def average(l):
+    """returns the average of the elements of the list l."""
+    sum_ = sum(l,0.0)
+    return sum_/len(l)
 
 def str2bool(s):
     if s.strip().lower() in ["true","t","1"]:

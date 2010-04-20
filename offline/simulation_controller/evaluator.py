@@ -7,6 +7,8 @@ intermixedly(?) (due to the return values not beeing in the same scale)
 __all__ = ["PointsEvaluator", "GoalDifferenceEvaluator", "ReliefEvaluator",
         "MARSEvaluator"]
 
+from utils import *
+
 class EvaluatorError(Exception):
     def __init__(self, msg='Unspecified'):
         Exception.__init__(self, msg)
@@ -26,8 +28,8 @@ class PointsEvaluator(BaseEvaluator):
     def __init__(self, statistics, myteam):
         BaseEvaluator.__init__(self, statistics, myteam)
 
-    def value(self):
-        s=self.statistics
+    @staticmethod
+    def _match_points(s):
         diff = s.goals()-s.goalssuffered()
         if diff > 0: # victory
             return 3
@@ -35,6 +37,14 @@ class PointsEvaluator(BaseEvaluator):
             return 0
         else: # draw
             return 1
+
+    def value(self):
+        # if it is a statistics agregator do the average of points per match.
+        if hasattr(self.statistics,"statistics"):
+            ss=self.statistics.statistics
+            return average([PointsEvaluator._match_points(s) for s in ss])
+        else:
+            return PointsEvaluator._match_points(self.statistics)
 
 class GoalDifferenceEvaluator(BaseEvaluator):
     """ evaluates a team performance in a match based on the goal difference

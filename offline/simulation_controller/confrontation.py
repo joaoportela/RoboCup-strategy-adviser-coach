@@ -85,12 +85,11 @@ class StatisticsAgregator(object):
             raise StatisticsAgregatorError("team must be set before calling these methods")
 
         results = [func(s,*args,**kwargs) for s in self.statistics]
-        sum_ = sum(results,0.0)
-        average = sum_/len(results)
+        average_=average(results)
 
         #restore
         self.team=backup
-        return average
+        return average_
 
     FUNCS_TO_AVERAGE=["passes", "passmisses", "passchains", "wingchanges",
             "goals", "goalmisses", "goalssuffered", "goalopportunities",

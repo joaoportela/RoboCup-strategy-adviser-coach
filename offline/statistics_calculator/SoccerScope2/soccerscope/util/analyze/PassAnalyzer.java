@@ -167,7 +167,6 @@ public class PassAnalyzer extends SceneAnalyzer implements Xmling {
 	}
 
 	public GameEvent analyze(Scene scene, Scene prev) {
-
 		if (prev == null)
 			return null;
 

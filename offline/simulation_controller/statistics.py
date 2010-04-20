@@ -162,7 +162,7 @@ def accept_side(fn):
     return wrapper
 
 ##
-# statistics mega class
+# Statistics mega class
 ##
 
 class Statistics(object):
@@ -188,7 +188,7 @@ class Statistics(object):
                 warn = "there is a team named '{0}'. This is sh*t prone!".format(team)
                 logging.warning(warn)
 
-        dbg="statistics object instantiated. ( xml: '{0}' teams: '{1}', side: '{2}')"
+        dbg="Statistics object instantiated. ( xml: '{0}' teams: '{1}', side: '{2}')"
         logging.debug(dbg.format(self.xml,self.teams, self.team))
 
 
@@ -397,7 +397,7 @@ class Statistics(object):
         raise StatisticsError(errmsg.format(half))
 
     ###
-    # statistics extraction starts here.
+    # Statistics extraction starts here.
     ##
     @accept_side
     def passes(self, half=None, offensive=None, breakpass=None):

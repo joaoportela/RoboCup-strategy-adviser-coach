@@ -196,7 +196,6 @@ class Confrontation(object):
         teamB = Team.decode(data['team_b'])
         return Confrontation(teamA,teamB)
 
-
     def encode(self):
         """endode a confrontation into json compatible data."""
         return {'team_a':self.teamA.encode(), 'team_b':self.teamB.encode()}

@@ -10,19 +10,21 @@ from team import *
 from match import *
 from confrontation import *
 from evaluator import *
-
-METADATA_FILES=["/home/joao/autorun/matches/fcportugalD-formation1_mentality2_gamepace2__vs__fcportugalX/confrontation_metadata.json",
-        "/home/joao/autorun/matches/fcportugalD-formation1_mentality2_gamepace2__vs__fcportugalY/confrontation_metadata.json"]
+from utils import confrontation_metadata_files
 
 def dotest(confrontation):
+    # play the number of matches I want.
+    min_matches=3
+    print str(confrontation),"matches:",len(confrontation),"/",min_matches
+    while len(confrontation) <  min_matches:
+        confrontation.playnewmatch()
+
+    # print their info
     print "this confrontation has",len(confrontation), "matches.",
     if len(confrontation):
         print "they are: \n\t"+"\n\t".join([str(x) for x in confrontation.allmatches()])
     else:
-        print ","
-
-    while len(confrontation) <  1:
-        confrontation.playnewmatch()
+        print " "
 
     peval=PointsEvaluator(confrontation.statistics(),"fcportugalD")
     print "according to the points evaluator the score is: ", peval.value()
@@ -41,7 +43,8 @@ def main():
     # fcpX = Team("fcportugalY")
     # fcpD_vs_fcpX = Confrontation(fcpD, fcpX)
     # dotest(fcpD_vs_fcpX)
-    for metadata_f in METADATA_FILES:
+    for metadata_f in confrontation_metadata_files():
+        print metadata_f
         dotest(Confrontation.from_metadata(metadata_f))
 
 if __name__ == '__main__':

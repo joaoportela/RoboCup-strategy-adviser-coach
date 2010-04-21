@@ -2,7 +2,8 @@
 
 __all__ = ["all_equal", "runcommand", "fake_runcommand", "write_script",
         "allrcgs", "allmetadata", "allmatchesids", "theid",
-        "confrontation_name", "same_team", "str2bool", "human_size", "average"]
+        "confrontation_name", "same_team", "str2bool", "human_size", "average",
+        "confrontation_metadata_files"]
 
 import logging
 import time
@@ -10,6 +11,13 @@ import os
 import stat
 import glob
 import re
+import config
+
+def confrontation_metadata_files(dir_=config.matchesdir):
+    for root, dirs, files in os.walk(dir_):
+        for file_ in files:
+            if file_ == "confrontation_metadata.json":
+                yield os.path.join(root,file_)
 
 def average(l):
     """returns the average of the elements of the list l."""

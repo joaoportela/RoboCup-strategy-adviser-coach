@@ -20,7 +20,7 @@ statistics_version="1.01"
 base_strategy="base_strategy.conf"
 # folder to put the generated strategy files.
 strategy_folder = "strategies/"
-strategy_default={"formation": 1, "mentality": 2, "gamepace":2 }
+strategy_default={"formation": 1, "mentality": 2, "gamepace":2}
 strategy_data = {
         "formation":
         [
@@ -51,8 +51,8 @@ strategy_data = {
         }
 
 #match generation
-opponents=["kickofftug", "wrighteagle", "bahia2d"]# "nemesis",
-min_matches=4
+opponents=["kickofftug", "wrighteagle", "bahia2d", "nemesis"]
+min_matches=8
 # typical duration of a match (used for time prediction)
 duration=datetime.timedelta(minutes=12)
 size=9.5*(1024**2)#9.5MiB

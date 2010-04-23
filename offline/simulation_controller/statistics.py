@@ -231,12 +231,28 @@ class Statistics(object):
 
     @property
     def dom(self):
+        """document object model of this statistics instance"""
         if (not hasattr(self, "_dom")) or self._dom is None:
             logging.debug("instancianting minidom object")
             self._dom = minidom.parse(self.xml)
             logging.debug("minidom object instanciated")
 
         return self._dom
+
+    @dom.deleter
+    def dom(self):
+        # this operation is allowed to save memory.
+        del self._dom
+
+    def save_mem(self):
+        """method that tries to free some memory. may cause the next call to
+        some of the statistics methods slower.
+
+        note: currently only deletes the dom object. next call to a method that
+        uses this will require waiting for instanciating a new dom object.
+        """
+        #frees the dom object that ocupies a lot of memory
+        del self.dom
 
     @property
     def valid_magic(self):

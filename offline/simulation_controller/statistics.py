@@ -173,7 +173,6 @@ class Statistics(object):
 
         xml=self._valid_xml(xml)
         self._xml=xml
-        self._dom = minidom.parse(xml)
         if teams is None:
             self._teams = Statistics.teamnames_from_xml(self.xml)
             logging.debug("calculating team names from the xml file")
@@ -232,6 +231,11 @@ class Statistics(object):
 
     @property
     def dom(self):
+        if (not hasattr(self, "_dom")) or self._dom is None:
+            logging.debug("instancianting minidom object")
+            self._dom = minidom.parse(self.xml)
+            logging.debug("minidom object instanciated")
+
         return self._dom
 
     @property

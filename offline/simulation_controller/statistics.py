@@ -242,6 +242,7 @@ class Statistics(object):
     @dom.deleter
     def dom(self):
         # this operation is allowed to save memory.
+        logging.debug("deleting minidom object")
         del self._dom
 
     def save_mem(self):

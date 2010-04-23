@@ -7,6 +7,7 @@ import sys
 import re
 import glob
 import shutil
+import json
 
 
 def usage():
@@ -60,17 +61,51 @@ def dict_by_id(list_):
         id_dict.setdefault(key,[]).append(f)
     return id_dict
 
+def fixid(src,dst):
+    src_bname=os.path.basename(src)
+    dst_bname=os.path.basename(dst)
+
+    if src_bname == dst_bname:
+        # nothing to do
+        return
+
+    if (not dst_bname.endswith("_metadata.json")):
+        return
+
+    # they are different
+    # and are matches metadata files
+
+    # read.
+    with open(dst) as dst_f:
+        data=json.load(dst_f)
+
+    # update
+    oldid=data['id']
+    assert oldid == theid(src_bname), "{0} == {1}".format(oldid,theid(src_bname))
+    newid = theid(dst_bname)
+    data['id']=newid
+
+    #write
+    with open(dst,'w') as dst_f:
+        json.dump(data,dst_f)
+
+
+
 def mycopy(src,dst):
     assert os.path.isfile(src)
     assert not os.path.exists(dst)
     print "copying {0} to {1}".format(src,dst)
-    return shutil.copyfile(src,dst)
+    rv=shutil.copyfile(src,dst)
+    fixid(src,dst)
+    return rv
 
 def mymove(src,dst):
     assert os.path.isfile(src)
     assert not os.path.exists(dst)
     print "moving {0} to {1}".format(src,dst)
-    return shutil.move(src,dst)
+    rv=shutil.move(src,dst)
+    fixid(src,dst)
+    return rv
 
 def treeids(dir_):
     """gives all the diferent ids of all the files that have and id (files that
@@ -114,16 +149,16 @@ def migrate(source,target, move=False):
                 newid+=1
 
             id_=str(newid)
-            target_transform = lambda x: x.replace(oldid, id_, 1)
+            name_transform = lambda x: x.replace(oldid, id_, 1)
             print >> sys.stderr, "converting", oldid, "to", id_
         else:
-            target_transform = lambda x: x
+            name_transform = lambda x: x
 
         for fname in fnames:
             src=os.path.join(source, fname)
 
             # the target may require transformation
-            fname=target_transform(fname)
+            fname=name_transform(fname)
             dst=os.path.join(target,fname)
 
             # do the actual copy/move...
@@ -146,7 +181,8 @@ def merge(target,sources, move=False):
             print "\tprocessing confrontation dir", directory
             migrate(j(source,directory), j(target,directory), move=move)
 
-if __name__ == '__main__':
+def main2():
+    """ the main that moves the files..."""
     move=False
     for i,arg in enumerate(sys.argv):
         if arg == "--move":
@@ -172,4 +208,11 @@ if __name__ == '__main__':
         # print "running doctest"
         import doctest
         doctest.testmod()
+
+def main():
+    """the main that fixes the ids in the metadata files"""
+    pass
+
+if __name__ == '__main__':
+    main()
 

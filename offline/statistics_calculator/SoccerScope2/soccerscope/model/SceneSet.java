@@ -49,15 +49,39 @@ public class SceneSet {
 	 * @return �������ä���줿��
 	 */
 	public boolean addScene(Scene scene) {
+		return this.addScene(scene, false);
+	}
+
+	public boolean addScene(Scene scene, boolean liveAnalysis) {
+		Scene prev = null;
+		boolean addsuccess = false;
 		if (Time.isValid(scene.time)) {
 			if (!validTable[scene.time]) {
 				timeTable[scene.time] = sceneList.size();
 				validTable[scene.time] = true;
 			}
+
+			if (this.sceneList.size() > 0) {
+				// store the previous scene.
+				prev = this.lastScene();
+				if (prev.time == Time.MAX_TIME) {
+					// no need to count the first scene of all (which is
+					// initialized with that time)
+					prev = null;
+				}
+			}
+
 			sceneList.add(scene);
-			return true;
+			addsuccess = true;
 		}
-		return false;
+
+		if (addsuccess && liveAnalysis) {
+			addsuccess = false;
+			if (GameAnalyzer.analyzeLive(scene, prev) != null) {
+				addsuccess = true;
+			}
+		}
+		return addsuccess;
 	}
 
 	/**
@@ -223,5 +247,10 @@ public class SceneSet {
 				return ge;
 		}
 		return null;
+	}
+
+	public void init() {
+		eventList.clear();
+		GameAnalyzer.init();
 	}
 }

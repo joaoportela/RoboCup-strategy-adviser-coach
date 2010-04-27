@@ -11,6 +11,7 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
+import java.net.SocketTimeoutException;
 
 import soccerscope.model.Ball;
 import soccerscope.model.Param;
@@ -25,10 +26,12 @@ public class SoccerServerConnection extends SceneBuilder {
 	public static String DEFAULT_HOST = "localhost";
 	public static int DEFAULT_PROTOCOL = SceneBuilder.MONITOR_PROTOCOL_2;
 
+	public boolean timeover = false;
 	private InetAddress address;
 	private String host;
 	private int port;
 	private DatagramSocket socket;
+	private boolean timeoutset;
 
 	public SoccerServerConnection() throws UnknownHostException,
 			SocketException {
@@ -135,10 +138,27 @@ public class SoccerServerConnection extends SceneBuilder {
 	public int readPacket(byte[] packet) throws IOException {
 		DatagramPacket udppacket = new DatagramPacket(packet, packet.length);
 		try {
+			if (this.timeover && !this.timeoutset) {
+				// we already got a timeover. it is very likely that
+				// the server will disconnect soon. NOTE: there should be
+				// annother way to do this but this works. ;)
+				socket.setSoTimeout(1000);
+				this.timeoutset = true;
+			}
+			if (!this.timeover && this.timeoutset) {
+				//ups... unset the timeout.
+				socket.setSoTimeout(0);
+				this.timeoutset = false;
+			}
+
 			socket.receive(udppacket);
+
+		} catch (SocketTimeoutException te) {
+			return -1;
 		} catch (IOException ie) {
 			throw ie;
 		}
+
 		return udppacket.getLength();
 	}
 
@@ -386,6 +406,14 @@ public class SoccerServerConnection extends SceneBuilder {
 			} else {
 				scene.player[i + Param.MAX_PLAYER].offside = false;
 			}
+		}
+
+		if (scene.pmode.pmode == PlayMode.PM_TimeOver) {
+			this.timeover = true;
+		} else if (this.timeover) {
+			System.err
+					.println("WARNING: after a timeover scene occurred a non-timeover scene");
+			this.timeover = false;
 		}
 
 		return scene;

@@ -80,7 +80,7 @@ public class GameAnalyzer {
 		analyzerList.add(new GoalOpportunityAnalyzer());
 	}
 
-	private static void init() {
+	public static void init() {
 		Iterator<SceneAnalyzer> it = analyzerList.iterator();
 		while (it.hasNext()) {
 			it.next().init();
@@ -109,6 +109,32 @@ public class GameAnalyzer {
 		return eventList;
 	}
 
+	/**
+	 * Analyzes the scene 'scene'. Since this is a live analysis it assumes that
+	 * the previous scenes have already been analyzed, and that all the analysis
+	 * request are done in order.
+	 * 
+	 * @param prev
+	 *            - the previous scene of the scene being analyzed.
+	 * @param scene
+	 *            - the scene to be analyzed.
+	 * @return a list of events resulting of the analysis.
+	 */
+	public static ArrayList<GameEvent> analyzeLive(Scene scene, Scene prev) {
+		ArrayList<GameEvent> eventList = new ArrayList<GameEvent>();
+		GameEvent ge;
+
+		Iterator<SceneAnalyzer> it = analyzerList.iterator();
+		while (it.hasNext()) {
+			ge = it.next().analyze(scene, prev);
+			if (ge != null && !eventList.contains(ge)) {
+				eventList.add(ge);
+			}
+		}
+		return eventList;
+
+	}
+
 	public static SceneAnalyzer getAnalyzer(String name) {
 		Iterator<SceneAnalyzer> it = analyzerList.iterator();
 		while (it.hasNext()) {
@@ -121,6 +147,11 @@ public class GameAnalyzer {
 
 	public static TableModel getTableModel() {
 		TableModel dataModel = new AbstractTableModel() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			public String getColumnName(int col) {
 				switch (col) {
 				case SceneAnalyzer.ROW_NAME:
@@ -152,6 +183,11 @@ public class GameAnalyzer {
 
 	public static TableModel getLeftTableModel() {
 		TableModel dataModel = new AbstractTableModel() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			public String getColumnName(int col) {
 				if (col == 0)
 					return " ";
@@ -180,6 +216,11 @@ public class GameAnalyzer {
 
 	public static TableModel getRightTableModel() {
 		TableModel dataModel = new AbstractTableModel() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			public String getColumnName(int col) {
 				if (col == 0)
 					return " ";

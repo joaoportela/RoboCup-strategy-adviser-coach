@@ -214,31 +214,27 @@ public class BallPossessionByZonesAnalyzer extends SceneAnalyzer implements
 					inzone = true;
 					switch (PassAnalyzer.getPossessionTeam(i)) {
 					case PassAnalyzer.LEFT_SIDE:
-						System.out.println("CICLE(" + i
-								+ ") Team(LEFT_TEAM); zone(" + z.name + ")");
+						//System.out.println("CICLE(" +i+ ") Team(LEFT_TEAM); zone(" + z.name + ")");
 						z.countLeft++;
 						totalTime++;
 						break;
 					case PassAnalyzer.RIGHT_SIDE:
-						System.out.println("CICLE(" + i
-								+ ") Team(RIGHT_TEAM); zone(" + z.name + ")");
+						//System.out.println("CICLE(" +i+ ") Team(RIGHT_TEAM); zone(" + z.name + ")");
 						z.countRight++;
 						totalTime++;
 						break;
 					case PassAnalyzer.PLAY_ON:
 						z.countNeutral++;
 						totalTime++;
-						System.out.println("CICLE(" + i + ") Team(NONE); zone("
-								+ z.name + ")");
+						//System.out.println("CICLE(" + i + ") Team(NONE); zone("+ z.name + ")");
 						break;
 					default:
 						break;
 					}
 				}
 			}
-			if (!inzone)
-				System.out.println("CICLE(" + i + ") Team(?); zone(UNKNOW)"
-						+ "posicao bola:" + b);
+			//if (!inzone)
+				//System.out.println("CICLE(" + i + ") Team(?); zone(UNKNOW)"+ "posicao bola:" + b);
 		}
 
 		for (Zone z : zones) {

@@ -33,6 +33,11 @@ import soccerscope.view.StatusBar;
 
 public class SoccerScope extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public static void main(String args[]) {
 		// check if we should run in batch mode.
 		if (args.length > 0) {

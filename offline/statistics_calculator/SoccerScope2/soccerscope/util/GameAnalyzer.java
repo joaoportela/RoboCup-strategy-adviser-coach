@@ -99,7 +99,6 @@ public class GameAnalyzer {
 			prev = scene;
 			scene = sceneit.next();
 			Iterator<SceneAnalyzer> it = analyzerList.iterator();
-			System.err.println("final analysis scene: " + scene.time);
 			while (it.hasNext()) {
 				ge = it.next().analyze(scene, prev);
 				if (ge != null && !eventList.contains(ge)) {

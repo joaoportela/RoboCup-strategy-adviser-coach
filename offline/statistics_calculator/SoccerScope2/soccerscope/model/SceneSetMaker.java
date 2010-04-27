@@ -72,9 +72,6 @@ public class SceneSetMaker extends Thread {
 			case SceneBuilder.SHOW_MODE:
 				scene = builder.makeScene(packet, playmode, left, right);
 				sceneSet.addScene(scene, liveAnalysis);
-				if (scene.time == 6000)
-					System.err.println(scene.time + "!: pmode(" + scene.pmode
-							+ ") ");
 				System.err.print("\r" + scene.time);
 				if (progress != null)
 					progress.setValue(scene.time);

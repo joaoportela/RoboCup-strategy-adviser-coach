@@ -4,8 +4,8 @@ import itertools
 import datetime
 import logging
 
-import runner # to initialize the logger
 import config
+import logging
 from team import *
 from confrontation import *
 from utils import *
@@ -62,15 +62,15 @@ def naive_prediction(data=config.strategy_data, opponents=config.opponents,
     return (nruns, duration, disk_space)
 
 def runmatches(confrontations=confrontations(), min_matches=config.min_matches,
-        n_missing=0, matchduration=config.duration):
+        matches_total=0, matchduration=config.duration):
     """confrontations with the matches that have to be run
 
     confrontations - confrontations to be runned
     min_matches - minimum number of matches per confrontation
-    n_missing - if the number of matches missing is supplied prints the
+    matches_total - if the total number of matches is supplied prints the
     progress
     """
-    if n_missing:
+    if matches_total:
         total_played=0
 
     for fcpD_vs_opp in confrontations:
@@ -87,24 +87,29 @@ def runmatches(confrontations=confrontations(), min_matches=config.min_matches,
             fcpD_vs_opp.playnewmatch()
             n_played_matches=len(fcpD_vs_opp)
 
-        print "ping"
-        if n_missing:
+        if matches_total:
             total_played+=min_matches
             now=datetime.datetime.now()
-            etime=now+n_missing*matchduration
+            etime=now+matches_total*matchduration
             print "{2} progress {0}/{1} - finish @ {3}".format(total_played,
-                    n_missing, now, etime)
+                    matches_total, now, etime)
 
 def main():
     (nmatches, naive_duration, naive_size)=naive_prediction()
     print "naive prediction: {1} runs, {0} duration".format(naive_duration, nmatches)
     cfs=list(confrontations())
-    (nmatches, duration, size)=smart_prediction(cfs)
+    (nmatches_missing, duration, size)=smart_prediction(cfs)
     print "{0} expected duration time.".format(duration)
     print "{0} expected size.".format(human_size(size))
     finish=datetime.datetime.now()+duration
-    print "expected to finish @ {0}".format(finish)
-    # runmatches(cfs,n_missing=nmatches)
+
+    expected_finish_str="expected to finish @ {0}".format(finish)
+    print expected_finish_str
+
+    logging.info(expected_finish_str)
+    report.report("upload")
+
+    runmatches(cfs,matches_total=nmatches)
 
 if __name__ == "__main__":
     # clean the log file

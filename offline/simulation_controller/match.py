@@ -123,8 +123,8 @@ class Match(object):
         # the id must be set...
         assert self._id is not None
 
-        # convert the log to a version supported and calculate statistics to
-        # the statistics.xml file
+        # the first time the statistics method is called it also generates the
+        # xml file
         stat = self.statistics()
         # get the match result from the statistics
         left_goals = stat.goals("left")
@@ -235,8 +235,7 @@ class Match(object):
         with open(fname) as f:
             data=json.load(f)
 
-        # TODO temporary fix...
-        # assert data['id'] == self._id, "metadata id is {0} but should be {1}".format(data['id'], self._id)
+        assert data['id'] == self._id, "metadata id is {0} but should be {1}".format(data['id'], self._id)
         self.team_l = Team.decode(data['team_l'])
         self.team_r = Team.decode(data['team_r'])
 
@@ -258,7 +257,7 @@ class Match(object):
         possible_files = filter(dont_include_convert, possible_files)
 
         # matchid thingy is unique
-        assert len(possible_files) == 1
+        assert len(possible_files) == 1, "possible_files={0}".format(possible_files)
         return possible_files[0]
 
     def _archive_outputs(self):

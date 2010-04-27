@@ -123,8 +123,8 @@ public class PassChainAnalyzer extends SceneAnalyzer implements Xmling {
 			Pass pass = PassAnalyzer.getPass(side, time);
 			if (pass != null) {
 				passChain.add(pass); // pass detected, add it to the pass chain
-				System.out.println("pass detected for team(" + side + ") "
-						+ pass.sender.time + "->" + pass.receiver.time);
+				//System.out.println("pass detected for team(" + side + ") "
+				//		+ pass.sender.time + "->" + pass.receiver.time);
 				// update the time to continue detecting the chains from the end
 				// of this pass
 				time = pass.receiver.time;
@@ -139,7 +139,7 @@ public class PassChainAnalyzer extends SceneAnalyzer implements Xmling {
 		}
 
 		System.out
-				.println("detecting pass chain for team:" + side + " end time:"
+				.println("detected pass chain for team:" + side + " end time:"
 						+ time + " number of passes:" + passChain.size());
 
 		return time;

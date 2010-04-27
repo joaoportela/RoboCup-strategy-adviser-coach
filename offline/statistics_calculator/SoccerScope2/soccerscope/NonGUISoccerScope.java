@@ -34,6 +34,7 @@ public class NonGUISoccerScope {
 		// open the log file and analyze it (by doing SceneSet.analyze())
 		NonGUISoccerScope.openAndAnalyzeLogFile(wm.getSceneSet(), file
 				.getPath());
+		System.out.println("final calculations and xml output:");
 		NonGUISoccerScope.printXML(wm.getSceneSet(), xmlFilename);
 		System.out.println("DONE!");
 	}
@@ -49,31 +50,27 @@ public class NonGUISoccerScope {
 			throws Exception {
 		XMLBuilder builder = XMLBuilder.create("analysis");
 		builder.attr("version", "1.01");
-		
+
 		Scene lscene = WorldModel.getInstance().getSceneSet().lastScene();
 
-		XMLBuilder left = builder.elem("leftteam").attr("name",lscene.left.name);
+		XMLBuilder left = builder.elem("leftteam").attr("name",
+				lscene.left.name);
 		int[] plindex = Team.firstAndLastPlayerIndexes(Team.LEFT_SIDE);
-		for(int iter = plindex[0]; iter < plindex[1]; iter++) {
+		for (int iter = plindex[0]; iter < plindex[1]; iter++) {
 			Player p = lscene.player[iter];
-			left.elem("player")
-				.attr("unum",String.valueOf(p.unum))
-				.attr("viewQuality",p.viewStr())
-				.attr("type",p.typeStr());
+			left.elem("player").attr("unum", String.valueOf(p.unum)).attr(
+					"viewQuality", p.viewStr()).attr("type", p.typeStr());
 		}
 
-		
-		XMLBuilder right = builder.elem("rightteam").attr("name",lscene.right.name);
+		XMLBuilder right = builder.elem("rightteam").attr("name",
+				lscene.right.name);
 		plindex = Team.firstAndLastPlayerIndexes(Team.RIGHT_SIDE);
-		for(int iter = plindex[0]; iter < plindex[1]; iter++) {
+		for (int iter = plindex[0]; iter < plindex[1]; iter++) {
 			Player p = lscene.player[iter];
-			right.elem("player")
-				.attr("unum",String.valueOf(p.unum))
-				.attr("viewQuality",p.viewStr())
-				.attr("type",p.typeStr());
+			right.elem("player").attr("unum", String.valueOf(p.unum)).attr(
+					"viewQuality", p.viewStr()).attr("type", p.typeStr());
 		}
 
-		
 		for (SceneAnalyzer analyzer : GameAnalyzer.analyzerList) {
 			// all the scene analyzers that can output to XML will do it...
 			if (Xmling.class.isInstance(analyzer)) {

@@ -35,6 +35,33 @@ public abstract class SceneBuilder {
 	public final static int PARAM_MODE = 8;
 	public final static int PPARAM_MODE = 9;
 
+	public static String packetTypeToString(int type) {
+		switch (type) {
+		case SceneBuilder.NO_INFO:
+			return "NO_INFO";
+		case SceneBuilder.SHOW_MODE:
+			return "SHOW_MODE";
+		case SceneBuilder.MSG_MODE:
+			return "MSG_MODE";
+		case SceneBuilder.DRAW_MODE:
+			return "DRAW_MODE";
+		case SceneBuilder.BLANK_MODE:
+			return "BLANK_MODE";
+		case SceneBuilder.PM_MODE:
+			return "PM_MODE";
+		case SceneBuilder.TEAM_MODE:
+			return "TEAM_MODE";
+		case SceneBuilder.PT_MODE:
+			return "PT_MODE";
+		case SceneBuilder.PARAM_MODE:
+			return "PARAM_MODE";
+		case SceneBuilder.PPARAM_MODE:
+			return "PPARAM_MODE";
+		default:
+			throw new IllegalArgumentException(type + " argument is not valid");
+		}
+	}
+
 	public int getPacketType(byte[] packet) {
 		return readShort(packet, 0);
 	};

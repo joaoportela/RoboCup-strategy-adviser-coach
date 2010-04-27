@@ -130,6 +130,9 @@ class Match(object):
         left_goals = stat.goals("left")
         right_goals = stat.goals("right")
 
+        # free some mem of the statistics object
+        stat.save_mem()
+
 	left_goals = (str(self.team_l), str(left_goals))
 	right_goals = (str(self.team_r), str(right_goals))
         self._result = (left_goals, right_goals)

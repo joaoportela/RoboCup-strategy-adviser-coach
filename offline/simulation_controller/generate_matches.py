@@ -62,16 +62,16 @@ def naive_prediction(data=config.strategy_data, opponents=config.opponents,
     return (nruns, duration, disk_space)
 
 def runmatches(confrontations=confrontations(), min_matches=config.min_matches,
-        matches_total=0, matchduration=config.duration):
+        matches_missing=0, matchduration=config.duration):
     """confrontations with the matches that have to be run
 
     confrontations - confrontations to be runned
     min_matches - minimum number of matches per confrontation
-    matches_total - if the total number of matches is supplied prints the
+    matches_missing - if the total number of matches missing is supplied prints the
     progress
     """
-    if matches_total:
-        total_played=0
+    if matches_missing:
+        matches_played=0
 
     for fcpD_vs_opp in confrontations:
         # play the required number of matches
@@ -85,14 +85,19 @@ def runmatches(confrontations=confrontations(), min_matches=config.min_matches,
                 fcpD_vs_opp))
 
             fcpD_vs_opp.playnewmatch()
+            if matches_missing:
+                # update the counter...
+                matches_played+=1
             n_played_matches=len(fcpD_vs_opp)
 
-        if matches_total:
-            total_played+=min_matches
+        if matches_missing:
             now=datetime.datetime.now()
-            etime=now+matches_total*matchduration
-            print "{2} progress {0}/{1} - finish @ {3}".format(total_played,
-                    matches_total, now, etime)
+            stillmissing=matches_missing-matches_played
+            etime=now+stillmissing*matchduration
+            msg="{0} progress {1}/{2} - finish @ {3}".format(now,
+                    matches_played, matches_missing, etime)
+            logging.info(msg)
+            print msg
 
 def main():
     (nmatches, naive_duration, naive_size)=naive_prediction()
@@ -109,7 +114,7 @@ def main():
     logging.info(expected_finish_str)
     report.report("upload")
 
-    runmatches(cfs,matches_total=nmatches)
+    runmatches(cfs,matches_missing=nmatches_missing)
 
 if __name__ == "__main__":
     # clean the log file

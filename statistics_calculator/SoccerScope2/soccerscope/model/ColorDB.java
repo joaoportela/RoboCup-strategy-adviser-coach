@@ -11,13 +11,13 @@ import java.util.prefs.Preferences;
 import soccerscope.util.Color2;
 
 public class ColorDB {
-	private static Hashtable colordb;
+	private static Hashtable<String, Color> colordb;
 
 	private ColorDB() {
 	}
 
 	static {
-		colordb = new Hashtable();
+		colordb = new Hashtable<String, Color>();
 		// ball color
 		loadColor("ball", "snow");
 		colordb.put("ball_vel", Color.red);
@@ -56,7 +56,7 @@ public class ColorDB {
 	}
 
 	public static Color getColor(String name) {
-		return (Color) colordb.get(name);
+		return colordb.get(name);
 	}
 
 	public static void putColor(String name, Color color) {

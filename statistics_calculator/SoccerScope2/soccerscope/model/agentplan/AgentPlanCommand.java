@@ -51,7 +51,7 @@ public class AgentPlanCommand {
 	private Point2f end = null;
 	private Point2f topleft = null;
 	private Point2f size;
-	private ArrayList points = null;
+	private ArrayList<Point2f> points = null;
 	private int rotate;
 	private Point2f targetPos = null;
 	private final static Image targetImage = new ImageIcon(ClassLoader
@@ -137,7 +137,7 @@ public class AgentPlanCommand {
 		// [<Comment>]
 		else if (context.currentToken().equals("polyline")) {
 			context.nextToken();
-			points = new ArrayList();
+			points = new ArrayList<Point2f>();
 			points.add(context.currentPoint());
 			context.nextToken();
 			Point2f last;
@@ -217,7 +217,7 @@ public class AgentPlanCommand {
 		// [<Comment>]
 		else if (context.currentToken().equals("rpolyline")) {
 			context.nextToken();
-			points = new ArrayList();
+			points = new ArrayList<Point2f>();
 			points.add(scene.player[index].pos);
 			Point2f last = new Point2f(scene.player[index].pos);
 			do {
@@ -255,7 +255,7 @@ public class AgentPlanCommand {
 		// [<Comment>]
 		else if (context.currentToken().equals("spolyline")) {
 			context.nextToken();
-			points = new ArrayList();
+			points = new ArrayList<Point2f>();
 			points.add(scene.player[index].pos);
 			context.nextToken();
 			Point2f last;
@@ -393,10 +393,10 @@ public class AgentPlanCommand {
 			else
 				layer.drawOval(g, topleft, size, rotate);
 		} else if (type == POLYLINE) {
-			Iterator it = points.iterator();
-			Point2f start = new Point2f((Point2f) it.next());
+			Iterator<Point2f> it = points.iterator();
+			Point2f start = new Point2f(it.next());
 			while (it.hasNext()) {
-				Point2f end = (Point2f) it.next();
+				Point2f end = it.next();
 				layer.drawLine(g, start, end);
 				start.set(end);
 			}

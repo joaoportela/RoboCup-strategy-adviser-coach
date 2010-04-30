@@ -14,7 +14,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Shape;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.InputEvent;
@@ -67,6 +66,10 @@ import soccerscope.view.layer.VisibleLayer;
 public class ScopePane extends JPanel implements SoccerObjectID, ScopeWindow,
 		AdjustmentListener, SoccerObjectSelectObserver, SoccerObjectSelector {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private SoccerScope soccerscope;
 	private FieldPane fieldPane;
 	private InfoBar infoBar;
@@ -85,8 +88,8 @@ public class ScopePane extends JPanel implements SoccerObjectID, ScopeWindow,
 	public final static int MAGNIFY_MODE = 3;
 	public final static int MOVE_MODE = 4;
 
-	private ArrayList showLayer;
-	private ArrayList drawLayer;
+	private ArrayList<Layer> showLayer;
+	private ArrayList<Layer> drawLayer;
 
 	// BMP�ե�����ؤν񤭽Ф���
 	private int index;
@@ -94,12 +97,12 @@ public class ScopePane extends JPanel implements SoccerObjectID, ScopeWindow,
 	private BufferedImage bimg;
 
 	// SoccerObjectSelectObserver�Υꥹ��
-	private ArrayList observerList;
+	private ArrayList<SoccerObjectSelectObserver> observerList;
 
 	// �����ϰ�ɽ����
-	private ArrayList shapeList;
+	private ArrayList<Rectangle> shapeList;
 	// �구��
-	private ArrayList textList;
+	private ArrayList<?> textList;
 	private Ruler ruler;
 
 	// ��������ѹ��ˤ������褫
@@ -119,10 +122,10 @@ public class ScopePane extends JPanel implements SoccerObjectID, ScopeWindow,
 		recording = false;
 		bimg = null;
 		dogBall = false;
-		observerList = new ArrayList();
+		observerList = new ArrayList<SoccerObjectSelectObserver>();
 		observerList.add(this);
-		shapeList = new ArrayList();
-		textList = new ArrayList();
+		shapeList = new ArrayList<Rectangle>();
+		textList = new ArrayList<Object>();
 
 		// ���ߡ��ʥ�����
 		scene = Scene.createScene();
@@ -202,7 +205,7 @@ public class ScopePane extends JPanel implements SoccerObjectID, ScopeWindow,
 		fieldPane.addForegroundLayer(agentLogLayer);
 
 		// on/off������show�ϥ쥤�䡼
-		showLayer = new ArrayList();
+		showLayer = new ArrayList<Layer>();
 		showLayer.add(neckLayer);
 		showLayer.add(visibleLayer);
 		showLayer.add(kickableLayer);
@@ -213,7 +216,7 @@ public class ScopePane extends JPanel implements SoccerObjectID, ScopeWindow,
 		showLayer.add(agentLogLayer);
 		showLayer.add(agentWorldModelLayer);
 		// on/off������draw�ϥ쥤�䡼
-		drawLayer = new ArrayList();
+		drawLayer = new ArrayList<Layer>();
 		drawLayer.add(offsideLayer);
 		drawLayer.add(tpassLayer);
 		drawLayer.add(ballposLayer);
@@ -281,12 +284,12 @@ public class ScopePane extends JPanel implements SoccerObjectID, ScopeWindow,
 	}
 
 	// show�ϥ쥤�䡼�μ���
-	public ArrayList getShowLayer() {
+	public ArrayList<Layer> getShowLayer() {
 		return showLayer;
 	}
 
 	// draw�ϥ쥤�䡼�μ���
-	public ArrayList getDrawLayer() {
+	public ArrayList<Layer> getDrawLayer() {
 		return drawLayer;
 	}
 
@@ -308,9 +311,9 @@ public class ScopePane extends JPanel implements SoccerObjectID, ScopeWindow,
 
 	// �����Ѳ���observer�����Τ���
 	private void deliverStateChanged(int id, boolean flag) {
-		Iterator it = observerList.iterator();
+		Iterator<SoccerObjectSelectObserver> it = observerList.iterator();
 		while (it.hasNext())
-			((SoccerObjectSelectObserver) it.next()).selectSoccerObject(id,
+			it.next().selectSoccerObject(id,
 					flag);
 	}
 
@@ -408,7 +411,7 @@ public class ScopePane extends JPanel implements SoccerObjectID, ScopeWindow,
 					0.5f));
 			int sls = shapeList.size();
 			for (int i = 0; i < sls; i++)
-				g2.draw((Shape) shapeList.get(i));
+				g2.draw(shapeList.get(i));
 			g2.setComposite(AlphaComposite
 					.getInstance(AlphaComposite.SRC, 1.0f));
 		}
@@ -568,11 +571,11 @@ public class ScopePane extends JPanel implements SoccerObjectID, ScopeWindow,
 	private Point pressPoint;
 	private Point releasePoint;
 	private Point dragPoint;
-	private Point2f selectPoint;
+	//private Point2f selectPoint;
 	private Point2f currentPoint;
 	private Point2f press;
 	private int selectID;
-	private boolean moving = false;
+	//private boolean moving = false;
 	private boolean dragged = false; // �ޥ�����ɥ�å�������
 
 	class DefaultMouseListener implements MouseEventListener {
@@ -592,9 +595,9 @@ public class ScopePane extends JPanel implements SoccerObjectID, ScopeWindow,
 				// �ݥåץ��åץ�˥塼��Ф�
 				Point2f press = fieldPane.screenToField(me.getPoint());
 				JPopupMenu jpop = new JPopupMenu();
-				Iterator showit = showLayer.iterator();
+				Iterator<Layer> showit = showLayer.iterator();
 				while (showit.hasNext()) {
-					jpop.add(((Layer) showit.next()).createJCheckBoxMenuItem());
+					jpop.add(showit.next().createJCheckBoxMenuItem());
 				}
 				jpop.addSeparator();
 				// �ץ쥤�䡼�򥯥�å�������

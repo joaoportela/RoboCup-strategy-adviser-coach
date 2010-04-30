@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.zip.GZIPInputStream;
-import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import soccerscope.model.Ball;
@@ -26,96 +25,98 @@ public class LogFileReader extends SceneBuilder {
 
 	private InputStream in;
 	private int version;
-	private String filename;
+	private final String filename;
 	private final static int REC_VERSION_1 = 1;
 	private final static int REC_VERSION_2 = 2;
 	private final static int REC_VERSION_3 = 3;
 
-	public LogFileReader(String name) throws IOException {
+	public LogFileReader(final String name) throws IOException {
 
-		FileInputStream fin = new FileInputStream(name);
+		final FileInputStream fin = new FileInputStream(name);
 		if (name.endsWith(".zip")) {
-			ZipInputStream zin = new ZipInputStream(fin);
-			ZipEntry zen = zin.getNextEntry();
-			in = new BufferedInputStream(zin);
+			final ZipInputStream zin = new ZipInputStream(fin);
+			//ZipEntry zen =
+			zin.getNextEntry();
+			this.in = new BufferedInputStream(zin);
 		} else if (name.endsWith(".gz")) {
-			in = new BufferedInputStream(new GZIPInputStream(fin));
+			this.in = new BufferedInputStream(new GZIPInputStream(fin));
 		} else {
-			in = new BufferedInputStream(fin);
+			this.in = new BufferedInputStream(fin);
 		}
 
-		filename = name;
+		this.filename = name;
 
 		// read logfile header
-		byte[] header = new byte[4];
+		final byte[] header = new byte[4];
 		try {
-			in.read(header);
-		} catch (IOException ie) {
+			this.in.read(header);
+		} catch (final IOException ie) {
 			throw ie;
 		}
 
 		if (header[0] == 'U' && header[1] == 'L' && header[2] == 'G') {
-			version = header[3];
+			this.version = header[3];
 		} else {
 			throw new IOException("no version info: " + name);
 		}
 
-		switch (version) {
+		switch (this.version) {
 		case REC_VERSION_1:
-			type = LOGFILE | LOGFILE_VER_1;
+			this.type = SceneBuilder.LOGFILE | SceneBuilder.LOGFILE_VER_1;
 			break;
 		case REC_VERSION_2:
-			type = LOGFILE | LOGFILE_VER_2;
+			this.type = SceneBuilder.LOGFILE | SceneBuilder.LOGFILE_VER_2;
 			break;
 		case REC_VERSION_3:
-			type = LOGFILE | LOGFILE_VER_3;
+			this.type = SceneBuilder.LOGFILE | SceneBuilder.LOGFILE_VER_3;
 			break;
 		default:
-			throw new IOException("invalid version: " + version + " " + name);
+			throw new IOException("invalid version: " + this.version + " " + name);
 		}
-		System.err.print("logfile version" + version + ": " + name);
+		System.err.print("logfile version" + this.version + ": " + name);
 	}
 
 	public String getFilename() {
-		return filename;
+		return this.filename;
 	}
 
 	public int getVersion() {
-		return version;
+		return this.version;
 	}
 
 	public void close() {
 		try {
-			in.close();
+			this.in.close();
 			System.err.println("...done");
-		} catch (IOException ie) {
+		} catch (final IOException ie) {
 		}
 	}
 
-	public int readLog(byte[] buffer) throws IOException {
+	public int readLog(final byte[] buffer) throws IOException {
 		try {
-			return readPacket(buffer);
-		} catch (IOException ie) {
+			return this.readPacket(buffer);
+		} catch (final IOException ie) {
 			throw ie;
 		}
 	}
 
-	public int readPacket(byte[] buffer) throws IOException {
-		switch (version) {
+	@Override
+	public int readPacket(final byte[] buffer) throws IOException {
+		switch (this.version) {
 		case REC_VERSION_1:
 			return -1;
 
 		case REC_VERSION_2:
 			try {
-				return readLogVer2(buffer);
-			} catch (IOException ie) {
+				return this.readLogVer2(buffer);
+			} catch (final IOException ie) {
 				throw ie;
 			}
 
 		case REC_VERSION_3:
 			try {
-				return readLogVer3(buffer);
-			} catch (IOException ie) {
+				return this.readLogVer3(buffer);
+			} catch (final IOException ie) {
 				throw ie;
 			}
 
@@ -125,87 +126,87 @@ public class LogFileReader extends SceneBuilder {
 	}
 
 	// logging protocol ver3
-	private int readLogVer3(byte[] buffer) throws IOException {
+	private int readLogVer3(final byte[] buffer) throws IOException {
 		// read mode
 		try {
-			if (in.read(buffer, 0, 2) == -1) {
+			if (this.in.read(buffer, 0, 2) == -1) {
 				return -1;
 			}
-		} catch (IOException ie) {
+		} catch (final IOException ie) {
 			throw ie;
 		}
 
-		int mode = readShort(buffer, 0);
+		final int mode = this.readShort(buffer, 0);
 
-		if (mode == SHOW_MODE) {
+		if (mode == SceneBuilder.SHOW_MODE) {
 			try {
-				if (in.read(buffer, 2, 1428) == -1) {
+				if (this.in.read(buffer, 2, 1428) == -1) {
 					return -1;
 				}
 				return 2 + 1428;
-			} catch (IOException ie) {
+			} catch (final IOException ie) {
 				throw ie;
 			}
-		} else if (mode == MSG_MODE) {
+		} else if (mode == SceneBuilder.MSG_MODE) {
 			try {
 				// read board info & length of message
-				if (in.read(buffer, 2, 4) == -1) {
+				if (this.in.read(buffer, 2, 4) == -1) {
 					return -1;
 				}
 
 				int len = buffer[4];
-				len = readShort(buffer, 4);
+				len = this.readShort(buffer, 4);
 
-				if (in.read(buffer, 6, len) == -1) {
+				if (this.in.read(buffer, 6, len) == -1) {
 					return -1;
 				}
 				return 2 + 2 + 2 + len;
-			} catch (IOException ie) {
+			} catch (final IOException ie) {
 				throw ie;
 			}
-		} else if (mode == PM_MODE) {
+		} else if (mode == SceneBuilder.PM_MODE) {
 			try {
-				if (in.read(buffer, 2, 1) == -1) {
+				if (this.in.read(buffer, 2, 1) == -1) {
 					return -1;
 				}
 				return 2 + 1;
-			} catch (IOException ie) {
+			} catch (final IOException ie) {
 				throw ie;
 			}
-		} else if (mode == TEAM_MODE) {
+		} else if (mode == SceneBuilder.TEAM_MODE) {
 			try {
-				if (in.read(buffer, 2, 36) == -1) {
+				if (this.in.read(buffer, 2, 36) == -1) {
 					return -1;
 				}
 				return 2 + 36;
-			} catch (IOException ie) {
+			} catch (final IOException ie) {
 				throw ie;
 			}
-		} else if (mode == PT_MODE) {
+		} else if (mode == SceneBuilder.PT_MODE) {
 			try {
-				if (in.read(buffer, 2, 88) == -1) {
+				if (this.in.read(buffer, 2, 88) == -1) {
 					return -1;
 				}
 				return 2 + 88;
-			} catch (IOException ie) {
+			} catch (final IOException ie) {
 				throw ie;
 			}
-		} else if (mode == PARAM_MODE) {
+		} else if (mode == SceneBuilder.PARAM_MODE) {
 			try {
-				if (in.read(buffer, 2, 396) == -1) {
+				if (this.in.read(buffer, 2, 396) == -1) {
 					return -1;
 				}
 				return 2 + 396;
-			} catch (IOException ie) {
+			} catch (final IOException ie) {
 				throw ie;
 			}
-		} else if (mode == PPARAM_MODE) {
+		} else if (mode == SceneBuilder.PPARAM_MODE) {
 			try {
-				if (in.read(buffer, 2, 132) == -1) {
+				if (this.in.read(buffer, 2, 132) == -1) {
 					return -1;
 				}
 				return 2 + 132;
-			} catch (IOException ie) {
+			} catch (final IOException ie) {
 				throw ie;
 			}
 		}
@@ -214,54 +215,55 @@ public class LogFileReader extends SceneBuilder {
 	}
 
 	// logging protocol ver2
-	private int readLogVer2(byte[] buffer) throws IOException {
+	private int readLogVer2(final byte[] buffer) throws IOException {
 		// read mode
 		try {
-			if (in.read(buffer, 0, 2) == -1) {
+			if (this.in.read(buffer, 0, 2) == -1) {
 				return -1;
 			}
-		} catch (IOException ie) {
+		} catch (final IOException ie) {
 			throw ie;
 		}
 
-		int mode = readShort(buffer, 0);
+		final int mode = this.readShort(buffer, 0);
 
-		if (mode == SHOW_MODE) {
+		if (mode == SceneBuilder.SHOW_MODE) {
 			try {
-				if (in.read(buffer, 2, 316) == -1) {
+				if (this.in.read(buffer, 2, 316) == -1) {
 					return -1;
 				}
 				return 2 + 316;
-			} catch (IOException ie) {
+			} catch (final IOException ie) {
 				throw ie;
 			}
-		} else if (mode == MSG_MODE) {
+		} else if (mode == SceneBuilder.MSG_MODE) {
 			try {
 				// read board info & length of message
-				if (in.read(buffer, 2, 4) == -1) {
+				if (this.in.read(buffer, 2, 4) == -1) {
 					return -1;
 				}
 
 				int len = buffer[4];
-				len = readShort(buffer, 4);
+				len = this.readShort(buffer, 4);
 
-				if (in.read(buffer, 6, len) == -1) {
+				if (this.in.read(buffer, 6, len) == -1) {
 					return -1;
 				}
 				return 2 + 2 + 2 + len;
-			} catch (IOException ie) {
+			} catch (final IOException ie) {
 				throw ie;
 			}
 		}
 		return 0;
 	}
 
-	public Scene makeScene(byte[] packet, PlayMode playmode, Team left,
-			Team right) {
-		Scene scene = new Scene();
+	@Override
+	public Scene makeScene(final byte[] packet, final PlayMode playmode, final Team left,
+			final Team right) {
+		final Scene scene = new Scene();
 		int offset = 0;
 
-		if (version == REC_VERSION_3) {
+		if (this.version == LogFileReader.REC_VERSION_3) {
 			scene.left = new Team(left);
 			scene.right = new Team(right);
 			scene.pmode = new PlayMode(playmode);
@@ -270,20 +272,20 @@ public class LogFileReader extends SceneBuilder {
 			// read ball_t
 			scene.ball.mode = Ball.STAND;
 			// // x, y (long)
-			scene.ball.pos.x = readLong(packet, offset) / SHOWINFO_SCALE2;
+			scene.ball.pos.x = this.readLong(packet, offset) / SceneBuilder.SHOWINFO_SCALE2;
 			offset += 4;
-			scene.ball.pos.y = readLong(packet, offset) / SHOWINFO_SCALE2;
+			scene.ball.pos.y = this.readLong(packet, offset) / SceneBuilder.SHOWINFO_SCALE2;
 			offset += 4;
 			// // deltax, deltay (long)
-			scene.ball.vel.x = readLong(packet, offset) / SHOWINFO_SCALE2;
+			scene.ball.vel.x = this.readLong(packet, offset) / SceneBuilder.SHOWINFO_SCALE2;
 			offset += 4;
-			scene.ball.vel.y = readLong(packet, offset) / SHOWINFO_SCALE2;
+			scene.ball.vel.y = this.readLong(packet, offset) / SceneBuilder.SHOWINFO_SCALE2;
 			offset += 4;
 
 			// read player_t
 			for (int i = 0; i < Param.MAX_PLAYER * 2; i++) {
 				// // mode (short)
-				scene.player[i].mode = readShort(packet, offset);
+				scene.player[i].mode = this.readShort(packet, offset);
 				offset += 2;
 
 				// // unum
@@ -296,49 +298,49 @@ public class LogFileReader extends SceneBuilder {
 				}
 
 				// // type (short)
-				scene.player[i].type = readShort(packet, offset);
+				scene.player[i].type = this.readShort(packet, offset);
 				offset += 2;
 
 				// // x, y (long)
-				scene.player[i].pos.x = readLong(packet, offset)
-						/ SHOWINFO_SCALE2;
+				scene.player[i].pos.x = this.readLong(packet, offset)
+				/ SceneBuilder.SHOWINFO_SCALE2;
 				offset += 4;
-				scene.player[i].pos.y = readLong(packet, offset)
-						/ SHOWINFO_SCALE2;
+				scene.player[i].pos.y = this.readLong(packet, offset)
+				/ SceneBuilder.SHOWINFO_SCALE2;
 				offset += 4;
 
 				// // deltax, deltay (long)
-				scene.player[i].vel.x = readLong(packet, offset)
-						/ SHOWINFO_SCALE2;
+				scene.player[i].vel.x = this.readLong(packet, offset)
+				/ SceneBuilder.SHOWINFO_SCALE2;
 				offset += 4;
-				scene.player[i].vel.y = readLong(packet, offset)
-						/ SHOWINFO_SCALE2;
+				scene.player[i].vel.y = this.readLong(packet, offset)
+				/ SceneBuilder.SHOWINFO_SCALE2;
 				offset += 4;
 
 				// // body_angle (long) (radians)
-				scene.player[i].angle = (float) Math.toDegrees(readLong(packet,
+				scene.player[i].angle = (float) Math.toDegrees(this.readLong(packet,
 						offset)
-						/ SHOWINFO_SCALE2);
+						/ SceneBuilder.SHOWINFO_SCALE2);
 				offset += 4;
 
 				// // head_angle (long) (radians)
-				scene.player[i].angleNeck = (int) Math.toDegrees(readLong(
+				scene.player[i].angleNeck = (int) Math.toDegrees(this.readLong(
 						packet, offset)
-						/ SHOWINFO_SCALE2);
+						/ SceneBuilder.SHOWINFO_SCALE2);
 				offset += 4;
 
 				// // view_width (long) (radians)
-				scene.player[i].angleVisible = (int) Math.toDegrees(readLong(
+				scene.player[i].angleVisible = (int) Math.toDegrees(this.readLong(
 						packet, offset)
-						/ SHOWINFO_SCALE2);
+						/ SceneBuilder.SHOWINFO_SCALE2);
 				offset += 4;
 
 				// // view_quality (short)
-				scene.player[i].viewQuality = readShort(packet, offset);
+				scene.player[i].viewQuality = this.readShort(packet, offset);
 				offset += 4;
 
 				// // stamina (long)
-				scene.player[i].stamina = (int) (readLong(packet, offset) / SHOWINFO_SCALE2);
+				scene.player[i].stamina = (int) (this.readLong(packet, offset) / SceneBuilder.SHOWINFO_SCALE2);
 				offset += 4;
 
 				// // effort (long)
@@ -352,15 +354,15 @@ public class LogFileReader extends SceneBuilder {
 				offset += 4;
 
 				// // kick_count (short)
-				scene.player[i].kickCount = readShort(packet, offset);
+				scene.player[i].kickCount = this.readShort(packet, offset);
 				offset += 2;
 
 				// // dash_count (short)
-				scene.player[i].dashCount = readShort(packet, offset);
+				scene.player[i].dashCount = this.readShort(packet, offset);
 				offset += 2;
 
 				// // turn_count (short)
-				scene.player[i].turnCount = readShort(packet, offset);
+				scene.player[i].turnCount = this.readShort(packet, offset);
 				offset += 2;
 
 				// // say_count (short)
@@ -383,13 +385,13 @@ public class LogFileReader extends SceneBuilder {
 				// scene.player[i].changeViewCount = readShort(packet, offset);
 				offset += 2;
 			}
-		} else if (version == REC_VERSION_2) {
+		} else if (this.version == LogFileReader.REC_VERSION_2) {
 			offset = 2;
-			PlayMode pplaymode = makePlayMode(packet);
+			final PlayMode pplaymode = this.makePlayMode(packet);
 			offset += 2;
 
-			Team tleft = makeLeftTeam(packet, offset);
-			Team tright = makeRightTeam(packet, offset);
+			final Team tleft = this.makeLeftTeam(packet, offset);
+			final Team tright = this.makeRightTeam(packet, offset);
 			offset += 36;
 
 			scene.left = new Team(tleft);
@@ -411,9 +413,9 @@ public class LogFileReader extends SceneBuilder {
 			offset += 2;
 
 			// // x, y (short)
-			scene.ball.pos.x = readShort(packet, offset) / SHOWINFO_SCALE;
+			scene.ball.pos.x = this.readShort(packet, offset) / SceneBuilder.SHOWINFO_SCALE;
 			offset += 2;
-			scene.ball.pos.y = readShort(packet, offset) / SHOWINFO_SCALE;
+			scene.ball.pos.y = this.readShort(packet, offset) / SceneBuilder.SHOWINFO_SCALE;
 			offset += 2;
 
 			// read pos_t[1-22]
@@ -424,49 +426,50 @@ public class LogFileReader extends SceneBuilder {
 				int index;
 
 				// // enable (short)
-				enable = readShort(packet, offset);
+				enable = this.readShort(packet, offset);
 				offset += 2;
 
 				// // side (short)
-				side = readShort(packet, offset);
+				side = this.readShort(packet, offset);
 				offset += 2;
 
 				// // unum (short)
-				unum = readShort(packet, offset);
+				unum = this.readShort(packet, offset);
 				offset += 2;
 
-				if (side == Team.LEFT_SIDE)
+				if (side == Team.LEFT_SIDE) {
 					index = (unum - 1);
-				else
+				} else {
 					index = (unum - 1) + Param.MAX_PLAYER;
+				}
 
 				scene.player[index].unum = unum;
 				scene.player[index].side = side;
 				scene.player[index].mode = enable;
 
 				// // angle (short)
-				scene.player[index].angle = readShort(packet, offset);
+				scene.player[index].angle = this.readShort(packet, offset);
 				offset += 2;
 
 				// // x, y (short)
-				scene.player[index].pos.x = readShort(packet, offset)
-						/ SHOWINFO_SCALE;
+				scene.player[index].pos.x = this.readShort(packet, offset)
+				/ SceneBuilder.SHOWINFO_SCALE;
 				offset += 2;
-				scene.player[index].pos.y = readShort(packet, offset)
-						/ SHOWINFO_SCALE;
+				scene.player[index].pos.y = this.readShort(packet, offset)
+				/ SceneBuilder.SHOWINFO_SCALE;
 				offset += 2;
 			}
 		}
 
 		// read time (short)
-		scene.time = readShort(packet, offset);
+		scene.time = this.readShort(packet, offset);
 		offset += 2;
 
 		// check offside
 		scene.left.offsideline = 0;
 		scene.right.offsideline = 0;
-		float leftx[] = new float[Param.MAX_PLAYER + 1];
-		float rightx[] = new float[Param.MAX_PLAYER + 1];
+		final float leftx[] = new float[Param.MAX_PLAYER + 1];
+		final float rightx[] = new float[Param.MAX_PLAYER + 1];
 		for (int i = 0; i < Param.MAX_PLAYER; i++) {
 			leftx[i] = scene.player[i].pos.x;
 			rightx[i] = scene.player[i + Param.MAX_PLAYER].pos.x;
@@ -475,10 +478,12 @@ public class LogFileReader extends SceneBuilder {
 		rightx[Param.MAX_PLAYER] = scene.ball.pos.x;
 		Arrays.sort(leftx);
 		Arrays.sort(rightx);
-		if (leftx[1] < 0)
+		if (leftx[1] < 0) {
 			scene.left.offsideline = leftx[1];
-		if (rightx[Param.MAX_PLAYER - 1] > 0)
+		}
+		if (rightx[Param.MAX_PLAYER - 1] > 0) {
 			scene.right.offsideline = rightx[Param.MAX_PLAYER - 1];
+		}
 
 		scene.left.offside = false;
 		scene.right.offside = false;

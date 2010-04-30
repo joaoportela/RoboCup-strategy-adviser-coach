@@ -62,7 +62,7 @@ public class UDPConnection {
 	public void send(String msgString) {
 		// Convert the message to an array of bytes
 		byte[] message = msgString.getBytes();
-		int msglen = msgString.length();
+		//int msglen = msgString.length();
 		send(message);
 	}
 

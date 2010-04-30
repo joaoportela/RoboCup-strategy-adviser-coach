@@ -4,11 +4,10 @@
 
 package soccerscope.action;
 
-import soccerscope.SoccerScope;
 
 public class SoccerScopeActionFactory {
 
-	private SoccerScope soccerscope;
+	// private SoccerScope soccerscope;
 
 	public static void setAction() {
 

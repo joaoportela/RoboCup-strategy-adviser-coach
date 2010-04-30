@@ -35,6 +35,11 @@ import soccerscope.view.ScopePane;
 
 public class SoccerScopeToolBar extends JToolBar implements ActionListener,
 		ItemListener {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private SoccerScope soccerscope;
 
 	// ToolBar Item
@@ -59,8 +64,8 @@ public class SoccerScopeToolBar extends JToolBar implements ActionListener,
 
 	public SoccerScopeToolBar(SoccerScope soccerscope) {
 		this.soccerscope = soccerscope;
-		ScopePane scopePane = soccerscope.getScopePane();
-		FieldPane fieldPane = scopePane.getFieldPane();
+		//ScopePane scopePane = soccerscope.getScopePane();
+		//FieldPane fieldPane = scopePane.getFieldPane();
 
 		this.setFloatable(false);
 
@@ -184,7 +189,7 @@ public class SoccerScopeToolBar extends JToolBar implements ActionListener,
 							.getSoccerServerConnection(), wm.getSceneSet());
 					try {
 						soccerscope.getSoccerServerConnection().dispinit();
-						Thread.currentThread().sleep(1000);
+						Thread.sleep(1000);
 						soccerscope.getScenePlayer().sync();
 						ssm.start();
 						ButtonManager.setEnabled("network", true);

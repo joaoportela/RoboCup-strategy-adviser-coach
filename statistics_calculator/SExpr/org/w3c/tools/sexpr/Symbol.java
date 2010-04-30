@@ -19,39 +19,45 @@ import java.util.Dictionary;
  */
 public class Symbol implements SExpr {
 
-  private String name;
+	private final String name;
 
-  /**
-   * Creates a symbol and potentially interns it in a symbol table.
-   */
-  public static Symbol makeSymbol(String name, Dictionary symbols)
-  {
-    if (symbols == null)
-      return new Symbol(name);
-    else {
-      String key = name.toLowerCase();
-      Symbol s = (Symbol)symbols.get(key);
-      if (s == null) {
-        s = new Symbol(name);
-        symbols.put(key, s);
-      }
-      return s;
-    }
-  }
+	/**
+	 * Creates a symbol and potentially interns it in a symbol table.
+	 */
+	public static Symbol makeSymbol(final String name, final Dictionary symbols) {
+		if (symbols == null) {
+			return new Symbol(name);
+		} else {
+			final String key = name.toLowerCase();
+			Symbol s = (Symbol) symbols.get(key);
+			if (s == null) {
+				s = new Symbol(name);
+				symbols.put(key, s);
+			}
+			return s;
+		}
+	}
 
-  protected Symbol(String name)
-  {
-    this.name = name;
-  }
+	protected Symbol(final String name) {
+		this.name = name;
+	}
 
-  public String toString()
-  {
-    return name;
-  }
+	@Override
+	public String toString() {
+		return this.name;
+	}
 
-  public void printExpr(PrintStream out)
-  {
-    out.print(toString());
-  }
+	@Override
+	public boolean equals(final Object o) {
+		if(o instanceof Symbol) {
+			final Symbol sym = (Symbol) o;
+			return this.name.equals(sym.name);
+		}
+		return false;
+	}
+
+	public void printExpr(final PrintStream out) {
+		out.print(this.toString());
+	}
 
 }

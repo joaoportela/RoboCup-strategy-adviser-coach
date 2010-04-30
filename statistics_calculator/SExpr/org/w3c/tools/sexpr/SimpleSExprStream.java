@@ -11,6 +11,7 @@
 
 package org.w3c.tools.sexpr;
 
+import java.io.ByteArrayInputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -323,20 +324,30 @@ SExprStream {
 
 	public static void main(final String args[]) throws SExprParserException,
 	IOException {
-		final SExprStream p = new SimpleSExprStream(System.in);
+		final InputStream expr = new ByteArrayInputStream(SEE_EXPR
+				.getBytes("UTF-8"));
+		final SExprStream p = new SimpleSExprStream(expr);
 		final Object e = p.parse();
 		SimpleSExprStream.printExpr(e, System.out);
-		if (e instanceof Cons) {
-			e.left();
-			final ConsEnumeration enumeration = new ConsEnumeration((Cons) e);
+		System.out.println("\n--------");
+		if (e instanceof Cons && ((Cons) e).left().equals(new Symbol("see_global"))) {
+			assert ((Cons) e).right() instanceof Cons;
+			final Cons cons = (Cons) ((Cons) e).right();
+			assert cons.left() instanceof Integer;
+			assert cons.right() instanceof Cons;
+
+			// iterate over the visible game objects
+			final ConsEnumeration enumeration = new ConsEnumeration(cons);
 			Object item = null;
 			while (enumeration.hasMoreElements()) {
-				item=enumeration.nextElement();
+				item = enumeration.nextElement();
 				SimpleSExprStream.printExpr(item, System.out);
 				System.out.println("");
 			}
 		}
 		System.out.println();
 	}
+
+	private static final String SEE_EXPR = "(see_global 0 ((g r) 52.5 0) ((g l) -52.5 0) ((b) 0 0 -0 -0) ((p \"FCPortugalD\" 1 goalie) -50 0 0 0 1 -1) ((p \"FCPortugalD\" 2) -14.86 16.23 0 0 1 -49) ((p \"FCPortugalD\" 3) -14.86 4.55 0 0 1 -18) ((p \"FCPortugalD\" 4) -14.86 -4.55 0 0 0 17) ((p \"FCPortugalD\" 5) -14.86 -16.23 0 0 0 47) ((p \"FCPortugalD\" 6) -9.11 -1.3 0 0 0 8) ((p \"FCPortugalD\" 7) -4.41 12.55 0 0 1 -72) ((p \"FCPortugalD\" 8) -4.41 -12.55 0 0 0 70) ((p \"FCPortugalD\" 9) -1.5 -0.27 0 0 -1 -19) ((p \"FCPortugalD\" 10) -1.5 26.55 0 0 0 -86) ((p \"FCPortugalD\" 11) -1.5 -26.55 0 0 -1 88) ((p \"FCPortugalX\" 1 goalie) 50 -0 0 0 179 0) ((p \"FCPortugalX\" 2) 14.86 -16.23 0 0 180 -47) ((p \"FCPortugalX\" 3) 14.86 -4.55 0 0 180 -17) ((p \"FCPortugalX\" 4) 14.86 4.55 0 0 179 17) ((p \"FCPortugalX\" 5) 14.86 16.23 0 0 180 48) ((p \"FCPortugalX\" 6) 9.39097 1.11341 0 0 179 8) ((p \"FCPortugalX\" 7) 4.41 -12.55 0 0 -179 -71) ((p \"FCPortugalX\" 8) 4.41 12.55 0 0 180 70) ((p \"FCPortugalX\" 9) 9.30053 1.6741 0 0 124 66) ((p \"FCPortugalX\" 10) 1.5 -26.55 0 0 180 -50) ((p \"FCPortugalX\" 11) 33 -37 0 0 0 0))";
 
 }

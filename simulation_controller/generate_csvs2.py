@@ -154,7 +154,8 @@ def usage():
 
 if __name__ == "__main__":
     if validate(sys.argv):
-        print "generating csvs for {0}".format(sys.argv[0])
+        logging.info("STARTING {0}".format(sys.argv[0]))
+        print "generating csvs for {0}".format(sys.argv[1])
         print "group1..."
         gen_group1(sys.argv[1],"group1.csv")
         print "group1 done. group2..."
@@ -163,6 +164,7 @@ if __name__ == "__main__":
         gen_group3(sys.argv[1],"group3.csv")
         print "group3 done. group 4..."
         gen_group4(sys.argv[1],"group4.csv")
-        print "group4 done"
+        print "group4 done."
+        logging.info("DONE")
     else:
         print usage()

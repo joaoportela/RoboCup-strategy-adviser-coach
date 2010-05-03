@@ -12,6 +12,7 @@ import stat
 import glob
 import re
 import config
+import json
 
 def walk_xmls(dir_):
     for root, dirs, files in os.walk(dir_):

@@ -5,9 +5,10 @@ csv data that needs to be generated. this module is more complex and
 complete.
 """
 
-__all__ = ["statistics14_keys","statistics14"]
+__all__ = ["statistics14_keys","statistics14", "evaluators_keys", "evaluators"]
 
 from datastructures import SortedDict
+from evaluator import *
 
 statistics14_keys=[
         "passmisses",
@@ -47,6 +48,24 @@ def statistics14(st):
     d["middlewing_4thquarter_possession"]=st.ballpossession(zone="middlewing_4thquarter")
     d["rightwing_3rdquarter_possession"]=st.ballpossession(zone="rightwing_3rdquarter")
     d["passchains"]=st.passchains()
+
+    return d
+
+evaluators_keys=[
+        "PointsEvaluator",
+        "GoalDifferenceEvaluator",
+        "ReliefEvaluator",
+        "MARSEvaluator"
+        ]
+def evaluators(st):
+    """
+    the result of the evaluators on the statistics object.
+    """
+    d=SortedDict()
+    d["PointsEvaluator"]=PointsEvaluator(st,st.team).value()
+    d["GoalDifferenceEvaluator"]=GoalDifferenceEvaluator(st,st.team).value()
+    d["ReliefEvaluator"]=ReliefEvaluator(st,st.team).value()
+    d["MARSEvaluator"]=MARSEvaluator(st,st.team).value()
 
     return d
 

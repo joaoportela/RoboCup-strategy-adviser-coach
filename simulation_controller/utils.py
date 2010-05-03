@@ -3,7 +3,7 @@
 __all__ = ["all_equal", "runcommand", "fake_runcommand", "write_script",
         "allrcgs", "allmetadata", "allmatchesids", "theid",
         "confrontation_name", "same_team", "str2bool", "human_size", "average",
-        "confrontation_metadata_files"]
+        "confrontation_metadata_files", "walk_xmls", "discoverteamconfig"]
 
 import logging
 import time
@@ -12,6 +12,34 @@ import stat
 import glob
 import re
 import config
+
+def walk_xmls(dir_):
+    for root, dirs, files in os.walk(dir_):
+        for f in files:
+            if f.endswith(".xml"):
+                yield os.path.join(root,f)
+
+def discoverteamconfig(xml, side):
+    dbgmsg="discovering config for {0} team in {1}".format(side,xml)
+    logging.debug(dbgmsg)
+    if side not in ["left","right"]:
+        raise Exception("unkown side argument {0}".format(side))
+    if side == "left":
+        side = "team_l"
+    elif side == "right":
+        side = "team_r"
+
+    dirname=os.path.dirname(xml)
+    id_=theid(xml)
+    metadata=os.path.join(dirname,id_+"_metadata.json")
+    with open(metadata) as f:
+        data=json.load(f)
+
+    assert data['id'] == id_
+    class_ = data[side][0]
+    params = data[side][1]
+
+    return params
 
 def confrontation_metadata_files(dir_=config.matchesdir):
     for root, dirs, files in os.walk(dir_):

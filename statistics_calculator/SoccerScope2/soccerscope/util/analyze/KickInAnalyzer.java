@@ -17,52 +17,53 @@ package soccerscope.util.analyze;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.jamesmurty.utils.XMLBuilder;
-
 import soccerscope.model.GameEvent;
 import soccerscope.model.PlayMode;
 import soccerscope.model.Scene;
 import soccerscope.model.Team;
 
+import com.jamesmurty.utils.XMLBuilder;
+
 public class KickInAnalyzer extends SceneAnalyzer implements Xmling {
 
 	public static String NAME = "Kick in";
 
+	@Override
 	public String getName() {
 		return NAME;
 	}
 
-	private List<KickIn> kicksinList = new LinkedList<KickIn>();
+	private final List<KickIn> kicksinList = new LinkedList<KickIn>();
 
 	public static class KickIn implements Xmling {
 		public int side;
 		public int time;
 
-		public KickIn(int side, int time) {
+		public KickIn(final int side, final int time) {
 			this.side = side;
 			this.time = time;
 		}
 
 		@Override
-		public void xmlElement(XMLBuilder builder) {
+		public void xmlElement(final XMLBuilder builder) {
 			builder.elem("kickin")
 			.attr("team", Team.name(this.side))
 			.attr("time", String.valueOf(this.time));
-			int a=Team.RIGHT_SIDE;
 		}
 	}
 
-	public GameEvent analyze(Scene scene, Scene prev) {
+	@Override
+	public GameEvent analyze(final Scene scene, final Scene prev) {
 		GameEvent ge = null;
 
 		/* ���å�����⡼�ɤϻ��郎�ߤޤ�ʤ����ᡢprev�򸫤ơ����å�����⡼�ɤˤʤä��ִ֤����򡢼����� */
 		if (prev != null) {
-			if (isPlayModeChanged(scene, prev, PlayMode.PM_KickIn_Left)) {
-				countUp(Team.LEFT_SIDE, scene.time);
+			if (this.isPlayModeChanged(scene, prev, PlayMode.PM_KickIn_Left)) {
+				this.countUp(Team.LEFT_SIDE, scene.time);
 				ge = new GameEvent(scene.time, GameEvent.KICK_IN);
 			}
-			if (isPlayModeChanged(scene, prev, PlayMode.PM_KickIn_Right)) {
-				countUp(Team.RIGHT_SIDE, scene.time);
+			if (this.isPlayModeChanged(scene, prev, PlayMode.PM_KickIn_Right)) {
+				this.countUp(Team.RIGHT_SIDE, scene.time);
 				ge = new GameEvent(scene.time, GameEvent.KICK_IN);
 			}
 		}
@@ -70,21 +71,23 @@ public class KickInAnalyzer extends SceneAnalyzer implements Xmling {
 	}
 
 	@Override
-	public void countUp(int side, int time) {
+	public void countUp(final int side, final int time) {
 		this.kicksinList.add(new KickIn(side, time));
-		if (side == Team.LEFT_SIDE)
+		if (side == Team.LEFT_SIDE) {
 			this.countUpLeft(time);
-		if (side == Team.RIGHT_SIDE)
+		}
+		if (side == Team.RIGHT_SIDE) {
 			this.countUpRight(time);
+		}
 	}
 
 	@Override
-	public void xmlElement(XMLBuilder builder) {
-		XMLBuilder kicksin = builder.elem("kicksin").attr("left",
+	public void xmlElement(final XMLBuilder builder) {
+		final XMLBuilder kicksin = builder.elem("kicksin").attr("left",
 				String.valueOf(this.lcount)).attr("right",
-				String.valueOf(this.rcount));
+						String.valueOf(this.rcount));
 
-		for (KickIn k : this.kicksinList) {
+		for (final KickIn k : this.kicksinList) {
 			k.xmlElement(kicksin);
 		}
 

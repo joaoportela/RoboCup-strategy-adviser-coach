@@ -13,7 +13,7 @@ logfile = "runner.log"
 matchesdir = "matches/"
 teamsdir = "teams/"
 matchhost = "127.0.0.1"
-statistics_version="1.01"
+statistics_version="1.02"
 
 # fcportugal_dynamic
 # strategy file to modify
@@ -25,36 +25,36 @@ strategy_data = {
         "formation":
         [
             1,  # 433OPEN
-            2,  # 442OPEN
-            3,  # 443OPEN11Players
-            4,  # 343
+            #2,  # 442OPEN
+            #3,  # 443OPEN11Players
+            #4,  # 343
             #8,  # TUDOAMONTE
-            9,  # 433OPENDef
+            #9,  # 433OPENDef
             #12  # 4213 RiOne
             ]
         ,
         "mentality":
         [
-            0,
-            1,
+            #0,
+            #1,
             2,
-            3
+            #3
             ]
         ,
         "gamepace":
         [
-            0,
-            1,
+            #0,
+            #1,
             2,
-            3
+            #3
             ]
         }
 
 #match generation
-opponents=["kickofftug", "wrighteagle", "bahia2d", "nemesis"]
+opponents=["fcportugalX"]#["kickofftug", "wrighteagle", "bahia2d", "nemesis"]
 min_matches=8
 # typical duration of a match (used for time prediction)
-duration=datetime.timedelta(minutes=12)
+duration=datetime.timedelta(minutes=13)
 size=9.5*(1024**2)#9.5MiB
 
 # scripts...

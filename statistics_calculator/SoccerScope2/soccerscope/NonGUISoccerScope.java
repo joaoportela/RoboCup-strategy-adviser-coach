@@ -21,12 +21,12 @@ import com.jamesmurty.utils.XMLBuilder;
 
 public class NonGUISoccerScope {
 
-	public static void run(String filename, String xmlFilename)
-			throws Exception {
+	public static void run(final String filename, final String xmlFilename)
+	throws Exception {
 		// initiate the world model...
-		WorldModel wm = WorldModel.getInstance();
+		final WorldModel wm = WorldModel.getInstance();
 		wm.clear(); // don't think this is necessary... but ok...
-		File file = new File(filename);
+		final File file = new File(filename);
 		if (file == null || !file.canRead()) {
 			throw new FileNotFoundException(String.format(
 					"invalid file '%s' or permissions...\n", filename));
@@ -39,46 +39,46 @@ public class NonGUISoccerScope {
 		System.out.println("DONE!");
 	}
 
-	private static void openAndAnalyzeLogFile(SceneSet sceneSet, String filename)
-			throws IOException, InterruptedException {
-		LogFileReader lfr = new LogFileReader(filename);
-		SceneSetMaker ssm = new SceneSetMaker(lfr, sceneSet);
+	private static void openAndAnalyzeLogFile(final SceneSet sceneSet, final String filename)
+	throws IOException, InterruptedException {
+		final LogFileReader lfr = new LogFileReader(filename);
+		final SceneSetMaker ssm = new SceneSetMaker(lfr, sceneSet);
 		ssm.run();
 	}
 
-	private static void printXML(SceneSet sceneSet, String xmlFilename)
-			throws Exception {
-		XMLBuilder builder = XMLBuilder.create("analysis");
-		builder.attr("version", "1.01");
+	private static void printXML(final SceneSet sceneSet, final String xmlFilename)
+	throws Exception {
+		final XMLBuilder builder = XMLBuilder.create("analysis");
+		builder.attr("version", "1.02");
 
-		Scene lscene = WorldModel.getInstance().getSceneSet().lastScene();
+		final Scene lscene = WorldModel.getInstance().getSceneSet().lastScene();
 
-		XMLBuilder left = builder.elem("leftteam").attr("name",
+		final XMLBuilder left = builder.elem("leftteam").attr("name",
 				lscene.left.name);
 		int[] plindex = Team.firstAndLastPlayerIndexes(Team.LEFT_SIDE);
 		for (int iter = plindex[0]; iter < plindex[1]; iter++) {
-			Player p = lscene.player[iter];
+			final Player p = lscene.player[iter];
 			left.elem("player").attr("unum", String.valueOf(p.unum)).attr(
 					"viewQuality", p.viewStr()).attr("type", p.typeStr());
 		}
 
-		XMLBuilder right = builder.elem("rightteam").attr("name",
+		final XMLBuilder right = builder.elem("rightteam").attr("name",
 				lscene.right.name);
 		plindex = Team.firstAndLastPlayerIndexes(Team.RIGHT_SIDE);
 		for (int iter = plindex[0]; iter < plindex[1]; iter++) {
-			Player p = lscene.player[iter];
+			final Player p = lscene.player[iter];
 			right.elem("player").attr("unum", String.valueOf(p.unum)).attr(
 					"viewQuality", p.viewStr()).attr("type", p.typeStr());
 		}
 
-		for (SceneAnalyzer analyzer : GameAnalyzer.analyzerList) {
+		for (final SceneAnalyzer analyzer : GameAnalyzer.analyzerList) {
 			// all the scene analyzers that can output to XML will do it...
 			if (Xmling.class.isInstance(analyzer)) {
 				((Xmling) analyzer).xmlElement(builder);
 			}
 		}
 
-		Properties outputProperties = new Properties();
+		final Properties outputProperties = new Properties();
 		// Explicitly identify the output as an XML document
 		outputProperties.put(javax.xml.transform.OutputKeys.METHOD, "xml");
 
@@ -89,7 +89,7 @@ public class NonGUISoccerScope {
 		outputProperties.put("{http://xml.apache.org/xslt}indent-amount", "2");
 
 		// output file...
-		PrintWriter out = new PrintWriter(new File(xmlFilename));
+		final PrintWriter out = new PrintWriter(new File(xmlFilename));
 
 		builder.toWriter(out, outputProperties);
 		out.flush();

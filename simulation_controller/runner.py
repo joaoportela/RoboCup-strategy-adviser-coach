@@ -14,7 +14,7 @@ from utils import confrontation_metadata_files
 
 def dotest(confrontation):
     # play the number of matches I want.
-    min_matches=3
+    min_matches=5
     print str(confrontation),"matches:",len(confrontation),"/",min_matches
     while len(confrontation) <  min_matches:
         confrontation.playnewmatch()
@@ -39,13 +39,13 @@ def dotest(confrontation):
     print "MARS evaluator score ", marseval.value()
 
 def main():
-    # fcpD = FCPortugal({"formation" : 1})
-    # fcpX = Team("fcportugalY")
-    # fcpD_vs_fcpX = Confrontation(fcpD, fcpX)
-    # dotest(fcpD_vs_fcpX)
-    for metadata_f in confrontation_metadata_files():
-        print metadata_f
-        dotest(Confrontation.from_metadata(metadata_f))
+    fcpD = FCPortugal({"formation" : 1})
+    fcpX = Team("fcportugalX")
+    fcpD_vs_fcpX = Confrontation(fcpD, fcpX)
+    dotest(fcpD_vs_fcpX)
+    # for metadata_f in confrontation_metadata_files():
+    #     print metadata_f
+    #     dotest(Confrontation.from_metadata(metadata_f))
 
 if __name__ == '__main__':
     # clean the log file

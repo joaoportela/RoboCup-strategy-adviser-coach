@@ -715,8 +715,9 @@ class Statistics(object):
 
         return n
 
+    @accept_side
     def kicks_in(self, half=None):
-        """return the number of kicks in(?). 'half' filters it by game half"""
+        """return the number of kicks in. 'half' filters it by game half"""
         kicksin_dom=self.dom.getElementsByTagName("kicksin")[0]
         if half is None:
             # no filters, easy :)
@@ -726,7 +727,7 @@ class Statistics(object):
         starttime, endtime = Statistics._timeofhalf(half)
 
         n=0
-        for kickin in kicksin_dom.getElementsByTagName("corner"):
+        for kickin in kicksin_dom.getElementsByTagName("kickin"):
             if kickin.getAttribute("team") != self.side_id:
                 continue
 
@@ -734,6 +735,34 @@ class Statistics(object):
                 # of the desired half
                 k_time = int(kickin.getAttribute("time"))
                 if not(starttime <= k_time and k_time <= endtime):
+                    # invalid time window, move along
+                    continue
+
+            # we got this far, its valid!
+            n+=1
+
+        return n
+
+    @accept_side
+    def goalkicks(self, half=None):
+        """return the number of goal kicks. 'half' filters it by game half"""
+        goalkicks_dom=self.dom.getElementsByTagName("goalkicks")[0]
+        if half is None:
+            # no filters, easy :)
+            return int(goalkicks_dom.getAttribute(self.side))
+
+        # validate argument
+        starttime, endtime = Statistics._timeofhalf(half)
+
+        n=0
+        for goalkick in goalkicks_dom.getElementsByTagName("goalkick"):
+            if goalkick.getAttribute("team") != self.side_id:
+                continue
+
+            if half is not None:
+                # of the desired half
+                gk_time = int(goalkick.getAttribute("time"))
+                if not(starttime <= gk_time and gk_time <= endtime):
                     # invalid time window, move along
                     continue
 

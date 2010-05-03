@@ -1,7 +1,9 @@
 #! /usr/bin/env python
 
-"""script to generate the csv file with the matches
-statistics and teams evaluation"""
+"""
+script to generate the csv file with the matches statistics and teams
+evaluation
+"""
 
 import config
 import logging
@@ -12,34 +14,6 @@ from evaluator import *
 import os
 import sys
 import json
-
-def walk_xmls(dir_):
-    for root, dirs, files in os.walk(dir_):
-        for f in files:
-            if f.endswith(".xml"):
-                yield os.path.join(root,f)
-
-def discoverteamconfig(xml, side):
-    dbgmsg="discovering config for {0} team in {1}".format(side,xml)
-    logging.debug(dbgmsg)
-    if side not in ["left","right"]:
-        raise Exception("unkown side argument {0}".format(side))
-    if side == "left":
-        side = "team_l"
-    elif side == "right":
-        side = "team_r"
-
-    dirname=os.path.dirname(xml)
-    id_=theid(xml)
-    metadata=os.path.join(dirname,id_+"_metadata.json")
-    with open(metadata) as f:
-        data=json.load(f)
-
-    assert data['id'] == id_
-    class_ = data[side][0]
-    params = data[side][1]
-
-    return params
 
 def get_data(dir_):
     # get the data

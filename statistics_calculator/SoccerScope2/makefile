@@ -9,9 +9,9 @@ ALL_JARS=$(JAR_FILE) $(DEPEND_JARS)
 
 all: soccerscope
 
-build: $(JARS)
+build: $(ALL_JARS)
 	@(echo "deploying jars")
-	@(cp $^ ../../simulation_controller/ -v)
+	@(cp $+ ../../simulation_controller/ -v)
 
 sexpr.jar:
 	@(cd ../SExpr; $(MAKE) $@)

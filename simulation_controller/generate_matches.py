@@ -129,6 +129,11 @@ if __name__ == "__main__":
         logging.exception("Unforeseen exception:")
         raise
     finally:
-        # always report
-        report.report("upload")
+        # get the upload pass
+        passwd=None
+        if len(sys.argv) == 2:
+            passwd=sys.argv[1]
+
+        # report
+        report.report("upload", passwd=passwd)
 

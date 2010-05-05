@@ -5,12 +5,21 @@ csv data that needs to be generated. this module is more complex and
 complete.
 """
 
-__all__ = ["statistics14_keys","statistics14", "evaluators_keys", "evaluators"]
+__all__ = ["BONUS_INFO_KEYS", "bonus_info", "STATISTICS14_KEYS", "statistics14", "EVALUATORS_KEYS", "evaluators"]
 
 from datastructures import SortedDict
 from evaluator import *
 
-statistics14_keys=[
+BONUS_INFO_KEYS=["xml","team"]
+
+def bonus_info(st):
+    """contains bonus info to be included in the csvs"""
+    d=SortedDict()
+    d["xml"]=st.xml
+    d["team"]=st.team
+    return d
+
+STATISTICS14_KEYS=[
         "passmisses",
         "goals",
         "outsides",
@@ -51,7 +60,7 @@ def statistics14(st):
 
     return d
 
-evaluators_keys=[
+EVALUATORS_KEYS=[
         "PointsEvaluator",
         "GoalDifferenceEvaluator",
         "ReliefEvaluator",

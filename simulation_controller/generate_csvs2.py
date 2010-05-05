@@ -24,11 +24,13 @@ def walk_statistics(dir_):
         yield Statistics(xml)
 
 def gen_group1(dir_, filename=None):
+    ROWS_HEAD=BONUS_INFO_KEYS+STATISTICS14_KEYS
     rows=[]
     for st in walk_statistics(dir_):
         for side in ["left", "right"]:
             st.side=side
             teamdata=SortedDict()
+            teamdata.update(bonus_info(st))
             teamdata.update(statistics14(st))
 
             # another row.
@@ -36,7 +38,7 @@ def gen_group1(dir_, filename=None):
 
     if filename is not None:
         with open(filename, "w") as f:
-            f.write(";".join(statistics14_keys)+"\n")
+            f.write(";".join(ROWS_HEAD)+"\n")
             for row in rows:
                 f.write(";".join([str(value) for _, value in row.iteritems()]))
                 f.write("\n")
@@ -44,6 +46,7 @@ def gen_group1(dir_, filename=None):
     return rows
 
 def gen_group2(matchesdir, target_dir=None):
+    ROWS_HEAD=BONUS_INFO_KEYS+STATISTICS14_KEYS
     teams={}
     for st in walk_statistics(matchesdir):
         for side in ["left", "right"]:
@@ -52,6 +55,7 @@ def gen_group2(matchesdir, target_dir=None):
                 teams[st.team]=[]
 
             teamdata=SortedDict()
+            teamdata.update(bonus_info(st))
             teamdata.update(statistics14(st))
 
             # another row
@@ -65,7 +69,7 @@ def gen_group2(matchesdir, target_dir=None):
         for teamname, teamdata in teams.iteritems():
             fname=os.path.join(target_dir, teamname+".csv")
             with open(fname, "w") as f:
-                f.write(";".join(statistics14_keys)+"\n")
+                f.write(";".join(STATISTICS14_KEYS)+"\n")
                 for row in teamdata:
                     f.write(";".join([str(value) for _, value in row.iteritems()]))
                     f.write("\n")
@@ -73,7 +77,7 @@ def gen_group2(matchesdir, target_dir=None):
     return teams
 
 def gen_group3(matchesdir, filename=None):
-    ROWS_HEAD=evaluators_keys+T_CONFIG_NAMES
+    ROWS_HEAD=BONUS_INFO_KEYS+EVALUATORS_KEYS+T_CONFIG_NAMES
     rows=[]
     for st in walk_statistics(matchesdir):
         for side in ["left", "right"]:
@@ -83,6 +87,7 @@ def gen_group3(matchesdir, filename=None):
                 continue
 
             teamdata=SortedDict()
+            teamdata.update(bonus_info(st))
             teamdata.update(evaluators(st))
             t_config=discoverteamconfig(st.xml,st.side)[0]
             teamdata["formation"]=t_config["formation"]
@@ -120,13 +125,14 @@ def teams_sides(st):
     return (fcp,other)
 
 def gen_group4(matchesdir, filename=None):
-    ROWS_HEAD=evaluators_keys+T_CONFIG_NAMES+["opponent"]+statistics14_keys
+    ROWS_HEAD=BONUS_INFO_KEYS+EVALUATORS_KEYS+T_CONFIG_NAMES+["opponent"]+STATISTICS14_KEYS
     rows=[]
     for st in walk_statistics(matchesdir):
         fcp,other = teams_sides(st)
         teamsdata=SortedDict()
 
         st.side=fcp
+        teamdata.update(bonus_info(st))
         teamsdata.update(evaluators(st))
         t_config=discoverteamconfig(st.xml,st.side)[0]
         teamsdata["formation"]=t_config["formation"]
@@ -159,12 +165,6 @@ def usage():
     return "usage: python {0} <STATISTICS_DIR>".format(sys.argv[0])
 
 def main():
-    password=None
-    for i, arg in enumerate(sys.argv):
-        if arg.startswith("-p"):
-            password=arg[2:]
-            del sys.argv[i]
-            break
     if valid(sys.argv):
         j=partial(os.path.join,config.running_dir)
         logging.info("STARTING {0}".format(sys.argv[0]))
@@ -201,6 +201,14 @@ def main():
         print usage()
 
 if __name__ == "__main__":
+    # get the password before anything else so that the argv can be clean.
+    password=None
+    for i, arg in enumerate(sys.argv):
+        if arg.startswith("-p"):
+            password=arg[2:]
+            del sys.argv[i]
+            break
+
     with open(config.logfile,"w") as f:
         f.truncate(0) # no need for this line because "w" already truncates...
     try:
@@ -213,5 +221,5 @@ if __name__ == "__main__":
         raise
     finally:
         # always report
-        report.report("upload")
+        report.report("upload", passwd=password)
 

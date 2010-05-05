@@ -26,13 +26,8 @@ def dotheupload(filename, passwd):
     logging.info("file must be in http://ni.fe.up.pt/~poncio/files/runner.log")
 
 
-def report(*rtypes):
+def report(*rtypes, passwd=None):
     logging.info("reporting results...")
-
-    #prepare the upload part
-    passwd=None
-    if len(sys.argv) == 2:
-        passwd=sys.argv[1]
 
     # do it all...
     if "upload" in rtypes:

@@ -135,7 +135,7 @@ def accept_side(fn):
     @wraps(fn)
     def wrapper(self, side=None, *args, **kwds):
         # validate side argument.
-        if side not in self.valid_magic:
+        if not self.valid_magic(side):
             raise StatisticsError("{0} is an invalid side".format(side))
 
         # backup the self.side variable
@@ -229,6 +229,17 @@ class Statistics(object):
             errmsg = "{1} {2}"
             raise StatisticsError(errmsg.format(self.teams,self.xml,teams))
 
+
+    @property
+    def _teamslower(self):
+        if not hasattr(self, "__teamslower_cache") or self.__teamslower_cache is None:
+            if self.teams is None:
+                self.__teamslower_cache=None
+            else:
+                self.__teamslower_cache=(self.teams[0].lower(), self.teams[1].lower())
+
+        return self.__teamslower_cache
+
     @property
     def dom(self):
         """document object model of this statistics instance"""
@@ -255,26 +266,38 @@ class Statistics(object):
         #frees the dom object that ocupies a lot of memory
         del self.dom
 
-    @property
-    def valid_magic(self):
-        return Statistics.SIDES+list(self.teams)+[None]
+    def valid_magic(self, val):
+        if val is None:
+            return True
+        return val.lower() in Statistics.SIDES+list(self._teamslower)
 
     def magic_side(self,value):
-        if value not in self.valid_magic:
+        if not self.valid_magic(value):
             raise StatisticsError("side not specified")
 
+        if value is None:
+            self.side=value
         # guess if the value is the side or the team
-        if value in Statistics.SIDES:
+        elif Statistics.isside(value):
             self.side = value
-        elif value in self.teams:
+        elif self.isteam(value):
             self.team = value
-        elif value is None:
-            self.side = value
 
         assert self.side in Statistics.SIDES or self.side is None
         assert self.team in self.teams or self.team is None
 
     magic_side=property(fset=magic_side)
+
+    @staticmethod
+    def isside(value):
+        if not hasattr(value, "lower"):
+            return False
+        return value.lower() in Statistics.SIDES
+
+    def isteam(self,value):
+        if not hasattr(value, "lower"):
+            return False
+        return value.lower() in self._teamslower
 
     @property
     def xml(self):
@@ -295,13 +318,17 @@ class Statistics(object):
 
     @team.setter
     def team(self,value):
-        if not(value in self.teams or value is None):
+        if value is not None:
+            value=value.lower()
+        if not(value in self._teamslower or value is None):
             raise StatisticsError("team {0} is invalid".format(value))
 
-        self._team = value
         if value is not None:
-            self._side=Statistics.SIDES[self.teams.index(value)]
+            index=self._teamslower.index(value)
+            self._team = self.teams[index]
+            self._side=Statistics.SIDES[index]
         else:
+            self._team=None
             self._side=None
 
         assert self._team in self.teams or self._team is None
@@ -316,6 +343,9 @@ class Statistics(object):
 
     @side.setter
     def side(self,value):
+        if value is not None:
+            value=value.lower()
+
         if not(value in Statistics.SIDES or value is None):
             raise StatisticsError("side {0} is invalid".format(value))
         self._side = value
@@ -490,7 +520,7 @@ class Statistics(object):
         return passes_count
 
     @accept_side
-    def passmisses(self, half=None, offensive=None, receiver_offside=True):
+    def passmisses(self, half=None, offensive=None, receiver_offside=None):
         """ passes misses.
         the arguments are filters, None does not filter.
 
@@ -498,7 +528,7 @@ class Statistics(object):
         """
         # no filters set. return all passmisses
         if half is None and offensive is None and receiver_offside is None:
-            return int(dom.getElementsByTagName("passmisses")[0].getAttribute(self.side))
+            return int(self.dom.getElementsByTagName("passmisses")[0].getAttribute(self.side))
 
         starttime, endtime = Statistics._timeofhalf(half)
         # validate filters

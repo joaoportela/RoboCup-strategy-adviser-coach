@@ -2,14 +2,19 @@
 
 """ script to generate the several csv files needed."""
 
+import config
 from utils import *
 from statistics import *
 from csvdata2 import *
 import logging
 from datastructures import SortedDict
+import report
 
-import sys
 import os
+import sys
+import shutil
+import tarfile
+from functools import partial
 
 T_CONFIG_NAMES=["formation","mentality","gamepace"]
 
@@ -145,26 +150,68 @@ def gen_group4(matchesdir, filename=None):
     return rows
 
 
-def validate(argv):
-    foldername=argv[1].split("/")[-1]
-    return len(argv)==2 and os.path.isdir(argv[1])# and foldername=="matches"
+def valid(argv):
+    # I had a more elegant solution for this... but this works for now.
+    foldername=argv[1].strip("/").split("/")[-1]
+    return len(argv)==2 and os.path.isdir(argv[1]) and foldername=="matches"
 
 def usage():
     return "usage: python {0} <STATISTICS_DIR>".format(sys.argv[0])
 
-if __name__ == "__main__":
-    if validate(sys.argv):
+def main():
+    password=None
+    for i, arg in enumerate(sys.argv):
+        if arg.startswith("-p"):
+            password=arg[2:]
+            del sys.argv[i]
+            break
+    if valid(sys.argv):
+        j=partial(os.path.join,config.running_dir)
         logging.info("STARTING {0}".format(sys.argv[0]))
         print "generating csvs for {0}".format(sys.argv[1])
         print "group1..."
-        gen_group1(sys.argv[1],"group1.csv")
+        gen_group1(sys.argv[1],j("group1.csv"))
         print "group1 done. group2..."
-        gen_group2(sys.argv[1],"group2")
+        gen_group2(sys.argv[1],j("group2"))
         print "group2 done. group3..."
-        gen_group3(sys.argv[1],"group3.csv")
+        gen_group3(sys.argv[1],j("group3.csv"))
         print "group3 done. group 4..."
-        gen_group4(sys.argv[1],"group4.csv")
+        gen_group4(sys.argv[1],j("group4.csv"))
         print "group4 done."
-        logging.info("DONE")
+
+        # now compress in a convenient archive.
+        tarname=j("csvs.tar.gz")
+        tar = tarfile.open(tarname,'w:gz')
+        filestotar=[j("group1.csv"),j("group2"), j("group3.csv"),
+                j("group4.csv")]
+        try:
+            for name in filestotar:
+                tar.add(name)
+        finally:
+            tar.close()
+        for f in filestotar:
+            if os.isdir(f):
+                shutil.rmtree(f)
+            else:
+                os.remove(f)
+
+        if password is not None:
+            report.dotheupload(tarname,password)
     else:
         print usage()
+
+if __name__ == "__main__":
+    with open(config.logfile,"w") as f:
+        f.truncate(0) # no need for this line because "w" already truncates...
+    try:
+        logging.info("----------- '%s' started  ----------", sys.argv[0])
+        logging.info("running main()")
+        main()
+        logging.info("----------- '%s' finished ----------", sys.argv[0])
+    except:
+        logging.exception("Unforeseen exception:")
+        raise
+    finally:
+        # always report
+        report.report("upload")
+

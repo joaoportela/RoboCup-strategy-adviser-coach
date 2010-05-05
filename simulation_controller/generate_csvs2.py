@@ -190,7 +190,7 @@ def main():
         finally:
             tar.close()
         for f in filestotar:
-            if os.isdir(f):
+            if os.path.isdir(f):
                 shutil.rmtree(f)
             else:
                 os.remove(f)

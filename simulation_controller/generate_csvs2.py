@@ -132,7 +132,7 @@ def gen_group4(matchesdir, filename=None):
         teamsdata=SortedDict()
 
         st.side=fcp
-        teamdata.update(bonus_info(st))
+        teamsdata.update(bonus_info(st))
         teamsdata.update(evaluators(st))
         t_config=discoverteamconfig(st.xml,st.side)[0]
         teamsdata["formation"]=t_config["formation"]

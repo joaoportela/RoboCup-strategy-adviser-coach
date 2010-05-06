@@ -161,6 +161,20 @@ def valid(argv):
     foldername=argv[1].strip("/").split("/")[-1]
     return len(argv)==2 and os.path.isdir(argv[1]) and foldername=="matches"
 
+def compress_cleanup(tarname,filestotar):
+    tar = tarfile.open(tarname,'w:gz')
+    try:
+        add_striped(tar,filestotar)
+    finally:
+        tar.close()
+
+    for f in filestotar:
+        if os.path.isdir(f):
+            shutil.rmtree(f)
+        else:
+            os.remove(f)
+
+
 def usage():
     return "usage: python {0} <STATISTICS_DIR>".format(sys.argv[0])
 
@@ -181,19 +195,9 @@ def main():
 
         # now compress in a convenient archive.
         tarname=j("csvs.tar.gz")
-        tar = tarfile.open(tarname,'w:gz')
         filestotar=[j("group1.csv"),j("group2"), j("group3.csv"),
                 j("group4.csv")]
-        try:
-            for name in filestotar:
-                tar.add(name)
-        finally:
-            tar.close()
-        for f in filestotar:
-            if os.path.isdir(f):
-                shutil.rmtree(f)
-            else:
-                os.remove(f)
+        compress_cleanup(tarname,filestotar)
 
         if password is not None:
             report.dotheupload(tarname,password)

@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-__all__ = ["all_equal", "runcommand", "fake_runcommand", "write_script",
+__all__ = ["add_striped", "all_equal", "runcommand", "fake_runcommand", "write_script",
         "allrcgs", "allmetadata", "allmatchesids", "theid",
         "confrontation_name", "same_team", "str2bool", "human_size", "average",
         "confrontation_metadata_files", "walk_xmls", "discoverteamconfig"]
@@ -13,6 +13,17 @@ import glob
 import re
 import config
 import json
+
+def add_striped(tarfile, files):
+    for fname in files:
+        if os.path.isdir(fname):
+            arcname=fname.strip("/").split("/")[-1]
+        elif os.path.isfile(fname):
+            arcname=os.path.basename(fname)
+        else:
+            # it will fail soon enough
+            arcname=None
+        tarfile.add(name=fname, arcname=arcname)
 
 def walk_xmls(dir_):
     for root, dirs, files in os.walk(dir_):

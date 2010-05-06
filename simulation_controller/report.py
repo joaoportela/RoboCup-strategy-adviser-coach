@@ -19,11 +19,12 @@ def dotheupload(filename, passwd):
     # print "'{0}'".format(r.read())
 
     br.select_form(name="upload")
-    br.form.add_file(open(filename), 'text/plain', filename)
+    br.form.add_file(open(filename), filename=os.path.basename(filename))
     br['password'] = passwd
     r=br.submit()
     logging.debug("upload response: '{0}'".format(r.read()))
-    logging.info("file must be in http://ni.fe.up.pt/~poncio/files/runner.log")
+    logging.info("file must be in http://ni.fe.up.pt/~poncio/files/{0}".format(
+        os.path.basename(filename)))
 
 
 def report(*rtypes, **kwargs):

@@ -1,5 +1,5 @@
-#ifndef ASSISTANT_COACH
-#define ASSISTANT_COACH
+#ifndef ASSISTANTCOACH
+#define ASSISTANTCOACH
 
 #include <string>
 #include <list>
@@ -14,6 +14,8 @@
 class AssistantCoach {
 
     public:
+        AssistantCoach();
+        virtual ~AssistantCoach();
         // input:
 
         /**
@@ -44,4 +46,4 @@ class AssistantCoach {
         std::list<std::string> out_messages;
 };
 
-#endif // ASSISTANT_COACH
+#endif // ASSISTANTCOACH

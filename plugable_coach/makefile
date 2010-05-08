@@ -1,20 +1,25 @@
 CC=g++
-CFLAGS=-c -Wall
+CXXFLAGS=-c -Wall
+LIBS= -lboost_system-mt
+LDFLAGS = $(LIBS)
 SOURCES=main.cpp assistantcoach.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=acoach
+CXX = g++
+LD = g++
 
 .PHONY: all clean
 
 all: $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJECTS) 
-	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
+	$(LD) $(LDFLAGS) $(OBJECTS) -o $@
 
 # implicit dependencies
-%.o: %.h
+%.o: %.hpp
+
 # explicit dependencies
-main.o: assistantcoach.h
+main.o: assistantcoach.hpp
 
 clean:
 	rm $(EXECUTABLE) $(OBJECTS) -vf

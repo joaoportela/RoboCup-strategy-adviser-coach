@@ -3,7 +3,7 @@
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
 
-#include "assistantcoach.h"
+#include "assistantcoach.hpp"
 
 #define foreach BOOST_FOREACH
 using namespace std;

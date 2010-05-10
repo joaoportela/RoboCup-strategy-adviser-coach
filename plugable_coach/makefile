@@ -1,10 +1,9 @@
-CC=g++
-CXXFLAGS=-c -Wall
+CXXFLAGS = -c -Wall -g 
 LIBS= -lboost_system-mt
 LDFLAGS = $(LIBS)
-SOURCES=main.cpp assistantcoach.cpp
-OBJECTS=$(SOURCES:.cpp=.o)
-EXECUTABLE=acoach
+SOURCES = main.cpp assistantcoach.cpp
+OBJECTS = $(SOURCES:.cpp=.o)
+EXECUTABLE = acoach
 CXX = g++
 LD = g++
 
@@ -23,4 +22,10 @@ main.o: assistantcoach.hpp
 
 clean:
 	rm $(EXECUTABLE) $(OBJECTS) -vf
+
+depend:
+	gcc -MM $(CXXFLAGS) *.cpp > makefile.d
+
+# Dependencies tracking:
+-include ./*.d
 

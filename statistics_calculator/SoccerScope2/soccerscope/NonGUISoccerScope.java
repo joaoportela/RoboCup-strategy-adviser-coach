@@ -4,6 +4,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
 import java.util.Properties;
 
 import soccerscope.file.LogFileReader;
@@ -39,15 +43,15 @@ public class NonGUISoccerScope {
 		System.out.println("DONE!");
 	}
 
-	private static void openAndAnalyzeLogFile(final SceneSet sceneSet, final String filename)
-	throws IOException, InterruptedException {
+	private static void openAndAnalyzeLogFile(final SceneSet sceneSet,
+			final String filename) throws IOException, InterruptedException {
 		final LogFileReader lfr = new LogFileReader(filename);
 		final SceneSetMaker ssm = new SceneSetMaker(lfr, sceneSet);
 		ssm.run();
 	}
 
-	private static void printXML(final SceneSet sceneSet, final String xmlFilename)
-	throws Exception {
+	private static void printXML(final SceneSet sceneSet,
+			final String xmlFilename) throws Exception {
 		final XMLBuilder builder = XMLBuilder.create("analysis");
 		builder.attr("version", "1.02");
 
@@ -93,6 +97,47 @@ public class NonGUISoccerScope {
 
 		builder.toWriter(out, outputProperties);
 		out.flush();
+	}
+
+	public static void run(int port) throws SocketException, IOException {
+		final int BUFFERSIZE = 16 * 2048;
+
+		DatagramSocket sock = new DatagramSocket();
+
+		NonGUISoccerScope.sendStartPacket(sock, port);
+
+		DatagramPacket pack;
+		String data;
+		while (true) {
+			// receive
+			pack = new DatagramPacket(new byte[BUFFERSIZE], BUFFERSIZE);
+			sock.receive(pack);
+			System.out.println("rcvd:" + new String(pack.getData()).trim() );
+
+			// echo
+			sock.send(pack);
+
+			// check if it is over...
+			data = new String(pack.getData()).trim();
+			if (data.equals("(end)")) {
+				sock.close();
+				System.out.println("connection closed");
+				break;
+			}
+		}
+	}
+
+	private static void sendStartPacket(DatagramSocket sock, int port) throws IOException {
+		String host = "localhost";
+		byte[] message = "(start)".getBytes();
+
+		// send "(start)"
+		InetAddress address = InetAddress.getByName(host);
+		// Initialize a datagram packet with data and address
+		DatagramPacket packet = new DatagramPacket(message, message.length,
+				address, port);
+		sock.send(packet);
+
 	}
 
 }

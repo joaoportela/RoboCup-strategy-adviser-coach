@@ -43,11 +43,11 @@ class AssistantCoach {
 
     private:
         // connection and some other things I don't know about.
-        static const std::string rcg;
-        static const std::string xml;
+        static const int listen_port;
         static const std::string exec;
         static const std::vector<std::string> args;
 
+        int child_port;
         // instructions waiting to be consumed.
         std::list<std::string> out_messages;
 };

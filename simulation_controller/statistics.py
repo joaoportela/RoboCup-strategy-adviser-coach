@@ -34,7 +34,7 @@ sout="${{dirname}}/statistics-output.log"
 serr="${{dirname}}/statistics-error.log"
 
 # generate the statistics
-MYCLASSPATH="${{scriptsdir}}/soccerscope.jar:${{scriptsdir}}/java-xmlbuilder-0.3.jar"
+MYCLASSPATH="${{scriptsdir}}/soccerscope.jar:${{scriptsdir}}/java-xmlbuilder-0.3.jar:${{scriptsdir}}/sexpr.jar"
 CLASSPATH="${{MYCLASSPATH}}" java ${{jclass}} --batch "${{rcgc}}" "${{xml}}" > ${{sout}} 2> ${{serr}}
 """
 

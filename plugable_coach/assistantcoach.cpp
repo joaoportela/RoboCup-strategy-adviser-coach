@@ -9,17 +9,28 @@
 using namespace std;
 namespace bp = ::boost::process;
 
-AssistantCoach::AssistantCoach() {
-    // spawn child process
-    string exec = bp::find_executable_in_path("hostname"); 
-    vector<string> args = boost::assign::list_of("hostname"); 
+string const AssistantCoach::rcg = "/home/joao/201004151233-FCPortugalD_0-vs-FCPortugalX_0_convert.rcg.gz";
+string const AssistantCoach::xml = "/home/joao/201004151233-FCPortugalD_0-vs-FCPortugalX_0_convert.rcg.gz.xml";
+vector<string> const AssistantCoach::args = boost::assign::list_of(string("java"))
+    (string("soccerscope.SoccerScope")) (string("--batch")) (rcg) (xml); 
+string const AssistantCoach::exec = bp::find_executable_in_path("java");
+
+
+AssistantCoach::AssistantCoach(){
+
     bp::context ctx; 
     ctx.environment = bp::self::get_environment(); 
-    ctx.stdout_behavior = bp::inherit_stream(); 
-    bp::child c = bp::launch(exec, args, ctx);
+    ctx.environment["CLASSPATH"] = "soccerscope.jar:java-xmlbuilder-0.3.jar:sexpr.jar";
+    //ctx.work_directory = "";
+
+    // ctx.stdout_behavior = bp::silence_stream(); // seems like close_stream() works too.
+
+    // spawn child process
+    bp::child c = bp::launch(AssistantCoach::exec, AssistantCoach::args, ctx);
     bp::status s = c.wait();
-    if (s.exited()) 
-        cout << s.exit_status() << endl;
+    if (s.exited()){ 
+        cout << "exit status: " << s.exit_status() << endl;
+    }
 }
 
 AssistantCoach::~AssistantCoach(){

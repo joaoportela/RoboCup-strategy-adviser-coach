@@ -3,6 +3,7 @@
 
 #include <string>
 #include <list>
+#include <vector>
 
 /**
   Class that gets data from the main coach and replies with
@@ -40,9 +41,14 @@ class AssistantCoach {
           */
         bool has_instructions() const;
 
-    protected:
+    private:
         // connection and some other things I don't know about.
+        static const std::string rcg;
+        static const std::string xml;
+        static const std::string exec;
+        static const std::vector<std::string> args;
 
+        // instructions waiting to be consumed.
         std::list<std::string> out_messages;
 };
 

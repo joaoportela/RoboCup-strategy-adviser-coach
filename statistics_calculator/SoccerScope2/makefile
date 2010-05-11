@@ -12,6 +12,7 @@ all: soccerscope
 build: $(ALL_JARS)
 	@(echo "deploying jars")
 	@(cp $+ ../../simulation_controller/ -v)
+	@(cp $+ ../../plugable_coach/ -v)
 
 sexpr.jar:
 	@(cd ../SExpr; $(MAKE) $@)

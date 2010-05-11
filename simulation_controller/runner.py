@@ -14,7 +14,7 @@ from utils import confrontation_metadata_files
 
 def dotest(confrontation):
     # play the number of matches I want.
-    min_matches=5
+    min_matches=1
     print str(confrontation),"matches:",len(confrontation),"/",min_matches
     while len(confrontation) <  min_matches:
         confrontation.playnewmatch()
@@ -23,8 +23,6 @@ def dotest(confrontation):
     print "this confrontation has",len(confrontation), "matches.",
     if len(confrontation):
         print "they are: \n\t"+"\n\t".join([str(x) for x in confrontation.allmatches()])
-    else:
-        print " "
 
     peval=PointsEvaluator(confrontation.statistics(),"fcportugalD")
     print "according to the points evaluator the score is: ", peval.value()
@@ -40,7 +38,7 @@ def dotest(confrontation):
 
 def main():
     fcpD = FCPortugal({"formation" : 1})
-    fcpX = Team("fcportugalX")
+    fcpX = Team("nemesis")
     fcpD_vs_fcpX = Confrontation(fcpD, fcpX)
     dotest(fcpD_vs_fcpX)
     # for metadata_f in confrontation_metadata_files():
@@ -73,5 +71,4 @@ if __name__ == '__main__':
 
         # report
         report.report("upload", passwd=passwd)
-
 

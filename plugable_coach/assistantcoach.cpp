@@ -2,33 +2,45 @@
 
 #include <iostream>
 #include <boost/foreach.hpp>
-#include <boost/process.hpp> 
 #include <boost/assign/list_of.hpp> 
 #include <boost/lexical_cast.hpp>
 #define foreach BOOST_FOREACH
 
 using namespace std;
-namespace bp = ::boost::process;
 
-const int AssistantCoach::listen_port = 1337;
-const vector<string> AssistantCoach::args = boost::assign::list_of(string("java"))
-    (string("soccerscope.SoccerScope")) (string("--udp")) (boost::lexical_cast<string>(AssistantCoach::listen_port)); 
+// initialization of static constants.
 const string AssistantCoach::exec = bp::find_executable_in_path("java");
+const string AssistantCoach::classpath="soccerscope.jar:java-xmlbuilder-0.3.jar:sexpr.jar";
 
+vector<string> buildargs(int listen_port) {
+    return (boost::assign::list_of(string("java"))
+            (string("soccerscope.SoccerScope")) (string("--udp"))
+            (boost::lexical_cast<string>(listen_port)));
+}
 
-AssistantCoach::AssistantCoach(){
+// TODO - ver funcao "to_adapter" (faz parte do boost::assing::list_of)
 
+AssistantCoach::AssistantCoach(int listen_port):
+    listen_port(listen_port),
+    args(buildargs(listen_port))
+{
     bp::context ctx; 
     ctx.environment = bp::self::get_environment(); 
-    ctx.environment["CLASSPATH"] = "soccerscope.jar:java-xmlbuilder-0.3.jar:sexpr.jar";
+    ctx.environment["CLASSPATH"] = AssistantCoach::classpath;
 
     // ctx.work_directory = "";
     // ctx.stdout_behavior = bp::silence_stream(); // seems like close_stream() works too.
 
+    cout << "args:" << endl;
+    foreach(string s, this->args) {
+        cout << s << endl;
+    }
+
     // spawn child process
-    bp::child c = bp::launch(AssistantCoach::exec, AssistantCoach::args, ctx);
+    bp::child child = bp::launch(AssistantCoach::exec, this->args, ctx);
 
     // listen on udp socket for the message "(start)"
+    // store the udp packet port on the child_port
 }
 
 AssistantCoach::~AssistantCoach(){
@@ -36,7 +48,8 @@ AssistantCoach::~AssistantCoach(){
 
     // wait for the child to terminate.
 
-    // bp::status s = c.wait();
+    cout << "waiting" << endl;
+    // bp::status s = child->wait();
     // if (s.exited()){ 
     //     cout << "exit status: " << s.exit_status() << endl;
     // }

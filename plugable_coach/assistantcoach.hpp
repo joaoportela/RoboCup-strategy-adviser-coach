@@ -4,6 +4,9 @@
 #include <string>
 #include <list>
 #include <vector>
+#include <boost/process.hpp> 
+
+namespace bp = ::boost::process;
 
 /**
   Class that gets data from the main coach and replies with
@@ -15,7 +18,7 @@
 class AssistantCoach {
 
     public:
-        AssistantCoach();
+        AssistantCoach(int listen_port=0xbeef);
         virtual ~AssistantCoach();
         // input:
 
@@ -42,12 +45,18 @@ class AssistantCoach {
         bool has_instructions() const;
 
     private:
-        // connection and some other things I don't know about.
-        static const int listen_port;
+        // parameters
+        const int listen_port;
+        const std::vector<std::string> args;
         static const std::string exec;
-        static const std::vector<std::string> args;
+        static const std::string classpath;
 
+        // child data
         int child_port;
+
+        // use fucking pointer...
+        // bp::child child;
+
         // instructions waiting to be consumed.
         std::list<std::string> out_messages;
 };

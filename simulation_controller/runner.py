@@ -23,6 +23,8 @@ def dotest(confrontation):
     print "this confrontation has",len(confrontation), "matches.",
     if len(confrontation):
         print "they are: \n\t"+"\n\t".join([str(x) for x in confrontation.allmatches()])
+    else:
+        print ""
 
     peval=PointsEvaluator(confrontation.statistics(),"fcportugalD")
     print "according to the points evaluator the score is: ", peval.value()

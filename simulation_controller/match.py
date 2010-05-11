@@ -274,8 +274,7 @@ class Match(object):
         tarname=os.path.join(self.matchdir,tarname)
         tar = tarfile.open(tarname,'w:gz')
         try:
-            for name in filestotar:
-                tar.add(name)
+            add_striped(tar,filestotar)
         finally:
             tar.close()
 

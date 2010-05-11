@@ -157,9 +157,7 @@ def gen_group4(matchesdir, filename=None):
 
 
 def valid(argv):
-    # I had a more elegant solution for this... but this works for now.
-    foldername=argv[1].strip("/").split("/")[-1]
-    return len(argv)==2 and os.path.isdir(argv[1]) and foldername=="matches"
+    return len(argv)==2 and os.path.isdir(argv[1])
 
 def compress_cleanup(tarname,filestotar):
     tar = tarfile.open(tarname,'w:gz')

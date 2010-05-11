@@ -38,7 +38,8 @@ def smart_prediction(confrontations=confrontations(), min_matches=config.min_mat
 
     confrontations - confrontations to be runned
     min_matches - minimum number of matches per confrontation
-    matchduration - average match duration"""
+    matchduration - average match duration
+    """
     runsmissing=0
     for fcpD_vs_opp in confrontations:
             # play the required number of matches
@@ -67,8 +68,8 @@ def runmatches(confrontations=confrontations(), min_matches=config.min_matches,
 
     confrontations - confrontations to be runned
     min_matches - minimum number of matches per confrontation
-    matches_missing - if the total number of matches missing is supplied prints the
-    progress
+    matches_missing - if the total number of matches missing is supplied prints
+    the progress
     """
     if matches_missing:
         matches_played=0
@@ -88,20 +89,25 @@ def runmatches(confrontations=confrontations(), min_matches=config.min_matches,
             if matches_missing:
                 # update the counter...
                 matches_played+=1
+                print_progress(matches_played, matches_missing,
+                        matchduration=matchduration)
             n_played_matches=len(fcpD_vs_opp)
 
-        if matches_missing:
-            now=datetime.datetime.now()
-            stillmissing=matches_missing-matches_played
-            etime=now+stillmissing*matchduration
-            msg="{0} progress {1}/{2} - finish @ {3}".format(now,
-                    matches_played, matches_missing, etime)
-            logging.info(msg)
-            print msg
+def print_progress(matches_played, matches_missing, matchduration=config.duration):
+    now=datetime.datetime.now()
+    stillmissing=matches_missing-matches_played
+    etime=now+stillmissing*matchduration
+    msg="{0} progress {1}/{2} - finish @ {3}".format(now,
+            matches_played, matches_missing, etime)
+    logging.info(msg)
+    print msg
 
 def main():
     (nmatches, naive_duration, naive_size)=naive_prediction()
-    print "naive prediction: {1} runs, {0} duration".format(naive_duration, nmatches)
+    naive_prediction_msg="naive prediction: {1} runs, {0} duration".format(naive_duration, nmatches)
+    print naive_prediction_msg
+    logging.log(naive_prediction_msg)
+
     cfs=list(confrontations())
     (nmatches_missing, duration, size)=smart_prediction(cfs)
     print "{0} expected duration time.".format(duration)
@@ -110,8 +116,8 @@ def main():
 
     expected_finish_str="expected to finish @ {0}".format(finish)
     print expected_finish_str
-
     logging.info(expected_finish_str)
+
     report.report("upload")
 
     runmatches(cfs,matches_missing=nmatches_missing)

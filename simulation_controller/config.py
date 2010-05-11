@@ -54,7 +54,7 @@ strategy_data = {
 opponents=["kickofftug", "wrighteagle", "bahia2d", "nemesis"]
 min_matches=9
 # typical duration of a match (used for time prediction)
-duration=datetime.timedelta(minutes=13)
+duration=datetime.timedelta(minutes=12)
 size=9.5*(1024**2)#9.5MiB
 
 # scripts...

@@ -34,7 +34,7 @@ outerror="${{name}}-error.log"
 
 sleep 1
 echo command: \"${{teamComm}}\" \"${{matchhost}}\" \"${{teamdir}}\" {other_as_arg} > ${{output}} 2> ${{outerror}}
-\"${{teamComm}}\" \"${{matchhost}}\" \"${{teamdir}}\" {other_as_arg} > ${{output}} 2> ${{outerror}}
+\"${{teamComm}}\" \"${{matchhost}}\" \"${{teamdir}}\" {other_as_arg} >> ${{output}} 2>> ${{outerror}}
 
 """
 

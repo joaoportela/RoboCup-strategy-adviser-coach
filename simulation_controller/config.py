@@ -51,7 +51,7 @@ strategy_data = {
         }
 
 #match generation
-opponents=["kickofftug", "wrighteagle", "bahia2d", "nemesis"]
+opponents=["wrighteagle", "bahia2d", "nemesis"] # "kickofftug",
 min_matches=9
 # typical duration of a match (used for time prediction)
 duration=datetime.timedelta(minutes=12)

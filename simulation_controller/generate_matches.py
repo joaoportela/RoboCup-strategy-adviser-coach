@@ -106,7 +106,7 @@ def main():
     (nmatches, naive_duration, naive_size)=naive_prediction()
     naive_prediction_msg="naive prediction: {1} runs, {0} duration".format(naive_duration, nmatches)
     print naive_prediction_msg
-    logging.log(naive_prediction_msg)
+    logging.info(naive_prediction_msg)
 
     cfs=list(confrontations())
     (nmatches_missing, duration, size)=smart_prediction(cfs)

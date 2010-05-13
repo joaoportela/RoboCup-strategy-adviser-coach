@@ -40,7 +40,7 @@ def dotest(confrontation):
 
 def main():
     fcpD = FCPortugal({"formation" : 1})
-    fcpX = Team("nemesis")
+    fcpX = Team("fcportugalX")
     fcpD_vs_fcpX = Confrontation(fcpD, fcpX)
     dotest(fcpD_vs_fcpX)
     # for metadata_f in confrontation_metadata_files():

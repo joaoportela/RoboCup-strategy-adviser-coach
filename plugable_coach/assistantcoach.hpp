@@ -4,9 +4,16 @@
 #include <string>
 #include <list>
 #include <vector>
+#include <boost/scoped_ptr.hpp>
 #include <boost/process.hpp> 
+#include <boost/asio.hpp>
+
+#ifndef NDEBUG
+#define CHILD_REDIRECT_TO_FILE
+#endif
 
 namespace bp = ::boost::process;
+using boost::asio::ip::udp;
 
 /**
   Class that gets data from the main coach and replies with
@@ -45,20 +52,29 @@ class AssistantCoach {
         bool has_instructions() const;
 
     private:
-        // parameters
+        // parameters to launch the child.
         const int listen_port;
         const std::vector<std::string> args;
         static const std::string exec;
         static const std::string classpath;
 
-        // child data
-        int child_port;
+        // io service.
+        boost::asio::io_service io_service;
 
-        // use fucking pointer...
-        // bp::child child;
+        // socket.
+        udp::socket socket;
+
+        // child data
+        udp::endpoint child_address;
+        boost::scoped_ptr<bp::child> child;
 
         // instructions waiting to be consumed.
         std::list<std::string> out_messages;
+
+#ifdef CHILD_REDIRECT_TO_FILE
+        int childoutput;
+        int childerror;
+#endif
 };
 
 #endif // ASSISTANTCOACH

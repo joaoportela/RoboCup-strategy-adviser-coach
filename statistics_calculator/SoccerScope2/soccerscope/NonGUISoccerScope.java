@@ -1,14 +1,21 @@
 package soccerscope;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.Properties;
+
+import org.w3c.tools.sexpr.Cons;
+import org.w3c.tools.sexpr.SExprStream;
+import org.w3c.tools.sexpr.SimpleSExprStream;
+import org.w3c.tools.sexpr.Symbol;
 
 import soccerscope.file.LogFileReader;
 import soccerscope.model.Player;
@@ -101,6 +108,8 @@ public class NonGUISoccerScope {
 
 	public static void run(int port) throws SocketException, IOException {
 		final int BUFFERSIZE = 16 * 2048;
+		final Symbol endSymbol = Symbol.makeSymbol("end", null);
+		final Symbol timeSymbol = Symbol.makeSymbol("time", null);
 
 		DatagramSocket sock = new DatagramSocket();
 
@@ -112,17 +121,36 @@ public class NonGUISoccerScope {
 			// receive
 			pack = new DatagramPacket(new byte[BUFFERSIZE], BUFFERSIZE);
 			sock.receive(pack);
-			System.out.println("rcvd:" + new String(pack.getData()).trim() );
-
-			// echo
-			sock.send(pack);
+			System.out.println("rcvd: \"" + new String(pack.getData()).trim() +"\"" );
 
 			// check if it is over...
 			data = new String(pack.getData()).trim();
-			if (data.equals("(end)")) {
-				sock.close();
-				System.out.println("connection closed");
-				break;
+			try {
+				InputStream datastream = new ByteArrayInputStream(data.getBytes("UTF-8"));
+				SExprStream p = new SimpleSExprStream(datastream);
+				Object e = p.parse();
+				if(e instanceof Cons) {
+					Cons expr = (Cons) e;
+					if( expr.left().equals(endSymbol) ) {
+						sock.close();
+						System.out.println("connection closed");
+						break;
+					} else if(expr.left().equals(timeSymbol)) {
+						assert expr.right() instanceof Cons;
+						Cons expr_right = (Cons) expr.right();
+						assert expr_right.left() instanceof Integer;
+						int time = ((Integer) expr_right.left()).intValue();
+						if((time % 10) == 0) { // every 10th message
+							byte[] message = ("(recvd "+ time +")").getBytes();
+							pack.setData(message);
+							sock.send(pack);
+							System.out.println("sent: \"" + new String(pack.getData()).trim() +"\"" );
+						}
+
+					}
+				}
+			} catch(Exception e) {
+				System.err.println("could not parse \""+ data +"\"");
 			}
 		}
 	}

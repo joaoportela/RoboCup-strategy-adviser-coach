@@ -147,7 +147,11 @@ public class NonGUISoccerScope {
 							System.out.println("sent: \"" + new String(pack.getData()).trim() +"\"" );
 						}
 
+					} else {
+						System.err.println("unkown message \""+ data +"\"");
 					}
+				} else {
+					System.err.println("unkown message \""+ data +"\"");
 				}
 			} catch(Exception e) {
 				System.err.println("could not parse \""+ data +"\"");

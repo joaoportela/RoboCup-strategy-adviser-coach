@@ -2,7 +2,7 @@
 #define SYNCRONIZEDQUEUE
 
 #include <boost/thread.hpp>
-
+#include <queue>
 
 /**
  * Very simple thread safe message queue.
@@ -12,7 +12,7 @@
  * for the guidelines.
  *
  * Maybe in the future I can extend this to allow simultaneous push and pop ;) 
- * That would probably require that I did not use a std::queue.
+ * Although it would probably require that I did not use a std::queue.
  */
 template <typename T>
 class SyncronizedQueue {
@@ -28,6 +28,8 @@ class SyncronizedQueue {
      * condition variable to wait for the queue to contain elements.
      */
     boost::condition_variable _queue_condition_variable;
+
+    public:
 
     /**
      * pushes an element into the queue
@@ -73,7 +75,6 @@ class SyncronizedQueue {
         x=this->_queue.front();
         this->_queue.pop();
         return true;
-
     }
 };
 

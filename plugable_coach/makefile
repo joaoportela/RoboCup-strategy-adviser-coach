@@ -1,5 +1,5 @@
 CXXFLAGS = -c -Wall -g 
-LIBS= -lboost_system-mt
+LIBS= -lboost_system-mt -lboost_thread-mt
 LDFLAGS = $(LIBS)
 SOURCES = main.cpp assistantcoach.cpp
 OBJECTS = $(SOURCES:.cpp=.o)

@@ -28,6 +28,7 @@ vector<string> buildargs(int listen_port)
 }
 
 AssistantCoach::AssistantCoach(int listen_port):
+    _finished(false),
     listen_port(listen_port),
     args(buildargs(listen_port)),
     socket(this->io_service, udp::endpoint(udp::v4(), listen_port))
@@ -67,6 +68,9 @@ AssistantCoach::AssistantCoach(int listen_port):
     if(recvdata != "(start)"){
         // TODO - what? exception?
     }
+
+    // launch the thread
+    boost::thread async_worker(boost::bind(&AssistantCoach::worker,this));
 }
 
 AssistantCoach::~AssistantCoach()
@@ -91,25 +95,40 @@ AssistantCoach::~AssistantCoach()
 #endif
 }
 
-void AssistantCoach::message_received(string const &message)
-{
-    // just echoes for now
-    this->out_messages.push_back(message);
+void AssistantCoach::worker() {
+    while(!this->isfinished()) {
 
+        // lock reading from thread...
+        // call handler
+
+    }
+}
+
+bool AssistantCoach::isfinished() {
+    boost::unique_lock<boost::mutex> lock(this->_finished_mutex);
+    return this->_finished;
+}
+
+void AssistantCoach::finish() {
+    boost::unique_lock<boost::mutex> lock(this->_finished_mutex);
+    this->_finished = true;
+}
+
+void AssistantCoach::inform(string const &message)
+{
     // send message to the child.
+    // this->socket.sendto(...);
 }
 
-list<string> AssistantCoach::instructions()
-{
-    list<string> ret_msgs;
-    this->out_messages.swap(ret_msgs);
-    return ret_msgs;
-}
-
-bool AssistantCoach::has_instructions() const 
-{
-    return not(this->out_messages.empty());
-}
-//  foreach(string message, data) {
-//      cout << ch;
-//  }
+// list<string> AssistantCoach::instructions()
+// {
+//     list<string> ret_msgs;
+//     this->out_messages.swap(ret_msgs);
+//     return ret_msgs;
+// }
+// 
+// bool AssistantCoach::has_instructions() const 
+// {
+//     return not(this->out_messages.empty());
+// }
+// 

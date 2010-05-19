@@ -7,7 +7,6 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/asio.hpp>
 #define foreach BOOST_FOREACH
-#define MAX_BUFFER_SIZE (16*2048)
 
 #ifdef CHILD_REDIRECT_TO_FILE
 #include <fcntl.h>
@@ -28,10 +27,13 @@ vector<string> buildargs(int listen_port)
 }
 
 AssistantCoach::AssistantCoach(int listen_port):
-    _finished(false),
-    listen_port(listen_port),
+    //_finished(false),
     args(buildargs(listen_port)),
     socket(this->io_service, udp::endpoint(udp::v4(), listen_port))
+#ifdef LOG_COMMUNICATION
+    ,to_child("messages-tochild.log"),
+    from_child("messages-fromchild.log")
+#endif
 #ifdef CHILD_REDIRECT_TO_FILE
     ,childoutput(creat("child-output.log", 0644)),
     childerror(creat("child-error.log", 0644))
@@ -56,21 +58,30 @@ AssistantCoach::AssistantCoach(int listen_port):
     this->child.reset(new bp::child(bp::launch(AssistantCoach::exec, this->args, ctx)));
 
     // listen on udp socket for the message "(start)"
-    boost::array<char, MAX_BUFFER_SIZE> recv_buf;
+    rcv_container_t recv_buf;
     boost::system::error_code error;
-    size_t s = this->socket.receive_from(boost::asio::buffer(recv_buf),
+    size_t size = this->socket.receive_from(boost::asio::buffer(recv_buf),
             this->child_address, 0, error);
 
-    if (error)
+    if (error) 
+    {
+        cerr << "error waiting for \"(start)\"" << endl;
         throw boost::system::system_error(error);
+    }
 
-    string recvdata(recv_buf.data(), s);
+    string recvdata(recv_buf.data(), size);
+#ifdef LOG_COMMUNICATION
+    from_child << "[thread:" << boost::this_thread::get_id()  << "]" << recvdata << endl;
+#endif
     if(recvdata != "(start)"){
+        cerr << "recvdata != start" << endl;
         // TODO - what? exception?
     }
 
-    // launch the thread
-    boost::thread async_worker(boost::bind(&AssistantCoach::worker,this));
+    install_receive();
+
+    // launch the thread running the io service
+    async_worker = boost::thread(boost::bind(&boost::asio::io_service::run, &(this->io_service)));
 }
 
 AssistantCoach::~AssistantCoach()
@@ -81,30 +92,31 @@ AssistantCoach::~AssistantCoach()
     boost::system::error_code ignored_error;
     this->socket.send_to(boost::asio::buffer(message),
              this->child_address, 0, ignored_error);
+#ifdef LOG_COMMUNICATION
+    to_child << "(" << boost::this_thread::get_id()  << ")" << message << endl;
+#endif
 
-    // wait for the child to terminate.
+    // wait for the worker and the child to terminate.
     cout << "waiting" << endl;
     bp::status s = this->child->wait();
     if (s.exited()) {
         cout << "exit status: " << s.exit_status() << endl;
     }
+    async_worker.join();
 
+#ifdef LOG_COMMUNICATION
+    to_child.close();
+    from_child.close();
+#endif
 #ifdef CHILD_REDIRECT_TO_FILE
     close(this->childoutput);
     close(this->childerror);
 #endif
 }
 
-void AssistantCoach::worker() {
-    while(!this->isfinished()) {
-
-        // lock reading from thread...
-        // call handler
-
-    }
-}
-
-bool AssistantCoach::isfinished() {
+#if 0
+bool AssistantCoach::isfinished() 
+{
     boost::unique_lock<boost::mutex> lock(this->_finished_mutex);
     return this->_finished;
 }
@@ -113,22 +125,73 @@ void AssistantCoach::finish() {
     boost::unique_lock<boost::mutex> lock(this->_finished_mutex);
     this->_finished = true;
 }
+#endif
 
 void AssistantCoach::inform(string const &message)
 {
+    // make a copy of the message to send
+    boost::shared_ptr<std::string> msg_ptr(new std::string(message)); 
+
     // send message to the child.
-    // this->socket.sendto(...);
+    this->socket.async_send_to(boost::asio::buffer(*msg_ptr), child_address, 
+            boost::bind(&AssistantCoach::handle_send, this,
+                msg_ptr, boost::asio::placeholders::error));
 }
 
-// list<string> AssistantCoach::instructions()
-// {
-//     list<string> ret_msgs;
-//     this->out_messages.swap(ret_msgs);
-//     return ret_msgs;
-// }
-// 
-// bool AssistantCoach::has_instructions() const 
-// {
-//     return not(this->out_messages.empty());
-// }
-// 
+void AssistantCoach::install_receive()
+{
+    boost::shared_ptr<rcv_container_t> recv_buf_ptr(new rcv_container_t());
+    this->socket.async_receive_from(
+            boost::asio::buffer(boost::asio::buffer(*recv_buf_ptr)), child_address,
+            boost::bind(&AssistantCoach::handle_receive, this,
+                recv_buf_ptr, boost::asio::placeholders::error,
+                boost::asio::placeholders::bytes_transferred));
+}
+
+void AssistantCoach::handle_send(boost::shared_ptr<std::string> message_ptr,
+        const boost::system::error_code& error)
+{
+    if (error)
+    {
+        cerr << "error sending message: " << *message_ptr << endl;
+        throw boost::system::system_error(error);
+    }
+
+#ifdef LOG_COMMUNICATION
+    to_child << "[thread:" << boost::this_thread::get_id()  << "]" << *message_ptr << endl;
+#endif
+}
+
+void AssistantCoach::handle_receive(
+        boost::shared_ptr<rcv_container_t> recv_buf_ptr, 
+        const boost::system::error_code& error,
+        std::size_t bytes_transferred)
+{
+    if(error) 
+    {
+        cerr << "error receiving message" << endl;
+        throw boost::system::system_error(error);
+    }
+
+    // fetch the message
+    string message(recv_buf_ptr->data(), bytes_transferred);
+
+#ifdef LOG_COMMUNICATION
+    // log the message
+    from_child << "[thread:" << boost::this_thread::get_id()  << "]" << message << endl;
+#endif
+
+    // call the user defined handler
+    this->receive(message);
+
+    if(message != "(end)")
+    {
+        install_receive();
+    }
+    else
+    {
+        cerr << "not installing handler" << endl;
+    }
+
+}
+

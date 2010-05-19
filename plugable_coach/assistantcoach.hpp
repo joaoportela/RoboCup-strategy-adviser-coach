@@ -1,6 +1,7 @@
 #ifndef ASSISTANTCOACH
 #define ASSISTANTCOACH
 
+#include <fstream>
 #include <string>
 #include <list>
 #include <vector>
@@ -8,21 +9,23 @@
 #include <boost/process.hpp> 
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
-#include "syncronizedqueue.hpp"
 
+#define MAX_BUFFER_SIZE (16*2048)
 #ifndef NDEBUG
 #define CHILD_REDIRECT_TO_FILE
+#define LOG_COMMUNICATION
 #endif
 
 namespace bp = ::boost::process;
 using boost::asio::ip::udp;
+typedef boost::array<char, MAX_BUFFER_SIZE> rcv_container_t;
 
 /**
   Class that gets data from the main coach and replies with
   instructions for the team.
-  This class is supposed to be used by feeding it though message_received
-  function whenever messages arrive and getting instructions for the team
-  whenever they are available.
+  This class is supposed to be used by feeding it through inform method whenever
+  messages arrive and getting instructions for the team by defining the receive
+  method.
   */
 class AssistantCoach 
 {
@@ -37,31 +40,38 @@ class AssistantCoach
           */
         void inform(std::string const & message);
 
-        // output:
-
     protected:
         /**
-         * method that is called when a new instruction arrives.
-         * should be overridden to achieve the desired behaviour.
+         * method that is called when a new instruction from the assistant
+         * coach arrives. Should be overridden to achieve the desired
+         * behaviour.
          *
          * note: this method will be run in the AssistantCoach thread, as
          * such, necessary precautions to avoid race conditions or other
-         * multithread problems should be taken.
+         * multi-thread problems should be taken.
          */
-        virtual void new_instruction(std::string instruction) = 0; 
+        virtual void receive(std::string instruction) = 0; 
 
     private:
-        /**
-         * Function that runs on a different thread communicating with the
-         * child process.
-         *
-         * Function that runs on a different thread communicating with the
-         * child process. This function does most of the work.
-         */
-        void worker();
-        /** thread that is running the worker. */
-        boost::thread worker_thread();
+        /** thread that is running the work. */
+        boost::thread async_worker;
 
+        /** handler for async_receive. */
+        void handle_receive(
+                boost::shared_ptr<rcv_container_t> recv_buf_ptr, 
+                const boost::system::error_code& error,
+                std::size_t bytes_transferred);
+
+        /** handler for async_send. */
+        void handle_send(boost::shared_ptr<std::string> message_ptr,
+                const boost::system::error_code& error);
+
+        /**
+         * installs the receive handler
+         */
+        void install_receive();
+
+#if 0
         // worker execution control:
         /**
          * Tells the worker thread to finish
@@ -81,9 +91,9 @@ class AssistantCoach
          * the variable that contains the state of the worker thread.
          */
         bool _finished;
+#endif
 
         // parameters to launch the child.
-        const int listen_port;
         const std::vector<std::string> args;
         static const std::string exec;
         static const std::string classpath;
@@ -95,14 +105,15 @@ class AssistantCoach
         udp::endpoint child_address;
         boost::scoped_ptr<bp::child> child;
 
+#ifdef LOG_COMMUNICATION
+        std::ofstream to_child;
+        std::ofstream from_child;
+#endif
 #ifdef CHILD_REDIRECT_TO_FILE
         int childoutput;
         int childerror;
 #endif
 
-        // message queues
-        SyncronizedQueue<std::string> messages_from_child;
-        // SyncronizedQueue<std::string> messges_to_child;
 };
 
 #endif // ASSISTANTCOACH

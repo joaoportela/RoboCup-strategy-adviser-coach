@@ -4,6 +4,7 @@
 #include <boost/lexical_cast.hpp>
 
 #include "assistantcoach.hpp"
+#include "dieroll.hpp"
 
 #define foreach BOOST_FOREACH
 using namespace std;
@@ -21,31 +22,32 @@ using namespace std;
  */
 int counter = 0;
 void report_func(string instruction) {
-    cout << "(" << counter++ << ")"<< instruction << endl;
+    cout << "rcv(" << counter++ << ")"<< instruction << endl;
 }
 
-class AssistantCoach2 : public AssistantCoach {
+class AssistantCoach2 : public AssistantCoach 
+{
     protected:
-        void new_instruction(string instruction) {
+        void receive(string instruction) {
             report_func(instruction);
         }
-            
+
 };
 
 int main( int /*argc*/, const char* /*argv*/[] )
 {
+    int counter = 0;
+    int r;
+
     AssistantCoach2 acoach;
 
-    for(int i =0; i < 10; ++i) {
+    for(int i =0; i < 110; ++i) {
         string message=boost::lexical_cast<string>( i );
         message="(time " + message + ")";
         acoach.inform(message);
-    }
-
-    cout << (acoach.has_instructions()?"true":"false") << endl;
-
-    foreach(string message, acoach.instructions()) {
-        cout << message << endl;
+        cout << "snd(" << counter++ << ")"<< message << endl;
+        r = rolldie(0,100);
+        // boost::this_thread::sleep(boost::posix_time::milliseconds(r));
     }
 
     return 0;

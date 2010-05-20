@@ -2,6 +2,7 @@
 #include <string>
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/bind.hpp>
 
 #include "assistantcoach.hpp"
 #include "dieroll.hpp"
@@ -11,21 +12,32 @@ using namespace std;
 
 /**
  * main.cpp:
- * this file is where I functionally test the Assistant coach class.
+ * this file is where I functionally test (by visual inspection) the Assistant
+ * coach class.
  */
 
 /*
  * function where message receiving is reported.
  */
 int counter = 0;
-void report_func(string instruction) {
+void report_func(string instruction) 
+{
     cout << "rcv(" << counter++ << ")"<< instruction << endl;
 }
+
+// struct report_struct
+// {
+//     void call_report_func(string instruction)
+//     {
+//         instruction(instruction);
+//     }
+// };
 
 int main( int /*argc*/, const char* /*argv*/[] )
 {
     int counter = 0;
     int r;
+    // report_struct rs;
 
     AssistantCoach acoach(&report_func);
 

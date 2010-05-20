@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <boost/bind.hpp>
 #include <boost/foreach.hpp>
 #include <boost/assign/list_of.hpp> 
 #include <boost/lexical_cast.hpp>

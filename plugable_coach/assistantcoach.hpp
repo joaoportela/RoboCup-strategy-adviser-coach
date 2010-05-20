@@ -5,6 +5,7 @@
 #include <string>
 #include <list>
 #include <vector>
+#include <boost/function.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/process.hpp> 
 #include <boost/asio.hpp>
@@ -19,7 +20,7 @@
 namespace bp = ::boost::process;
 using boost::asio::ip::udp;
 typedef boost::array<char, MAX_BUFFER_SIZE> rcv_container_t;
-typedef void (*userhandler_t) (std::string);
+typedef boost::function<void(std::string)> userhandler_t;
 
 /**
   Class that gets data from the main coach and replies with

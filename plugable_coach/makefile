@@ -20,6 +20,9 @@ $(EXECUTABLE): $(OBJECTS)
 clean:
 	rm $(EXECUTABLE) $(OBJECTS) -vf
 
+fullclean: clean
+	rm *.log
+
 depend:
 	gcc -MM $(CXXFLAGS) *.cpp > makefile.d
 

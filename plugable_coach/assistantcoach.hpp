@@ -72,6 +72,11 @@ class AssistantCoach
          */
         void install_receive();
 
+        /**
+         * gets the current time string
+         */
+        const std::string current_time() const;
+
 #if 0
         // worker execution control:
         /**

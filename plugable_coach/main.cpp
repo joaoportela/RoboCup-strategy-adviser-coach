@@ -29,7 +29,7 @@ void report_func(string instruction)
 // {
 //     void call_report_func(string instruction)
 //     {
-//         instruction(instruction);
+//         report_func(instruction);
 //     }
 // };
 
@@ -40,14 +40,16 @@ int main( int /*argc*/, const char* /*argv*/[] )
     // report_struct rs;
 
     AssistantCoach acoach(&report_func);
+    // AssistantCoach acoach(boost::bind(&report_struct::call_report_func,&rs,_1));
 
-    for(int i =0; i < 110; ++i) {
+    for(int i =0; i < 110; ++i) 
+    {
         string message=boost::lexical_cast<string>( i );
         message="(time " + message + ")";
         acoach.inform(message);
         cout << "snd(" << counter++ << ")"<< message << endl;
         r = rolldie(0,100);
-        // boost::this_thread::sleep(boost::posix_time::milliseconds(r));
+        boost::this_thread::sleep(boost::posix_time::milliseconds(r));
     }
 
     return 0;

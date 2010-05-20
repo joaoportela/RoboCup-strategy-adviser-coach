@@ -7,6 +7,7 @@
 #include <boost/assign/list_of.hpp> 
 #include <boost/lexical_cast.hpp>
 #include <boost/asio.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #define foreach BOOST_FOREACH
 
 #ifdef CHILD_REDIRECT_TO_FILE
@@ -73,7 +74,7 @@ AssistantCoach::AssistantCoach(userhandler_t rcvfunc, int listen_port):
 
     string recvdata(recv_buf.data(), size);
 #ifdef LOG_COMMUNICATION
-    from_child << "[thread:" << boost::this_thread::get_id()  << "]" << recvdata << endl;
+    from_child << this->current_time() << "[thread:" << boost::this_thread::get_id()  << "]" << recvdata << endl;
 #endif
     if(recvdata != "(start)"){
         cerr << "recvdata != start" << endl;
@@ -95,7 +96,7 @@ AssistantCoach::~AssistantCoach()
     this->socket.send_to(boost::asio::buffer(message),
              this->child_address, 0, ignored_error);
 #ifdef LOG_COMMUNICATION
-    to_child << "(" << boost::this_thread::get_id()  << ")" << message << endl;
+    to_child << this->current_time() << "(" << boost::this_thread::get_id()  << ")" << message << endl;
 #endif
 
     // wait for the worker and the child to terminate.
@@ -160,7 +161,7 @@ void AssistantCoach::handle_send(boost::shared_ptr<std::string> message_ptr,
     }
 
 #ifdef LOG_COMMUNICATION
-    to_child << "[thread:" << boost::this_thread::get_id()  << "]" << *message_ptr << endl;
+    to_child << this->current_time() << "[thread:" << boost::this_thread::get_id()  << "]" << *message_ptr << endl;
 #endif
 }
 
@@ -180,7 +181,7 @@ void AssistantCoach::handle_receive(
 
 #ifdef LOG_COMMUNICATION
     // log the message
-    from_child << "[thread:" << boost::this_thread::get_id()  << "]" << message << endl;
+    from_child << this->current_time() << "[thread:" << boost::this_thread::get_id()  << "]" << message << endl;
 #endif
 
     // call the user defined handler
@@ -197,3 +198,17 @@ void AssistantCoach::handle_receive(
 
 }
 
+const string AssistantCoach::current_time() const
+{
+    // std::ostringstream msg;
+    // const boost::posix_time::ptime now=
+    //     boost::posix_time::second_clock::local_time();
+    // boost::posix_time::time_facet*const f=
+    //     new boost::posix_time::time_facet("%H-%M-%S");
+    // msg.imbue(std::locale(msg.getloc(),f));
+    // msg << now;
+    // return msg.str();
+    return boost::posix_time::to_iso_string(
+           boost::posix_time::second_clock::local_time()
+           );
+}

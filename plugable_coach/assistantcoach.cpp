@@ -26,7 +26,8 @@ vector<string> buildargs(int listen_port)
             (boost::lexical_cast<string>(listen_port)));
 }
 
-AssistantCoach::AssistantCoach(int listen_port):
+AssistantCoach::AssistantCoach(userhandler_t rcvfunc, int listen_port):
+    receive(rcvfunc),
     //_finished(false),
     args(buildargs(listen_port)),
     socket(this->io_service, udp::endpoint(udp::v4(), listen_port))

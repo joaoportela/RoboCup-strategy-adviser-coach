@@ -19,6 +19,7 @@
 namespace bp = ::boost::process;
 using boost::asio::ip::udp;
 typedef boost::array<char, MAX_BUFFER_SIZE> rcv_container_t;
+typedef void (*userhandler_t) (std::string);
 
 /**
   Class that gets data from the main coach and replies with
@@ -30,9 +31,8 @@ typedef boost::array<char, MAX_BUFFER_SIZE> rcv_container_t;
 class AssistantCoach 
 {
     public:
-        AssistantCoach(int listen_port=0xbeef);
+        AssistantCoach(userhandler_t rcvfunc, int listen_port=0xbeef);
         virtual ~AssistantCoach();
-        // input:
 
         /**
           Whenever data arrives from the server it should be fed to the assistant coach
@@ -40,19 +40,19 @@ class AssistantCoach
           */
         void inform(std::string const & message);
 
-    protected:
+    private:
+
         /**
          * method that is called when a new instruction from the assistant
-         * coach arrives. Should be overridden to achieve the desired
-         * behaviour.
+         * coach arrives. Should be provided by the user in order to achieve
+         * the desired behaviour.
          *
          * note: this method will be run in the AssistantCoach thread, as
          * such, necessary precautions to avoid race conditions or other
          * multi-thread problems should be taken.
          */
-        virtual void receive(std::string instruction) = 0; 
+        userhandler_t receive; 
 
-    private:
         /** thread that is running the work. */
         boost::thread async_worker;
 

@@ -15,31 +15,19 @@ using namespace std;
  */
 
 /*
- * overriding new_instruction event.
- *
- * this is done in this particular way to test calling functions that use
- * global objects.
+ * function where message receiving is reported.
  */
 int counter = 0;
 void report_func(string instruction) {
     cout << "rcv(" << counter++ << ")"<< instruction << endl;
 }
 
-class AssistantCoach2 : public AssistantCoach 
-{
-    protected:
-        void receive(string instruction) {
-            report_func(instruction);
-        }
-
-};
-
 int main( int /*argc*/, const char* /*argv*/[] )
 {
     int counter = 0;
     int r;
 
-    AssistantCoach2 acoach;
+    AssistantCoach acoach(&report_func);
 
     for(int i =0; i < 110; ++i) {
         string message=boost::lexical_cast<string>( i );

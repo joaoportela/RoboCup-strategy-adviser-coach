@@ -6,8 +6,10 @@ OBJECTS = $(SOURCES:.cpp=.o)
 EXECUTABLE = acoach
 CXX = g++
 LD = g++
+RM = rm
+RMFLAGS = -vf
 
-.PHONY: all clean
+.PHONY: all clean depend fullclean
 
 all: $(EXECUTABLE)
 
@@ -18,10 +20,10 @@ $(EXECUTABLE): $(OBJECTS)
 %.o: %.hpp
 
 clean:
-	rm $(EXECUTABLE) $(OBJECTS) -vf
+	$(RM) $(EXECUTABLE) $(OBJECTS) $(RMFLAGS)
 
 fullclean: clean
-	rm *.log
+	$(RM) *.log $(RMFLAGS)
 
 depend:
 	gcc -MM $(CXXFLAGS) *.cpp > makefile.d

@@ -184,11 +184,12 @@ void AssistantCoach::handle_receive(
     from_child << this->current_time() << "[thread:" << boost::this_thread::get_id()  << "]" << message << endl;
 #endif
 
-    // call the user defined handler
-    this->receive(message);
-
     if(message != "(end)")
     {
+        // call the user defined handler
+        this->receive(message);
+
+        // prepare to receive more messages
         install_receive();
     }
     else

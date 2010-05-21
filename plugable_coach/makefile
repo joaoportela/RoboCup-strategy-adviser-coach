@@ -8,6 +8,8 @@ CXX = g++
 LD = g++
 RM = rm
 RMFLAGS = -vf
+FILES_TO_DEPLOY = assistantcoach.hpp assistantcoach.cpp
+DEPLOY_TARGET = ~/fcportugalE/coach/
 
 .PHONY: all clean depend fullclean
 
@@ -15,9 +17,6 @@ all: $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJECTS) 
 	$(LD) $(LDFLAGS) $(OBJECTS) -o $@
-
-# implicit dependencies
-%.o: %.hpp
 
 clean:
 	$(RM) $(EXECUTABLE) $(OBJECTS) $(RMFLAGS)
@@ -28,6 +27,12 @@ fullclean: clean
 depend:
 	gcc -MM $(CXXFLAGS) *.cpp > makefile.d
 
+deploy:
+	cp $(FILES_TO_DEPLOY) $(DEPLOY_TARGET)
+
 # Dependencies tracking:
+# implicit dependencies
+%.o: %.hpp
+# generated dependencies
 -include ./*.d
 

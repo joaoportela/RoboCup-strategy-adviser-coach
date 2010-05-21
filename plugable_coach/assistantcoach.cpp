@@ -100,10 +100,9 @@ AssistantCoach::~AssistantCoach()
 #endif
 
     // wait for the worker and the child to terminate.
-    cout << "waiting" << endl;
     bp::status s = this->child->wait();
     if (s.exited()) {
-        cout << "exit status: " << s.exit_status() << endl;
+        cout << "acoach-child exit status: " << s.exit_status() << endl;
     }
     async_worker.join();
 

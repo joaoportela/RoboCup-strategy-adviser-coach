@@ -149,14 +149,13 @@ class Team(object):
         # filter
         return [team for team in teams if has_start(team) and has_kill(team)]
 
-# remember: ./FCPortugalPlayer -file client.conf -file server.conf -host
-# 127.0.0.1 -team_name LOL -strategy_file strategy.conf -formations_file
-# /home/joao/robocup/runner_workdir/teams/fcportugalY/formations.conf 
-
 class FCPortugal(Team):
-    def __init__(self, strategy_params):
-        # changed while trying to track a problem
-        Team.__init__(self, "fcportugalD")
+    def __init__(self, strategy_params, extended=False):
+        if extended:
+            Team.__init__(self, "fcportugalE")
+        else:
+            Team.__init__(self, "fcportugalD")
+        self.extended=extended
         self.strategy_params=config.strategy_default
         self.strategy_params.update(strategy_params)
         config.validate_strategy(self.strategy_params)
@@ -202,7 +201,7 @@ class FCPortugal(Team):
         return "_".join(dynamic_part)
 
     def encode(self):
-        return ("FCPortugal", [self.strategy_params])
+        return ("FCPortugal", [self.strategy_params, self.extended])
 
     def __str__(self):
         return self.name+"-"+self.params_summary()

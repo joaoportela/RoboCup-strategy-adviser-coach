@@ -8,7 +8,7 @@ CXX = g++
 LD = g++
 RM = rm
 RMFLAGS = -vf
-FILES_TO_DEPLOY = assistantcoach.hpp assistantcoach.cpp
+FILES_TO_DEPLOY = assistantcoach.hpp assistantcoach.cpp *.jar
 DEPLOY_TARGET = ~/fcportugalE/coach/
 
 .PHONY: all clean depend fullclean

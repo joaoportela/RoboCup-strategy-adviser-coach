@@ -25,31 +25,35 @@ void report_func(string instruction)
     cout << "rcv(" << counter++ << ")"<< instruction << endl;
 }
 
-// struct report_struct
-// {
-//     void call_report_func(string instruction)
-//     {
-//         report_func(instruction);
-//     }
-// };
+struct report_struct
+{
+    int counter;
+    report_struct():counter(0) {}
+    void operator()(string instruction)
+    {
+        cout << "rcv(" << counter++ << ")"<< instruction << endl;
+    }
+};
+
+boost::scoped_ptr<AssistantCoach> acoach_ptr;
 
 int main( int /*argc*/, const char* /*argv*/[] )
 {
     int counter = 0;
-    int r;
-    // report_struct rs;
+    int die_result;
 
-    AssistantCoach acoach(&report_func);
-    // AssistantCoach acoach(boost::bind(&report_struct::call_report_func,&rs,_1));
+    // instanciate the assistant coach
+    BOOST_ASSERT(!acoach_ptr);
+    acoach_ptr.reset(new AssistantCoach(report_struct()));
 
     for(int i =0; i < 110; ++i) 
     {
         string message=boost::lexical_cast<string>( i );
         message="(time " + message + ")";
-        acoach.inform(message);
+        acoach_ptr->inform(message);
         cout << "snd(" << counter++ << ")"<< message << endl;
-        r = rolldie(0,100);
-        boost::this_thread::sleep(boost::posix_time::milliseconds(r));
+        die_result = rolldie(0,100);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(die_result));
     }
 
     return 0;

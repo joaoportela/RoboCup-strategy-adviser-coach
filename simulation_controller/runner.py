@@ -22,7 +22,7 @@ def dotest(confrontation):
     # print their info
     print "this confrontation has",len(confrontation), "matches.",
     if len(confrontation):
-        print "they are: \n\t"+"\n\t".join([str(x) for x in confrontation.allmatches()])
+        print "They are: \n\t"+"\n\t".join([str(x) for x in confrontation.allmatches()])
     else:
         print ""
 

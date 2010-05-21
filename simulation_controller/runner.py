@@ -26,23 +26,23 @@ def dotest(confrontation):
     else:
         print ""
 
-    peval=PointsEvaluator(confrontation.statistics(),"fcportugalD")
+    peval=PointsEvaluator(confrontation.statistics(),"fcportugalE")
     print "according to the points evaluator the score is: ", peval.value()
 
-    gdiff=GoalDifferenceEvaluator(confrontation.statistics(),"fcportugalD")
+    gdiff=GoalDifferenceEvaluator(confrontation.statistics(),"fcportugalE")
     print "according to the goal difference evaluator the score is: ", gdiff.value()
 
-    reval=ReliefEvaluator(confrontation.statistics(),"fcportugalD")
+    reval=ReliefEvaluator(confrontation.statistics(),"fcportugalE")
     print "relief evaluator score ", reval.value()
 
-    marseval=MARSEvaluator(confrontation.statistics(),"fcportugalD")
+    marseval=MARSEvaluator(confrontation.statistics(),"fcportugalE")
     print "MARS evaluator score ", marseval.value()
 
 def main():
-    fcpD = FCPortugal({"formation" : 1})
+    fcpE = FCPortugal({"formation" : 1}, extended=True)
     fcpX = Team("fcportugalX")
-    fcpD_vs_fcpX = Confrontation(fcpD, fcpX)
-    dotest(fcpD_vs_fcpX)
+    fcpE_vs_fcpX = Confrontation(fcpE, fcpX)
+    dotest(fcpE_vs_fcpX)
     # for metadata_f in confrontation_metadata_files():
     #     print metadata_f
     #     dotest(Confrontation.from_metadata(metadata_f))

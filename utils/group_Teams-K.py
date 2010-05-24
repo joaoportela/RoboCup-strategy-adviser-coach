@@ -35,7 +35,7 @@ def team_k(line):
     """
 
     line_sp=line.strip().split(';')
-    return TeamK(team=line_sp[1], k=line_sp[-1])
+    return TeamK(team=line_sp[1].strip("\""), k=line_sp[-1])
 
 def process_file(infile, outfolder):
     with open(infile) as f:

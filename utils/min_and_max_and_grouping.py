@@ -16,17 +16,24 @@ def valid_arguments(args):
             return False
     return True
 
+def is_number(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
+
 def average(list_):
     return math.fsum(list_)/len(list_)
 
 def median(numeric_values):
-  s_values = sorted(numeric_values)
-  if len(s_values) % 2 == 1: # odd
-    return s_values[(len(s_values)+1)/2-1]
-  else: # even
-    lower = s_values[len(s_values)/2-1]
-    upper = s_values[len(s_values)/2]
-    return (float(lower + upper)) / 2
+    s_values = sorted(numeric_values)
+    if len(s_values) % 2 == 1: # odd
+        return s_values[(len(s_values)+1)/2-1]
+    else: # even
+        lower = s_values[len(s_values)/2-1]
+        upper = s_values[len(s_values)/2]
+        return (float(lower + upper)) / 2
 
 STRATEGY_DATA = {
         "formation":
@@ -79,7 +86,7 @@ def args_to_str(args):
         return "_".join(dynamic_part)
 
 def fcpd_configurations_str(data=STRATEGY_DATA):
-    for args in fcpd_configurations():
+    for args in fcpd_configurations(data):
         args_str=args_to_str(args)
         yield args_str
 
@@ -89,30 +96,71 @@ def initial_configs_counter(configs=list(fcpd_configurations_str())):
         counter[conf]=0
     return counter
 
+def initial_configs_groupeddata(configs=list(fcpd_configurations_str())):
+    data={}
+    for conf in configs:
+        data[conf]=[]
+    return data
+
 def which_config_is(str_with_config,configs=list(fcpd_configurations_str())):
     for conf in configs:
         if conf in str_with_config:
             return conf
     else:
-        assert False, "unknown configuration "+conf
+        assert False, "unknown configuration "+str_with_config
 
 def config_column(line):
     return line.split(";")[0]
 
-def find_minmax(files, configs=list(fcpd_configurations_str())):
-    for fname in files:
-        with open(fname) as f:
-            # initialization
-            counter=initial_configs_counter(configs)
+def name_column(line):
+    return line.split(";")[1]
 
-            f.readline()# ignore the first line
+def merge(lines):
+    outline=[]
+    config=which_config_is(config_column(lines[0]))
+    outline.append(config) # column 0
+    outline.append(name_column(lines[0])) # column 1
 
-            # count how many times each config appears appearances 
-            for line in f:
-                conf=which_config_is(config_column(line))
-                counter[conf]+=1
+    # prepare the lines
+    for i, line in enumerate(lines):
+        newline=[]
+        for col in line.split(";"):
+            newline.append(col.strip("\""))
+        lines[i] = newline
 
-        fname_=os.path.basename(fname)
+    number_of_lines=len(lines)
+    number_of_columns=len(lines[0])
+
+    for index in range(2,number_of_columns):
+        acumulator=[]
+        for line in lines:
+            acumulator.append(float(line[index]))
+        outline.append(average(acumulator))
+
+    # transform outline back to strings
+    outline_str=";".join([str(x) for x in outline])
+    if not outline_str.endswith("\n"):
+        outline_str+="\n"
+
+    return outline_str
+
+def gather_data(fname, configs):
+    with open(fname) as f:
+        # initialization
+        counter=initial_configs_counter(configs)
+        grouped_data=initial_configs_groupeddata(configs)
+
+        file_header=f.readline()# the first line is the header
+
+        # count how many times each config appears appearances 
+        for line in f:
+            conf=which_config_is(config_column(line))
+            grouped_data[conf].append(line)
+            counter[conf]+=1
+
+    return counter, grouped_data, file_header
+
+def print_minmax(fname_,counter):
         cnt_items=counter.items()
         n_appearances=lambda x: x[1]
         # find the min and the max.
@@ -127,12 +175,29 @@ def find_minmax(files, configs=list(fcpd_configurations_str())):
         nozeros=lambda x: x[1] != 0
         value_only=lambda x:x[1]
         game_values_no_zeros=map(value_only,filter(nozeros,cnt_items))
-        median_=median(game_values_no_zeros)
-        print "{fname_} {min_}({min_count}) \
-{max_}({max_count}) \
-{median_}".format(**locals())
+        average_=average(game_values_no_zeros)
+        print_str="{fname_} {min_[1]}({min_count}) "
+        print_str+="{max_[1]}({max_count}) "
+        print_str+="{average_}"
+        print print_str.format(**locals())
 
+def write_grouped_data(fname_out, grouped_data, file_header):
+        with open(fname_out,'w') as fout:
+            fout.write(file_header)
+            for config, lines in grouped_data.iteritems():
+                if lines:
+                    newline=merge(lines)
+                    fout.write(newline)
 
+def find_minmax(files, configs=list(fcpd_configurations_str())):
+    for fname in files:
+        (counter, grouped_data, file_header)=gather_data(fname, configs)
+
+        path, basename = os.path.split(fname)
+        print_minmax(basename,counter)
+
+        fname_out=fname+".merged"
+        write_grouped_data(fname_out, grouped_data,file_header)
 
 if __name__ == '__main__':
     import sys

@@ -118,8 +118,8 @@ def name_column(line):
 def merge(lines):
     outline=[]
     config=which_config_is(config_column(lines[0]))
-    outline.append(config) # column 0
-    outline.append(name_column(lines[0])) # column 1
+    outline.append(config) # column 0 (xmlpath->config)
+    outline.append(name_column(lines[0])) # column 1 (team name -> team name)
 
     # prepare the lines
     for i, line in enumerate(lines):

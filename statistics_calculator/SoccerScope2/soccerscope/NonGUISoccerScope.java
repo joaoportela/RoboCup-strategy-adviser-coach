@@ -115,6 +115,10 @@ public class NonGUISoccerScope {
 
 		NonGUISoccerScope.sendStartPacket(sock, port);
 
+		// TODO - uncomment this after making it work and remove the rest
+		// openUDPCoachConnection(sock);
+
+
 		DatagramPacket pack;
 		String data;
 		while (true) {
@@ -172,5 +176,16 @@ public class NonGUISoccerScope {
 		sock.send(packet);
 
 	}
+
+	/*
+	private static void openUDPCoachConnection(DatagramSocket sock) {
+		final WorldModel wm = WorldModel.getInstance();
+		wm.clear(); // don't think this is necessary... but ok...
+
+		SceneBuilder cconnection = new CoachConnection(sock);
+		SceneSetMaker ssm = new SceneSetMaker(cconnection, wm.getSceneSet());
+		ssm.run();
+	}
+	 */
 
 }

@@ -136,7 +136,7 @@ class ReliefEvaluator(BaseEvaluator):
         total_goal_opportunities=self.statistics.goalopportunities()
 
         # I think someone might cry when they see this line...
-        # I personally think it is scary.
+        # I personally think it is disturbing but works :)
         return (0.1085678173*first_half_passes+
                 0.0333793177*first_half_defensive_passes+
                 0.0796453572*second_half_passes+

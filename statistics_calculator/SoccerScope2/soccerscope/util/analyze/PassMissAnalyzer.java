@@ -43,14 +43,15 @@ public class PassMissAnalyzer extends SceneAnalyzer implements Xmling {
 
 		public PassMiss(int side, Kicker s, Kicker r, Zone z) {
 			this.side = side;
-			sender = s;
-			receiver = r;
+			this.sender = s;
+			this.receiver = r;
 			this.zone = z;
 		}
 
+		@Override
 		public String toString() {
-			return side + " :: " + +sender.time + ": " + sender.unum + " -> "
-					+ receiver.time + ": " + receiver.unum;
+			return this.side + " :: " + +this.sender.time + ": " + this.sender.unum + " -> "
+			+ this.receiver.time + ": " + this.receiver.unum;
 		}
 
 		public boolean inOffensiveField() {
@@ -62,7 +63,7 @@ public class PassMissAnalyzer extends SceneAnalyzer implements Xmling {
 		public void xmlElement(XMLBuilder builder) {
 			XMLBuilder passmiss = builder.elem("passmiss").attr("team",
 					Team.name(this.side)).attr("offensive",
-					String.valueOf(this.inOffensiveField()));
+							String.valueOf(this.inOffensiveField()));
 			this.sender.xmlElement(passmiss.elem("kick"));
 			this.receiver.xmlElement(passmiss.elem("target"));
 		}
@@ -77,7 +78,7 @@ public class PassMissAnalyzer extends SceneAnalyzer implements Xmling {
 		int side; // side of the field where the zone is...
 
 		public Zone(int side, Rectangle2f a) {
-			area = a;
+			this.area = a;
 			this.side = side;
 			this.countLeft = 0;
 			this.countRight = 0;
@@ -101,14 +102,16 @@ public class PassMissAnalyzer extends SceneAnalyzer implements Xmling {
 
 	/* END - zones stuffs */
 
+	@Override
 	public void init() {
 		super.init();
 		this.initZones();
 		this.passMissList = new LinkedList<PassMiss>();
-		leftKicker = null;
-		rightKicker = null;
+		this.leftKicker = null;
+		this.rightKicker = null;
 	}
 
+	@Override
 	public String getName() {
 		return NAME;
 	}
@@ -120,9 +123,9 @@ public class PassMissAnalyzer extends SceneAnalyzer implements Xmling {
 		public Point2f position;
 
 		public Kicker() {
-			time = 0;
-			unum = 0;
-			position = null;
+			this.time = 0;
+			this.unum = 0;
+			this.position = null;
 		}
 
 		public Kicker(int time, int unum, Point2f position, boolean offside) {
@@ -132,8 +135,9 @@ public class PassMissAnalyzer extends SceneAnalyzer implements Xmling {
 			this.offside = offside;
 		}
 
+		@Override
 		public String toString() {
-			return "kicker ::" + time + ": " + unum;
+			return "kicker ::" + this.time + ": " + this.unum;
 		}
 
 		@Override
@@ -145,57 +149,61 @@ public class PassMissAnalyzer extends SceneAnalyzer implements Xmling {
 		}
 	}
 
+	@Override
 	public GameEvent analyze(Scene scene, Scene prev) {
 
-		if (prev == null)
+		if (prev == null) {
 			return null;
+		}
 
 		Kicker left = null;
 		Kicker right = null;
 
 		// �ץ쥤��ʳ���, ��
-		if (isPlayModeChanged(scene, prev, PlayMode.PM_FreeKick_Left)
-				|| isPlayModeChanged(scene, prev, PlayMode.PM_KickIn_Left)
-				|| isPlayModeChanged(scene, prev, PlayMode.PM_GoalKick_Left)
-				|| isPlayModeChanged(scene, prev, PlayMode.PM_CornerKick_Left)
-				|| isPlayModeChanged(scene, prev, PlayMode.PM_OffSide_Right)
-				|| isPlayModeChanged(scene, prev, PlayMode.PM_Back_Pass_Right)
-				|| isPlayModeChanged(scene, prev,
+		if (this.isPlayModeChanged(scene, prev, PlayMode.PM_FreeKick_Left)
+				|| this.isPlayModeChanged(scene, prev, PlayMode.PM_KickIn_Left)
+				|| this.isPlayModeChanged(scene, prev, PlayMode.PM_GoalKick_Left)
+				|| this.isPlayModeChanged(scene, prev, PlayMode.PM_CornerKick_Left)
+				|| this.isPlayModeChanged(scene, prev, PlayMode.PM_OffSide_Right)
+				|| this.isPlayModeChanged(scene, prev, PlayMode.PM_Back_Pass_Right)
+				|| this.isPlayModeChanged(scene, prev,
 						PlayMode.PM_Free_Kick_Fault_Right)) {
 			left = new Kicker(scene.time, 0, null, false);
-		} else if (isPlayModeChanged(scene, prev, PlayMode.PM_FreeKick_Right)
-				|| isPlayModeChanged(scene, prev, PlayMode.PM_KickIn_Right)
-				|| isPlayModeChanged(scene, prev, PlayMode.PM_GoalKick_Right)
-				|| isPlayModeChanged(scene, prev, PlayMode.PM_CornerKick_Right)
-				|| isPlayModeChanged(scene, prev, PlayMode.PM_OffSide_Left)
-				|| isPlayModeChanged(scene, prev, PlayMode.PM_Back_Pass_Left)
-				|| isPlayModeChanged(scene, prev,
+		} else if (this.isPlayModeChanged(scene, prev, PlayMode.PM_FreeKick_Right)
+				|| this.isPlayModeChanged(scene, prev, PlayMode.PM_KickIn_Right)
+				|| this.isPlayModeChanged(scene, prev, PlayMode.PM_GoalKick_Right)
+				|| this.isPlayModeChanged(scene, prev, PlayMode.PM_CornerKick_Right)
+				|| this.isPlayModeChanged(scene, prev, PlayMode.PM_OffSide_Left)
+				|| this.isPlayModeChanged(scene, prev, PlayMode.PM_Back_Pass_Left)
+				|| this.isPlayModeChanged(scene, prev,
 						PlayMode.PM_Free_Kick_Fault_Left)) {
 			right = new Kicker(scene.time, 0, null, false);
 		} else if (scene.pmode.pmode != PlayMode.PM_PlayOn) {
-			leftKicker = null;
-			rightKicker = null;
+			this.leftKicker = null;
+			this.rightKicker = null;
 			return null;
 		}
 
 		boolean leftKickable = false;
 		boolean rightKickable = false;
 		for (int i = 0; i < Param.MAX_PLAYER; i++) {
-			if (scene.player[i].isKickable(scene.ball.pos))
+			if (scene.player[i].isKickable(scene.ball.pos)) {
 				leftKickable = true;
+			}
 		}
 		for (int i = Param.MAX_PLAYER; i < Param.MAX_PLAYER * 2; i++) {
-			if (scene.player[i].isKickable(scene.ball.pos))
+			if (scene.player[i].isKickable(scene.ball.pos)) {
 				rightKickable = true;
+			}
 		}
 		for (int i = 0; i < Param.MAX_PLAYER; i++) {
 			if (!rightKickable
 					&& (scene.player[i].isKicking() && prev.player[i]
-							.isKickable(prev.ball.pos))
-					|| (scene.player[i].isCatching() && prev.player[i]
-							.isCatchable(prev.ball.pos))
-					|| (scene.player[i].isTackling() && prev.player[i]
-							.canTackle(prev.ball.pos))) {
+					                                               .isKickable(prev.ball.pos))
+					                                               || (scene.player[i].isCatching() && prev.player[i]
+					                                                                                               .isCatchable(prev.ball.pos))
+					                                                                                               || (scene.player[i].isTackling() && prev.player[i]
+					                                                                                                                                               .canTackle(prev.ball.pos))) {
 				left = new Kicker(scene.time, scene.player[i].unum,
 						scene.player[i].pos, scene.player[i].offside);
 			}
@@ -203,11 +211,11 @@ public class PassMissAnalyzer extends SceneAnalyzer implements Xmling {
 		for (int i = Param.MAX_PLAYER; i < Param.MAX_PLAYER * 2; i++) {
 			if (!leftKickable
 					&& (scene.player[i].isKicking() && prev.player[i]
-							.isKickable(prev.ball.pos))
-					|| (scene.player[i].isCatching() && prev.player[i]
-							.isCatchable(prev.ball.pos))
-					|| (scene.player[i].isTackling() && prev.player[i]
-							.canTackle(prev.ball.pos))) {
+					                                               .isKickable(prev.ball.pos))
+					                                               || (scene.player[i].isCatching() && prev.player[i]
+					                                                                                               .isCatchable(prev.ball.pos))
+					                                                                                               || (scene.player[i].isTackling() && prev.player[i]
+					                                                                                                                                               .canTackle(prev.ball.pos))) {
 				right = new Kicker(scene.time, scene.player[i].unum,
 						scene.player[i].pos, scene.player[i].offside);
 			}
@@ -220,33 +228,33 @@ public class PassMissAnalyzer extends SceneAnalyzer implements Xmling {
 			right = null;
 		}
 		if (left != null) {
-			if (rightKicker != null) {
+			if (this.rightKicker != null) {
 				// rightKicker missed the pass. lets increment the ball position
 				// for the zone count
-				countUpRight(rightKicker, rightKickerTarget);
-				rightKicker = null;
+				this.countUpRight(this.rightKicker, this.rightKickerTarget);
+				this.rightKicker = null;
 			}
-			Kicker target = getPassKickTarget(scene, LEFT, left.unum);
+			Kicker target = this.getPassKickTarget(scene, LEFT, left.unum);
 			if (target != null) {
-				leftKicker = left;
-				leftKickerTarget = target;
+				this.leftKicker = left;
+				this.leftKickerTarget = target;
 			} else {
-				leftKicker = null;
+				this.leftKicker = null;
 			}
 		}
 		if (right != null) {
-			if (leftKicker != null) {
+			if (this.leftKicker != null) {
 				// leftKicker missed the pass. lets increment the ball position
 				// for the zone count
-				countUpLeft(leftKicker, leftKickerTarget);
-				leftKicker = null;
+				this.countUpLeft(this.leftKicker, this.leftKickerTarget);
+				this.leftKicker = null;
 			}
-			Kicker target = getPassKickTarget(scene, RIGHT, right.unum);
+			Kicker target = this.getPassKickTarget(scene, RIGHT, right.unum);
 			if (target != null) {
-				rightKicker = right;
-				rightKickerTarget = target;
+				this.rightKicker = right;
+				this.rightKickerTarget = target;
 			} else {
-				rightKicker = null;
+				this.rightKicker = null;
 			}
 		}
 
@@ -254,22 +262,23 @@ public class PassMissAnalyzer extends SceneAnalyzer implements Xmling {
 	}
 
 	public void countUpLeft(Kicker sender, Kicker receiver) {
-		Zone zone = whichZone(this.fieldZones, sender.position);
-		if (zone == null) // outside know zones, skip
+		Zone zone = PassMissAnalyzer.whichZone(this.fieldZones, sender.position);
+		if (zone == null) {
 			return;
+		}
 		PassMiss pass = new PassMiss(Team.LEFT_SIDE, sender, receiver, zone);
 		this.passMissList.add(pass);
 
-		this.passMissList.add(pass);
 		System.out.println("LEFT_PASSMISS START_CYCLE(" + sender.time
 				+ ") END_CYCLE(" + receiver.time + ")");
 		super.countUpLeft(receiver.time);
 	}
 
 	public void countUpRight(Kicker sender, Kicker receiver) {
-		Zone zone = whichZone(this.fieldZones, sender.position);
-		if (zone == null) // outside know zones, skip
+		Zone zone = PassMissAnalyzer.whichZone(this.fieldZones, sender.position);
+		if (zone == null) {
 			return;
+		}
 		PassMiss pass = new PassMiss(Team.RIGHT_SIDE, sender, receiver, zone);
 		this.passMissList.add(pass);
 
@@ -293,48 +302,52 @@ public class PassMissAnalyzer extends SceneAnalyzer implements Xmling {
 	 * the event of a pass miss.
 	 */
 	public Kicker getPassKickTarget(Scene scene, int team, int unum) {
-		if (unum == 0)
+		if (unum == 0) {
 			return null;
+		}
 		int start = 0;
-		if (team == RIGHT)
+		if (team == RIGHT) {
 			start = Param.MAX_PLAYER;
+		}
 
 		Point2f tmpp = new Point2f(scene.ball.pos);
 		Vector2f tmpv = new Vector2f(scene.ball.vel);
 		for (int n = 0; n < 100; n++) {
 			for (int i = 0; i < Param.MAX_PLAYER; i++) {
 				float dist = scene.player[i + start].pos.dist(tmpp)
-						- Param.KICKABLE_R;
+				- Param.KICKABLE_R;
 				if (scene.player[i + start].estimateMinTimeByDistance(dist,
 						0.6f) < n) {
-					if (unum == scene.player[i + start].unum)
+					if (unum == scene.player[i + start].unum) {
 						return null;
-					else
+					} else {
 						return new Kicker(scene.time + n, scene.player[i
-								+ start].unum, scene.player[i + start].pos,
-								scene.player[i + start].offside);
+						                                               + start].unum, scene.player[i + start].pos,
+						                                               scene.player[i + start].offside);
+					}
 				}
 			}
 			tmpp.add(tmpv); // update ball position
 			tmpv.scale(0.94f); // account for ball friction
-			if (!inField(tmpp))
+			if (!this.inField(tmpp)) {
 				return null;
+			}
 		}
 		return null;
 	}
 
 	public boolean inField(Point2f pos) {
 		return -52.5f <= pos.x && pos.x <= 52.5f && -34.0f <= pos.y
-				&& pos.y <= 34.0;
+		&& pos.y <= 34.0;
 	}
 
 	@Override
 	public void xmlElement(XMLBuilder builder) {
-		int missLeft = nPassMiss(Team.LEFT_SIDE);
-		int missRight = nPassMiss(Team.RIGHT_SIDE);
+		int missLeft = this.nPassMiss(Team.LEFT_SIDE);
+		int missRight = this.nPassMiss(Team.RIGHT_SIDE);
 		builder = builder.elem("passmisses").attr("left",
 				String.valueOf(missLeft)).attr("right",
-				String.valueOf(missRight));
+						String.valueOf(missRight));
 		for (PassMiss p : this.passMissList) {
 			p.xmlElement(builder);
 		}
@@ -344,8 +357,9 @@ public class PassMissAnalyzer extends SceneAnalyzer implements Xmling {
 	private int nPassMiss(int side) {
 		int count = 0;
 		for (PassMiss p : this.passMissList) {
-			if (p.side == side)
+			if (p.side == side) {
 				count++;
+			}
 		}
 		return count;
 	}

@@ -60,7 +60,7 @@ public class NonGUISoccerScope {
 	private static void printXML(final SceneSet sceneSet,
 			final String xmlFilename) throws Exception {
 		final XMLBuilder builder = XMLBuilder.create("analysis");
-		builder.attr("version", "1.02");
+		builder.attr("version", "1.03");
 
 		final Scene lscene = WorldModel.getInstance().getSceneSet().lastScene();
 
@@ -106,59 +106,59 @@ public class NonGUISoccerScope {
 		out.flush();
 	}
 
-        public static void run(int port) throws SocketException, IOException {
-            final int BUFFERSIZE = 16 * 2048;
-            final Symbol endSymbol = Symbol.makeSymbol("end", null);
-            final Symbol timeSymbol = Symbol.makeSymbol("time", null);
+	public static void run(int port) throws SocketException, IOException {
+		final int BUFFERSIZE = 16 * 2048;
+		final Symbol endSymbol = Symbol.makeSymbol("end", null);
+		final Symbol timeSymbol = Symbol.makeSymbol("time", null);
 
-            DatagramSocket sock = new DatagramSocket();
+		DatagramSocket sock = new DatagramSocket();
 
-            NonGUISoccerScope.sendStartPacket(sock, port);
+		NonGUISoccerScope.sendStartPacket(sock, port);
 
-            DatagramPacket pack;
-            String data;
-            while (true) {
-                // receive
-                pack = new DatagramPacket(new byte[BUFFERSIZE], BUFFERSIZE);
-                sock.receive(pack);
-                System.out.println("rcvd: \"" + new String(pack.getData()).trim() +"\"" );
+		DatagramPacket pack;
+		String data;
+		while (true) {
+			// receive
+			pack = new DatagramPacket(new byte[BUFFERSIZE], BUFFERSIZE);
+			sock.receive(pack);
+			System.out.println("rcvd: \"" + new String(pack.getData()).trim() +"\"" );
 
-                data = new String(pack.getData()).trim();
-                try {
-                    InputStream datastream = new ByteArrayInputStream(data.getBytes("UTF-8"));
-                    SExprStream p = new SimpleSExprStream(datastream);
-                    Object e = p.parse();
-                    if(e instanceof Cons) {
-                        Cons expr = (Cons) e;
-                        if( expr.left().equals(endSymbol) ) {
-                            // confirm that received end by sending end.
-                            sock.send(pack);
-                            sock.close();
-                            System.out.println("connection closed");
-                            break;
-                        } else if(expr.left().equals(timeSymbol)) {
-                            assert expr.right() instanceof Cons;
-                            Cons expr_right = (Cons) expr.right();
-                            assert expr_right.left() instanceof Integer;
-                            int time = ((Integer) expr_right.left()).intValue();
-                            if((time % 10) == 0) { // every 10th message
-                                byte[] message = ("(recvd "+ time +")").getBytes();
-                                pack.setData(message);
-                                sock.send(pack);
-                                System.out.println("sent: \"" + new String(pack.getData()).trim() +"\"" );
-                            }
+			data = new String(pack.getData()).trim();
+			try {
+				InputStream datastream = new ByteArrayInputStream(data.getBytes("UTF-8"));
+				SExprStream p = new SimpleSExprStream(datastream);
+				Object e = p.parse();
+				if(e instanceof Cons) {
+					Cons expr = (Cons) e;
+					if( expr.left().equals(endSymbol) ) {
+						// confirm that received end by sending end.
+						sock.send(pack);
+						sock.close();
+						System.out.println("connection closed");
+						break;
+					} else if(expr.left().equals(timeSymbol)) {
+						assert expr.right() instanceof Cons;
+						Cons expr_right = (Cons) expr.right();
+						assert expr_right.left() instanceof Integer;
+						int time = ((Integer) expr_right.left()).intValue();
+						if((time % 10) == 0) { // every 10th message
+							byte[] message = ("(recvd "+ time +")").getBytes();
+							pack.setData(message);
+							sock.send(pack);
+							System.out.println("sent: \"" + new String(pack.getData()).trim() +"\"" );
+						}
 
-                        } else {
-                            System.err.println("unkown message \""+ data +"\"");
-                        }
-                    } else {
-                        System.err.println("unkown message \""+ data +"\"");
-                    }
-                } catch(Exception e) {
-                    System.err.println("could not parse \""+ data +"\"");
-                }
-            }
-        }
+					} else {
+						System.err.println("unkown message \""+ data +"\"");
+					}
+				} else {
+					System.err.println("unkown message \""+ data +"\"");
+				}
+			} catch(Exception e) {
+				System.err.println("could not parse \""+ data +"\"");
+			}
+		}
+	}
 
 	private static void sendStartPacket(DatagramSocket sock, int port) throws IOException {
 		String host = "localhost";

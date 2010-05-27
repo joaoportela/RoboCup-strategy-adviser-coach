@@ -13,7 +13,7 @@ logfile = "runner.log"
 matchesdir = "matches/"
 teamsdir = "teams/"
 matchhost = "127.0.0.1"
-statistics_version="1.02"
+statistics_version="1.03"
 
 # fcportugal_dynamic
 # strategy file to modify

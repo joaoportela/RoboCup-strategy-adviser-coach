@@ -1,6 +1,6 @@
 /**
  * Objects of this class are supposed to analyze
- * the game and detect when an attack is done  
+ * the game and detect when an attack is done
  */
 package soccerscope.util.analyze;
 
@@ -64,13 +64,15 @@ public class AttackAnalyzer extends SceneAnalyzer implements Xmling {
 		}
 
 		private boolean validTeam() {
-			return (team == Team.LEFT_SIDE || team == Team.RIGHT_SIDE);
+			return (this.team == Team.LEFT_SIDE || this.team == Team.RIGHT_SIDE);
 		}
 
 		public boolean valid() {
-			if (this.validTeam())
-				if (this.startTime > 0 && this.endTime > this.startTime)
+			if (this.validTeam()) {
+				if (this.startTime > 0 && this.endTime > this.startTime) {
 					return (this.endTime - this.startTime) > ATTACK_MIN_TIME;
+				}
+			}
 			return false;
 		}
 
@@ -78,9 +80,9 @@ public class AttackAnalyzer extends SceneAnalyzer implements Xmling {
 			if (this.dangerous()) {
 				int timeToDangerZone = this.timeToDangerZone();
 				float distanceToDangerZone = this.distanceToDangerZone();
-				if (timeToDangerZone < fastAttackMaxTime(distanceToDangerZone)) {
+				if (timeToDangerZone < this.fastAttackMaxTime(distanceToDangerZone)) {
 					return AttackType.FAST;
-				} else if (timeToDangerZone < mediumAttackMaxTime(distanceToDangerZone)) {
+				} else if (timeToDangerZone < this.mediumAttackMaxTime(distanceToDangerZone)) {
 					return AttackType.MEDIUM;
 				}
 				return AttackType.SLOW;
@@ -107,11 +109,12 @@ public class AttackAnalyzer extends SceneAnalyzer implements Xmling {
 		}
 
 		public boolean dangerous() {
-			if (this.valid())
+			if (this.valid()) {
 				if (this.dangerousStartTime >= this.startTime
 						&& this.endTime > this.dangerousStartTime) {
 					return true;
 				}
+			}
 			return false;
 
 		}
@@ -119,14 +122,14 @@ public class AttackAnalyzer extends SceneAnalyzer implements Xmling {
 		@Override
 		public void xmlElement(XMLBuilder builder) {
 			builder.elem("attack")
-					.attr("start", String.valueOf(this.startTime))
-					.attr("end", String.valueOf(this.endTime))
-					.attr("team", Team.name(this.team))
-					.attr("dangerous", String.valueOf(this.dangerous()))
-					.attr("type",this.attackType().toString());
-//				.attr("dangerousstarttime", String.valueOf(this.dangerousStartTime))
-//				.attr("distanceToDangerZone", String.valueOf(this.distanceToDangerZone()))
-//				.attr("timeToDangerZone", String.valueOf(this.timeToDangerZone()));
+			.attr("start", String.valueOf(this.startTime))
+			.attr("end", String.valueOf(this.endTime))
+			.attr("team", Team.name(this.team))
+			.attr("dangerous", String.valueOf(this.dangerous()))
+			.attr("type",this.attackType().toString());
+			//				.attr("dangerousstarttime", String.valueOf(this.dangerousStartTime))
+			//				.attr("distanceToDangerZone", String.valueOf(this.distanceToDangerZone()))
+			//				.attr("timeToDangerZone", String.valueOf(this.timeToDangerZone()));
 		}
 
 	}
@@ -139,7 +142,7 @@ public class AttackAnalyzer extends SceneAnalyzer implements Xmling {
 		int field;
 
 		public Zone(int field, Rectangle2f a) {
-			area = a;
+			this.area = a;
 			this.field = field;
 		}
 
@@ -170,9 +173,10 @@ public class AttackAnalyzer extends SceneAnalyzer implements Xmling {
 	}
 
 	public AttackAnalyzer() {
-		initZones();
+		this.initZones();
 	}
 
+	@Override
 	public void init() {
 		this.attack = new Attack(-1, Team.NEUTRAL, new Point2f(-1f, -1f));
 		this.attacks = new ArrayList<Attack>(10); // 10 => estimated value
@@ -181,8 +185,9 @@ public class AttackAnalyzer extends SceneAnalyzer implements Xmling {
 	@Override
 	public GameEvent analyze(Scene scene, Scene prev) {
 
-		if (prev == null || scene == null)
+		if (prev == null || scene == null) {
 			return null;
+		}
 
 		GameEvent gevent = null;
 
@@ -191,7 +196,7 @@ public class AttackAnalyzer extends SceneAnalyzer implements Xmling {
 
 			// we are not longer PlayOn but the team already had a valid attack,
 			// store it
-			gevent = validateAttack();
+			gevent = this.validateAttack();
 
 			this.attack = new Attack(-1, Team.NEUTRAL, scene.ball.pos);
 		}
@@ -228,12 +233,7 @@ public class AttackAnalyzer extends SceneAnalyzer implements Xmling {
 			opposing_team = Team.LEFT_SIDE;
 		}
 
-		if (this.attack.team != Team.NEUTRAL)
-			// System.out
-			// .println("ATTACK HAPPENING!!!" + scene.time + "team:"
-			// + Team.name(this.attack.team) + " "
-			// + this.attack.startTime);
-			// in the danger zone?
+		if (this.attack.team != Team.NEUTRAL) {
 			if (dangerousField == opposing_team) {
 				// if (this.attack.team != Team.NEUTRAL)
 				// System.out.println("IN DANGER ZONE!!!" + scene.time + "team:"
@@ -245,11 +245,12 @@ public class AttackAnalyzer extends SceneAnalyzer implements Xmling {
 					this.attack.dangerousStartTime = scene.time;
 				}
 			}
+		}
 
 		// my_team was not previously attacking.
 		if (this.attack.team != my_team && this.attack.team != Team.NEUTRAL) {
 			// this.attack.team may still be attacking
-			if (mayStillBeAttacking(this.attack.team, dangerousField, scene)) {
+			if (AttackAnalyzer.mayStillBeAttacking(this.attack.team, dangerousField, scene)) {
 				// since we may still be attacking don't let the rest of the
 				// code terminate the attack
 				return null;
@@ -260,10 +261,10 @@ public class AttackAnalyzer extends SceneAnalyzer implements Xmling {
 		if (this.attack.team != my_team) {
 
 			// Opposing side just finished a valid attack?
-			gevent = validateAttack();
+			gevent = this.validateAttack();
 
 			// if we are starting an attack
-			if (getKickTeam(scene.time) == my_team) {
+			if (AttackAnalyzer.getKickTeam(scene.time) == my_team) {
 				// we where not previously attacking but we are now.
 				this.attack = new Attack(scene.time, my_team, scene.ball.pos);
 			} else {
@@ -298,7 +299,7 @@ public class AttackAnalyzer extends SceneAnalyzer implements Xmling {
 		if (field == opposing_team) {
 			// System.out.println("WAITING (in oppteamfield) t(" + scene.time
 			// + ") team(" + my_team + ")");
-			int kickteam = getKickTeam(scene.time);
+			int kickteam = AttackAnalyzer.getKickTeam(scene.time);
 			// if the ball is going back but was kicked by the correct
 			// team...
 			if (my_team == kickteam) {
@@ -341,15 +342,15 @@ public class AttackAnalyzer extends SceneAnalyzer implements Xmling {
 			return null;
 		}
 
-		if (this.attack.dangerous())
+		if (this.attack.dangerous()) {
 			System.out
-					.println("ATTACK_FINISHED START(" + this.attack.startTime
-							+ ") FINISH(" + this.attack.endTime
-							+ ") dangerous(" + this.attack.dangerousStartTime
-							+ ")  type(" + this.attack.attackType()
-							+ ") startPos(" + this.attack.startPos + ") team("
-							+ this.attack.team + ")");
-		else {
+			.println("ATTACK_FINISHED START(" + this.attack.startTime
+					+ ") FINISH(" + this.attack.endTime
+					+ ") dangerous(" + this.attack.dangerousStartTime
+					+ ")  type(" + this.attack.attackType()
+					+ ") startPos(" + this.attack.startPos + ") team("
+					+ this.attack.team + ")");
+		} else {
 			System.out.println("ATTACK_FINISHED START(" + this.attack.startTime
 					+ ") FINISH(" + this.attack.endTime + ") type("
 					+ this.attack.attackType() + ") team(" + this.attack.team
@@ -357,9 +358,9 @@ public class AttackAnalyzer extends SceneAnalyzer implements Xmling {
 		}
 
 		this.attacks.add(this.attack);
-		countUp(this.attack.team, this.attack.endTime);
+		this.countUp(this.attack.team, this.attack.endTime);
 
-		// TODO - generate GAMEEVENT? - probably not...
+		// - generate GAMEEVENT? - probably not...
 		return null;
 	}
 
@@ -376,11 +377,11 @@ public class AttackAnalyzer extends SceneAnalyzer implements Xmling {
 
 			for (int i = 0; i < Param.MAX_PLAYER * 2; i++) {
 				if ((scene.player[i].isKicking() && prev.player[i]
-						.isKickable(prev.ball.pos))
-						|| (scene.player[i].isCatching() && prev.player[i]
-								.isCatchable(prev.ball.pos))
-						|| (scene.player[i].isTackling() && prev.player[i]
-								.canTackle(prev.ball.pos))) {
+				                                                .isKickable(prev.ball.pos))
+				                                                || (scene.player[i].isCatching() && prev.player[i]
+				                                                                                                .isCatchable(prev.ball.pos))
+				                                                                                                || (scene.player[i].isTackling() && prev.player[i]
+				                                                                                                                                                .canTackle(prev.ball.pos))) {
 					// we found the culprit! check the zone and return it!
 					return scene.player[i].side;
 				}
@@ -398,9 +399,10 @@ public class AttackAnalyzer extends SceneAnalyzer implements Xmling {
 	@Override
 	public void xmlElement(XMLBuilder builder) {
 		XMLBuilder attacksBuilder = builder.elem("attacks").attr("left",
-				String.valueOf(lcount)).attr("right", String.valueOf(rcount));
+				String.valueOf(this.lcount)).attr("right", String.valueOf(this.rcount));
 		for (Attack attack : this.attacks) {
 			attack.xmlElement(attacksBuilder);
 		}
 	}
+
 }

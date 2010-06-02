@@ -135,9 +135,10 @@ void AssistantCoach::inform(string const &message)
     boost::shared_ptr<std::string> msg_ptr(new std::string(message)); 
 
     // send message to the child.
-    this->socket.async_send_to(boost::asio::buffer(*msg_ptr), child_address, 
-            boost::bind(&AssistantCoach::handle_send, this,
-                msg_ptr, boost::asio::placeholders::error));
+    // DISABLED!
+    // this->socket.async_send_to(boost::asio::buffer(*msg_ptr), child_address, 
+    //         boost::bind(&AssistantCoach::handle_send, this,
+    //             msg_ptr, boost::asio::placeholders::error));
 }
 
 void AssistantCoach::install_receive()

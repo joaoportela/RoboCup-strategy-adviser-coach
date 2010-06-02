@@ -9,9 +9,9 @@ LD = g++
 RM = rm
 RMFLAGS = -vf
 FILES_TO_DEPLOY = assistantcoach.hpp assistantcoach.cpp *.jar
-DEPLOY_TARGET = ~/fcportugalE/coach/
+DEPLOY_TARGET = ~/FCPortugal/2D/trunk/fcportugal/coach/
 
-.PHONY: all clean depend fullclean
+.PHONY: all clean depend fullclean deploy
 
 all: $(EXECUTABLE)
 

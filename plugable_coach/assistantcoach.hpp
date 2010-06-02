@@ -11,7 +11,7 @@
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
 
-#define MAX_BUFFER_SIZE (16*2048)
+const int max_buffer_size = (16*2048);
 #ifndef NDEBUG
 #define CHILD_REDIRECT_TO_FILE
 #define LOG_COMMUNICATION
@@ -19,7 +19,7 @@
 
 namespace bp = ::boost::process;
 using boost::asio::ip::udp;
-typedef boost::array<char, MAX_BUFFER_SIZE> rcv_container_t;
+typedef boost::array<char, max_buffer_size> rcv_container_t;
 typedef boost::function<void(std::string)> userhandler_t;
 
 /**

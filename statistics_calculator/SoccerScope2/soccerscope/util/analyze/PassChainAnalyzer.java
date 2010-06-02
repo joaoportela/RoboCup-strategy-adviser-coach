@@ -26,7 +26,7 @@ import soccerscope.util.analyze.PassAnalyzer.Pass;
 
 import com.jamesmurty.utils.XMLBuilder;
 
-public class PassChainAnalyzer extends SceneAnalyzer implements Xmling {
+public class PassChainAnalyzer extends SceneAnalyzer implements AnalyzeNow,Xmling {
 
 	public static String NAME = "Pass Chain";
 
@@ -35,30 +35,35 @@ public class PassChainAnalyzer extends SceneAnalyzer implements Xmling {
 	int leftChain[] = new int[20];
 	int rightChain[] = new int[20];
 
+	@Override
 	public void init() {
 		super.init();
-		leftChain = new int[20];
-		rightChain = new int[20];
-		passChains.clear();
+		this.leftChain = new int[20];
+		this.rightChain = new int[20];
+		this.passChains.clear();
 	}
 
+	@Override
 	public String getName() {
 		return NAME;
 	}
 
+	@Override
 	public Object getValueAt(int col, int fromTime, int toTime) {
-		count(fromTime, toTime);
+		this.count(fromTime, toTime);
 		switch (col) {
 		case ROW_NAME:
-			return getName();
+			return this.getName();
 		case LEFT:
-			if (lcount == -1)
+			if (this.lcount == -1) {
 				return "--";
-			return new Integer(lcount);
+			}
+			return new Integer(this.lcount);
 		case RIGHT:
-			if (rcount == -1)
+			if (this.rcount == -1) {
 				return "--";
-			return new Integer(rcount);
+			}
+			return new Integer(this.rcount);
 		default:
 			return " ";
 		}
@@ -80,11 +85,11 @@ public class PassChainAnalyzer extends SceneAnalyzer implements Xmling {
 			switch (PassAnalyzer.getPossessionTeam(time)) {
 			case PassAnalyzer.LEFT_SIDE:
 				// System.out.println("LEFT_SIDE detecting pass chain");
-				time = detectPassChain(Team.LEFT_SIDE, time);
+				time = this.detectPassChain(Team.LEFT_SIDE, time);
 				break;
 			case PassAnalyzer.RIGHT_SIDE:
 				// System.out.println("LEFT_SIDE detecting pass chain");
-				time = detectPassChain(Team.RIGHT_SIDE, time);
+				time = this.detectPassChain(Team.RIGHT_SIDE, time);
 				break;
 			}
 		}
@@ -139,18 +144,19 @@ public class PassChainAnalyzer extends SceneAnalyzer implements Xmling {
 		}
 
 		System.out
-				.println("detected pass chain for team:" + side + " end time:"
-						+ time + " number of passes:" + passChain.size());
+		.println("detected pass chain for team:" + side + " end time:"
+				+ time + " number of passes:" + passChain.size());
 
 		return time;
 	}
 
+	@Override
 	public void count(int fromTime, int toTime) {
-		lcount = 0;
-		rcount = 0;
+		this.lcount = 0;
+		this.rcount = 0;
 		for (int i = 0; i < 20; i++) {
-			leftChain[i] = 0;
-			rightChain[i] = 0;
+			this.leftChain[i] = 0;
+			this.rightChain[i] = 0;
 		}
 
 		for (List<Pass> passChain : this.getPassChains()) {
@@ -163,30 +169,32 @@ public class PassChainAnalyzer extends SceneAnalyzer implements Xmling {
 					// increase the number of chains that have
 					// 'passChain.size()' number of
 					// passes
-					leftChain[passChain.size()]++;
-					if (passChain.size() > lcount) {
-						lcount = passChain.size();
+					this.leftChain[passChain.size()]++;
+					if (passChain.size() > this.lcount) {
+						this.lcount = passChain.size();
 					}
 				} else if (passChain.get(0).side == Team.RIGHT_SIDE) {
-					rightChain[passChain.size()]++;
-					if (passChain.size() > rcount) {
-						rcount = passChain.size();
+					this.rightChain[passChain.size()]++;
+					if (passChain.size() > this.rcount) {
+						this.rcount = passChain.size();
 					}
 				}
 			}
 		}
-		if (lcount == 0 || lcount == 1)
-			lcount = -1;
-		if (rcount == 0 || lcount == 1)
-			rcount = -1;
+		if (this.lcount == 0 || this.lcount == 1) {
+			this.lcount = -1;
+		}
+		if (this.rcount == 0 || this.lcount == 1) {
+			this.rcount = -1;
+		}
 	}
 
 	public void count_old(int fromTime, int toTime) {
-		lcount = 0;
-		rcount = 0;
+		this.lcount = 0;
+		this.rcount = 0;
 		for (int i = 0; i < 20; i++) {
-			leftChain[i] = 0;
-			rightChain[i] = 0;
+			this.leftChain[i] = 0;
+			this.rightChain[i] = 0;
 		}
 
 		for (int i = fromTime; i <= toTime; i++) {
@@ -200,17 +208,18 @@ public class PassChainAnalyzer extends SceneAnalyzer implements Xmling {
 					if (pass != null) {
 						left++; // increase the number of passes this chain has.
 						i = pass.receiver.time;
-						if (left > lcount)
-							lcount = left; // biggest pass chain?
+						if (left > this.lcount) {
+							this.lcount = left; // biggest pass chain?
+						}
 					}
 					i++;
 				}
 				// increase the number of chains that have 'left' number of
 				// passes
-				leftChain[left]++;
+				this.leftChain[left]++;
 				break;
 
-			// this does the same has above
+				// this does the same has above
 			case PassAnalyzer.RIGHT_SIDE:
 				int right = 0;
 				while (PassAnalyzer.getPossessionTeam(i) == PassAnalyzer.RIGHT_SIDE
@@ -219,35 +228,40 @@ public class PassChainAnalyzer extends SceneAnalyzer implements Xmling {
 					if (pass != null) {
 						right++;
 						i = pass.receiver.time;
-						if (right > rcount)
-							rcount = right;
+						if (right > this.rcount) {
+							this.rcount = right;
+						}
 					}
 					i++;
 				}
-				rightChain[right]++;
+				this.rightChain[right]++;
 				break;
 
 			default:
 			}
 		}
-		if (lcount == 0 || lcount == 1)
-			lcount = -1;
-		if (rcount == 0 || lcount == 1)
-			rcount = -1;
+		if (this.lcount == 0 || this.lcount == 1) {
+			this.lcount = -1;
+		}
+		if (this.rcount == 0 || this.lcount == 1) {
+			this.rcount = -1;
+		}
 	}
 
+	@Override
 	public GameEvent analyze(Scene scene, Scene prev) {
 		return null;
 	}
 
 	public int getLeftPassChain(int chain) {
-		return leftChain[chain];
+		return this.leftChain[chain];
 	}
 
 	public int getRightPassChain(int chain) {
-		return rightChain[chain];
+		return this.rightChain[chain];
 	}
 
+	@Override
 	public TableModel getTableModel() {
 		TableModel dataModel = new AbstractTableModel() {
 			/**
@@ -255,6 +269,7 @@ public class PassChainAnalyzer extends SceneAnalyzer implements Xmling {
 			 */
 			private static final long serialVersionUID = 1L;
 
+			@Override
 			public String getColumnName(int col) {
 				switch (col) {
 				case 0:
@@ -277,14 +292,14 @@ public class PassChainAnalyzer extends SceneAnalyzer implements Xmling {
 			}
 
 			public Object getValueAt(int row, int col) {
-				count(0, lastTime);
+				PassChainAnalyzer.this.count(0, PassChainAnalyzer.this.lastTime);
 				switch (col) {
 				case 0:
 					return new String(row + 2 + " passes");
 				case 1:
-					return new Integer(leftChain[row + 2]);
+					return new Integer(PassChainAnalyzer.this.leftChain[row + 2]);
 				case 2:
-					return new Integer(rightChain[row + 2]);
+					return new Integer(PassChainAnalyzer.this.rightChain[row + 2]);
 				default:
 					return " ";
 				}
@@ -295,12 +310,22 @@ public class PassChainAnalyzer extends SceneAnalyzer implements Xmling {
 	}
 
 	@Override
+	public void analyzeNow() {
+		// reset
+		this.passChains.clear();
+		// count
+		this.getPassChains();
+	}
+
+	@Override
 	public void xmlElement(XMLBuilder builder) {
-		int leftChains = nChains(Team.LEFT_SIDE);
-		int rightChains = nChains(Team.RIGHT_SIDE);
+		this.analyzeNow();
+		int leftChains = this.nChains(Team.LEFT_SIDE);
+		int rightChains = this.nChains(Team.RIGHT_SIDE);
+
 		XMLBuilder passchains = builder.elem("passchains").attr("left",
 				String.valueOf(leftChains)).attr("right",
-				String.valueOf(rightChains));
+						String.valueOf(rightChains));
 		for (List<Pass> passchain : this.getPassChains()) {
 			int side = passchain.get(0).side;
 			int stime = passchain.get(0).sender.time;
@@ -308,7 +333,7 @@ public class PassChainAnalyzer extends SceneAnalyzer implements Xmling {
 			int size = passchain.size();
 			passchains.elem("passchain").attr("team", Team.name(side)).attr(
 					"start", String.valueOf(stime)).attr("end",
-					String.valueOf(etime)).attr("size", String.valueOf(size));
+							String.valueOf(etime)).attr("size", String.valueOf(size));
 		}
 	}
 

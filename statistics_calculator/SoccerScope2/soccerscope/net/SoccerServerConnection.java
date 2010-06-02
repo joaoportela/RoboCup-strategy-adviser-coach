@@ -9,9 +9,9 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
-import java.net.SocketTimeoutException;
 
 import soccerscope.model.Ball;
 import soccerscope.model.Param;
@@ -34,46 +34,46 @@ public class SoccerServerConnection extends SceneBuilder {
 	private boolean timeoutset;
 
 	public SoccerServerConnection() throws UnknownHostException,
-			SocketException {
+	SocketException {
 		this(DEFAULT_HOST, DEFAULT_PORT, SERVER | DEFAULT_PROTOCOL);
 	}
 
 	public SoccerServerConnection(String hostname) throws UnknownHostException,
-			SocketException {
+	SocketException {
 		this(hostname, DEFAULT_PORT, SERVER | DEFAULT_PROTOCOL);
 	}
 
 	public SoccerServerConnection(String hostname, int port, int protocol)
-			throws UnknownHostException, SocketException {
-		type = SERVER | protocol;
+	throws UnknownHostException, SocketException {
+		this.type = SERVER | protocol;
 		this.host = hostname;
 		this.port = port;
 		try {
-			address = InetAddress.getByName(hostname);
+			this.address = InetAddress.getByName(hostname);
 		} catch (UnknownHostException uhe) {
 			throw uhe;
 		}
 		try {
-			socket = new DatagramSocket();
+			this.socket = new DatagramSocket();
 		} catch (SocketException se) {
 			throw se;
 		}
 	}
 
 	public String getHostName() {
-		return host;
+		return this.host;
 	}
 
 	public int getPort() {
-		return port;
+		return this.port;
 	}
 
 	private void sendMessage(String msg) throws IOException {
 		byte[] rawMsg = msg.getBytes();
 		DatagramPacket packet = new DatagramPacket(rawMsg, rawMsg.length,
-				address, port);
+				this.address, this.port);
 		try {
-			socket.send(packet);
+			this.socket.send(packet);
 		} catch (IOException ie) {
 			throw ie;
 		}
@@ -81,11 +81,11 @@ public class SoccerServerConnection extends SceneBuilder {
 
 	public void dispinit() throws IOException {
 		String msg = new String("(dispinit)");
-		if ((type & MONITOR_PROTOCOL_2) == MONITOR_PROTOCOL_2) {
+		if ((this.type & MONITOR_PROTOCOL_2) == MONITOR_PROTOCOL_2) {
 			msg = new String("(dispinit version 2)");
 		}
 		try {
-			sendMessage(msg);
+			this.sendMessage(msg);
 		} catch (IOException ie) {
 			throw ie;
 		}
@@ -93,7 +93,7 @@ public class SoccerServerConnection extends SceneBuilder {
 
 	public void dispbye() throws IOException {
 		try {
-			sendMessage("(dispbye)");
+			this.sendMessage("(dispbye)");
 		} catch (IOException ie) {
 			throw ie;
 		}
@@ -101,7 +101,7 @@ public class SoccerServerConnection extends SceneBuilder {
 
 	public void dispstart() throws IOException {
 		try {
-			sendMessage("(dispstart)");
+			this.sendMessage("(dispstart)");
 		} catch (IOException ie) {
 			throw ie;
 		}
@@ -109,7 +109,7 @@ public class SoccerServerConnection extends SceneBuilder {
 
 	public void dispfoul(float x, float y, int side) throws IOException {
 		try {
-			sendMessage("(dispfoul " + (int) (x * SHOWINFO_SCALE) + " "
+			this.sendMessage("(dispfoul " + (int) (x * SHOWINFO_SCALE) + " "
 					+ (int) (y * SHOWINFO_SCALE) + " " + side + ")");
 		} catch (IOException ie) {
 			throw ie;
@@ -118,16 +118,16 @@ public class SoccerServerConnection extends SceneBuilder {
 
 	public void dispdiscard(int side, int unum) throws IOException {
 		try {
-			sendMessage("(dispdiscard " + side + " " + unum + ")");
+			this.sendMessage("(dispdiscard " + side + " " + unum + ")");
 		} catch (IOException ie) {
 			throw ie;
 		}
 	}
 
 	public void dispplayer(int side, int unum, float x, float y, int angle)
-			throws IOException {
+	throws IOException {
 		try {
-			sendMessage("(dispplayer " + side + " " + unum + " "
+			this.sendMessage("(dispplayer " + side + " " + unum + " "
 					+ (int) (x * SHOWINFO_SCALE) + " "
 					+ (int) (y * SHOWINFO_SCALE) + " " + angle + ")");
 		} catch (IOException ie) {
@@ -135,25 +135,28 @@ public class SoccerServerConnection extends SceneBuilder {
 		}
 	}
 
+	@Override
 	public int readPacket(byte[] packet) throws IOException {
 		DatagramPacket udppacket = new DatagramPacket(packet, packet.length);
 		try {
 			if (this.timeover && !this.timeoutset) {
-				// we already got a timeover. it is very likely that
-				// the server will disconnect soon. NOTE: there should be
-				// annother way to do this but this works. ;)
-				socket.setSoTimeout(1000);
+				// we already got a timeover scene. it is very likely that
+				// the server will disconnect soon, so the socket should only
+				// block for a second (max).
+				this.socket.setSoTimeout(1000);
 				this.timeoutset = true;
 			}
 			if (!this.timeover && this.timeoutset) {
-				//ups... unset the timeout.
-				socket.setSoTimeout(0);
+				// a timeover was received and the timeout was set
+				// but then a non-timeover scene occured. unset the timeout.
+				this.socket.setSoTimeout(0);
 				this.timeoutset = false;
 			}
 
-			socket.receive(udppacket);
+			this.socket.receive(udppacket);
 
 		} catch (SocketTimeoutException te) {
+			// socket timed out, so the server should be disconnected.
 			return -1;
 		} catch (IOException ie) {
 			throw ie;
@@ -162,18 +165,19 @@ public class SoccerServerConnection extends SceneBuilder {
 		return udppacket.getLength();
 	}
 
+	@Override
 	public Scene makeScene(byte[] packet, PlayMode playmode, Team left,
 			Team right) {
 		Scene scene = new Scene();
 		int offset = 0;
 
-		if ((type & MONITOR_PROTOCOL_2) == MONITOR_PROTOCOL_2) {
+		if ((this.type & MONITOR_PROTOCOL_2) == MONITOR_PROTOCOL_2) {
 			offset = 4;
 			scene.pmode = new PlayMode();
-			scene.pmode.pmode = readChar(packet, offset);
+			scene.pmode.pmode = this.readChar(packet, offset);
 			offset += 2;
-			scene.left = makeLeftTeam(packet, offset);
-			scene.right = makeRightTeam(packet, offset);
+			scene.left = this.makeLeftTeam(packet, offset);
+			scene.right = this.makeRightTeam(packet, offset);
 			offset += 36;
 
 			offset += 2;
@@ -181,20 +185,20 @@ public class SoccerServerConnection extends SceneBuilder {
 			// read ball_t
 			scene.ball.mode = Ball.STAND;
 			// // x, y (long)
-			scene.ball.pos.x = readLong(packet, offset) / SHOWINFO_SCALE2;
+			scene.ball.pos.x = this.readLong(packet, offset) / SHOWINFO_SCALE2;
 			offset += 4;
-			scene.ball.pos.y = readLong(packet, offset) / SHOWINFO_SCALE2;
+			scene.ball.pos.y = this.readLong(packet, offset) / SHOWINFO_SCALE2;
 			offset += 4;
 			// // deltax, deltay (long)
-			scene.ball.vel.x = readLong(packet, offset) / SHOWINFO_SCALE2;
+			scene.ball.vel.x = this.readLong(packet, offset) / SHOWINFO_SCALE2;
 			offset += 4;
-			scene.ball.vel.y = readLong(packet, offset) / SHOWINFO_SCALE2;
+			scene.ball.vel.y = this.readLong(packet, offset) / SHOWINFO_SCALE2;
 			offset += 4;
 
 			// read player_t
 			for (int i = 0; i < Param.MAX_PLAYER * 2; i++) {
 				// // mode (short)
-				scene.player[i].mode = readShort(packet, offset);
+				scene.player[i].mode = this.readShort(packet, offset);
 				offset += 2;
 
 				// // unum
@@ -207,49 +211,49 @@ public class SoccerServerConnection extends SceneBuilder {
 				}
 
 				// // type (short)
-				scene.player[i].type = readShort(packet, offset);
+				scene.player[i].type = this.readShort(packet, offset);
 				offset += 2;
 
 				// // x, y (long)
-				scene.player[i].pos.x = readLong(packet, offset)
-						/ SHOWINFO_SCALE2;
+				scene.player[i].pos.x = this.readLong(packet, offset)
+				/ SHOWINFO_SCALE2;
 				offset += 4;
-				scene.player[i].pos.y = readLong(packet, offset)
-						/ SHOWINFO_SCALE2;
+				scene.player[i].pos.y = this.readLong(packet, offset)
+				/ SHOWINFO_SCALE2;
 				offset += 4;
 
 				// // deltax, deltay (long)
-				scene.player[i].vel.x = readLong(packet, offset)
-						/ SHOWINFO_SCALE2;
+				scene.player[i].vel.x = this.readLong(packet, offset)
+				/ SHOWINFO_SCALE2;
 				offset += 4;
-				scene.player[i].vel.y = readLong(packet, offset)
-						/ SHOWINFO_SCALE2;
+				scene.player[i].vel.y = this.readLong(packet, offset)
+				/ SHOWINFO_SCALE2;
 				offset += 4;
 
 				// // body_angle (long) (radians)
-				scene.player[i].angle = (int) Math.toDegrees(readLong(packet,
-						offset)
+				scene.player[i].angle = (int) Math.toDegrees(this.readLong(
+						packet, offset)
 						/ SHOWINFO_SCALE2);
 				offset += 4;
 
 				// // head_angle (long) (radians)
-				scene.player[i].angleNeck = (int) Math.toDegrees(readLong(
+				scene.player[i].angleNeck = (int) Math.toDegrees(this.readLong(
 						packet, offset)
 						/ SHOWINFO_SCALE2);
 				offset += 4;
 
 				// // view_width (long) (radians)
-				scene.player[i].angleVisible = (int) Math.toDegrees(readLong(
-						packet, offset)
+				scene.player[i].angleVisible = (int) Math.toDegrees(this
+						.readLong(packet, offset)
 						/ SHOWINFO_SCALE2);
 				offset += 4;
 
 				// // view_quality (short)
-				scene.player[i].viewQuality = readShort(packet, offset);
+				scene.player[i].viewQuality = this.readShort(packet, offset);
 				offset += 4;
 
 				// // stamina (long)
-				scene.player[i].stamina = (int) (readLong(packet, offset) / SHOWINFO_SCALE2);
+				scene.player[i].stamina = (int) (this.readLong(packet, offset) / SHOWINFO_SCALE2);
 				offset += 4;
 
 				// // effort (long)
@@ -263,15 +267,15 @@ public class SoccerServerConnection extends SceneBuilder {
 				offset += 4;
 
 				// // kick_count (short)
-				scene.player[i].kickCount = readShort(packet, offset);
+				scene.player[i].kickCount = this.readShort(packet, offset);
 				offset += 2;
 
 				// // dash_count (short)
-				scene.player[i].dashCount = readShort(packet, offset);
+				scene.player[i].dashCount = this.readShort(packet, offset);
 				offset += 2;
 
 				// // turn_count (short)
-				scene.player[i].turnCount = readShort(packet, offset);
+				scene.player[i].turnCount = this.readShort(packet, offset);
 				offset += 2;
 
 				// // say_count (short)
@@ -295,13 +299,13 @@ public class SoccerServerConnection extends SceneBuilder {
 				offset += 2;
 			}
 
-		} else if ((type & MONITOR_PROTOCOL_1) == MONITOR_PROTOCOL_1) {
+		} else if ((this.type & MONITOR_PROTOCOL_1) == MONITOR_PROTOCOL_1) {
 			offset = 2;
-			PlayMode pplaymode = makePlayMode(packet);
+			PlayMode pplaymode = this.makePlayMode(packet);
 			offset += 2;
 
-			Team tleft = makeLeftTeam(packet, offset);
-			Team tright = makeRightTeam(packet, offset);
+			Team tleft = this.makeLeftTeam(packet, offset);
+			Team tright = this.makeRightTeam(packet, offset);
 			offset += 36;
 
 			scene.left = new Team(tleft);
@@ -323,9 +327,9 @@ public class SoccerServerConnection extends SceneBuilder {
 			offset += 2;
 
 			// // x, y (short)
-			scene.ball.pos.x = readShort(packet, offset) / SHOWINFO_SCALE;
+			scene.ball.pos.x = this.readShort(packet, offset) / SHOWINFO_SCALE;
 			offset += 2;
-			scene.ball.pos.y = readShort(packet, offset) / SHOWINFO_SCALE;
+			scene.ball.pos.y = this.readShort(packet, offset) / SHOWINFO_SCALE;
 			offset += 2;
 
 			// read pos_t[1-22]
@@ -336,41 +340,42 @@ public class SoccerServerConnection extends SceneBuilder {
 				int index;
 
 				// // enable (short)
-				enable = readShort(packet, offset);
+				enable = this.readShort(packet, offset);
 				offset += 2;
 
 				// // side (short)
-				side = readShort(packet, offset);
+				side = this.readShort(packet, offset);
 				offset += 2;
 
 				// // unum (short)
-				unum = readShort(packet, offset);
+				unum = this.readShort(packet, offset);
 				offset += 2;
 
-				if (side == Team.LEFT_SIDE)
+				if (side == Team.LEFT_SIDE) {
 					index = (unum - 1);
-				else
+				} else {
 					index = (unum - 1) + Param.MAX_PLAYER;
+				}
 
 				scene.player[index].unum = unum;
 				scene.player[index].side = side;
 				scene.player[index].mode = enable;
 
 				// // angle (short)
-				scene.player[index].angle = readShort(packet, offset);
+				scene.player[index].angle = this.readShort(packet, offset);
 				offset += 2;
 
 				// // x, y (short)
-				scene.player[index].pos.x = readShort(packet, offset)
-						/ SHOWINFO_SCALE;
+				scene.player[index].pos.x = this.readShort(packet, offset)
+				/ SHOWINFO_SCALE;
 				offset += 2;
-				scene.player[index].pos.y = readShort(packet, offset)
-						/ SHOWINFO_SCALE;
+				scene.player[index].pos.y = this.readShort(packet, offset)
+				/ SHOWINFO_SCALE;
 				offset += 2;
 			}
 		}
 		// read time (short)
-		scene.time = readUnsignedShort(packet, offset);
+		scene.time = this.readUnsignedShort(packet, offset);
 		offset += 2;
 
 		// check offside
@@ -386,10 +391,12 @@ public class SoccerServerConnection extends SceneBuilder {
 		rightx[Param.MAX_PLAYER] = scene.ball.pos.x;
 		Arrays.sort(leftx);
 		Arrays.sort(rightx);
-		if (leftx[1] < 0)
+		if (leftx[1] < 0) {
 			scene.left.offsideline = leftx[1];
-		if (rightx[Param.MAX_PLAYER - 1] > 0)
+		}
+		if (rightx[Param.MAX_PLAYER - 1] > 0) {
 			scene.right.offsideline = rightx[Param.MAX_PLAYER - 1];
+		}
 
 		scene.left.offside = false;
 		scene.right.offside = false;
@@ -412,7 +419,7 @@ public class SoccerServerConnection extends SceneBuilder {
 			this.timeover = true;
 		} else if (this.timeover) {
 			System.err
-					.println("WARNING: after a timeover scene occurred a non-timeover scene");
+			.println("WARNING: after a timeover scene occurred a non-timeover scene");
 			this.timeover = false;
 		}
 

@@ -16,7 +16,7 @@ import soccerscope.util.geom.Rectangle2f;
 
 import com.jamesmurty.utils.XMLBuilder;
 
-public class WingVariationByPass extends SceneAnalyzer implements Xmling {
+public class WingVariationByPass extends SceneAnalyzer implements Xmling, AnalyzeNow {
 
 	public static final String NAME = "Wing variation By Pass";
 
@@ -27,7 +27,7 @@ public class WingVariationByPass extends SceneAnalyzer implements Xmling {
 		Rectangle2f area;
 
 		public Zone(Rectangle2f a) {
-			area = a;
+			this.area = a;
 		}
 
 		public boolean contains(Point2f p) {
@@ -51,12 +51,12 @@ public class WingVariationByPass extends SceneAnalyzer implements Xmling {
 			this.side = pass.side;
 			this.time = pass.receiver.time;
 			Point2f sender_pos = WingVariationByPass.kickerPosition(
-					pass.sender, side);
+					pass.sender, this.side);
 			Point2f receiver_pos = WingVariationByPass.kickerPosition(
-					pass.receiver, side);
+					pass.receiver, this.side);
 			// check in which wings is each of the players...
-			this.senderWing = whichWing(sender_pos);
-			this.receiverWing = whichWing(receiver_pos);
+			this.senderWing = WingVariationByPass.whichWing(sender_pos);
+			this.receiverWing = WingVariationByPass.whichWing(receiver_pos);
 
 			if (this.senderWing != null && this.receiverWing != null) {
 				if (this.senderWing != this.receiverWing) {
@@ -85,16 +85,16 @@ public class WingVariationByPass extends SceneAnalyzer implements Xmling {
 			}
 
 			XMLBuilder wcXml = builder.elem("wingchange")
-					.attr("offensive", String.valueOf(offensive))
-					.attr("totalvariation",	String.valueOf(this.pass2 != null));
-			XMLBuilder pass = wcXml.elem("pass").attr("team", Team.name(side));
+			.attr("offensive", String.valueOf(offensive))
+			.attr("totalvariation",	String.valueOf(this.pass2 != null));
+			XMLBuilder pass = wcXml.elem("pass").attr("team", Team.name(this.side));
 			this.pass.sender.xmlElement(pass.elem("kick").attr("wing",
 					this.senderWing.toString()));
 			this.pass.receiver.xmlElement(pass.elem("reception").attr("wing",
 					this.receiverWing.toString()));
 			if (this.pass2 != null) {
 				XMLBuilder pass2 = wcXml.elem("pass").attr("team",
-						Team.name(side));
+						Team.name(this.side));
 				this.pass2.sender.xmlElement(pass2.elem("kick").attr("wing",
 						this.senderWing2.toString()));
 				this.pass2.receiver.xmlElement(pass2.elem("reception").attr(
@@ -114,7 +114,7 @@ public class WingVariationByPass extends SceneAnalyzer implements Xmling {
 		TOP, BOTTOM, MIDDLE
 	};
 
-	public static EnumMap<WING, Zone> wings = initWings();
+	public static EnumMap<WING, Zone> wings = WingVariationByPass.initWings();
 
 	public static EnumMap<WING, Zone> initWings() {
 		EnumMap<WING, Zone> wings = new EnumMap<WING, Zone>(WING.class);
@@ -128,9 +128,10 @@ public class WingVariationByPass extends SceneAnalyzer implements Xmling {
 		return wings;
 	}
 
+	@Override
 	public void init() {
 		super.init();
-		wingChanges.clear();
+		this.wingChanges.clear();
 	}
 
 	@Override
@@ -144,36 +145,40 @@ public class WingVariationByPass extends SceneAnalyzer implements Xmling {
 		return NAME;
 	}
 
+	@Override
 	public Object getValueAt(int col, int fromTime, int toTime) {
-		count(fromTime, toTime);
+		this.count(fromTime, toTime);
 		switch (col) {
 		case ROW_NAME:
-			return getName();
+			return this.getName();
 		case LEFT:
-			if (lcount == -1)
+			if (this.lcount == -1) {
 				return "--";
-			return new Integer(lcount);
+			}
+			return new Integer(this.lcount);
 		case RIGHT:
-			if (rcount == -1)
+			if (this.rcount == -1) {
 				return "--";
-			return new Integer(rcount);
+			}
+			return new Integer(this.rcount);
 		default:
 			return " ";
 		}
 	}
 
+	@Override
 	public void count(int fromTime, int toTime) {
-		initCounts();
-		countPartialVariation(fromTime, toTime);
+		this.initCounts();
+		this.countPartialVariation(fromTime, toTime);
 		// total variation depends on partial variation.
 		// does not need time interval because it will only use the
 		// already analyzed variation.
-		countTotalVariation();
+		this.countTotalVariation();
 	}
 
 	private void initCounts() {
-		lcount = 0;
-		rcount = 0;
+		this.lcount = 0;
+		this.rcount = 0;
 		this.wingChanges.clear();
 	}
 
@@ -189,7 +194,7 @@ public class WingVariationByPass extends SceneAnalyzer implements Xmling {
 
 				if (wingChange.valid()) {
 					// this pass corresponded to a change on the wing...
-					countUp(wingChange);
+					this.countUp(wingChange);
 					String sideName = Team.name(wingChange.side);
 					System.out.println("WING_CHANGE (pass)" + sideName + " "
 							+ senderWing + "(" + stime + ") " + receiverWing
@@ -207,7 +212,7 @@ public class WingVariationByPass extends SceneAnalyzer implements Xmling {
 		ListIterator<WingChangePass> iter = this.wingChanges.listIterator();
 		while (iter.hasNext()) {
 			WingChangePass wing = iter.next();
-			if (prev != null)
+			if (prev != null) {
 				if (prev.pass2 != null) {
 					System.err.println("this should never happen!!");
 				} else if (wing.side == prev.side) {
@@ -230,6 +235,7 @@ public class WingVariationByPass extends SceneAnalyzer implements Xmling {
 						}
 					}
 				}
+			}
 			prev = wing;
 		}
 	}
@@ -271,13 +277,20 @@ public class WingVariationByPass extends SceneAnalyzer implements Xmling {
 	}
 
 	@Override
-	public void xmlElement(XMLBuilder builder) {
+	public void analyzeNow() {
+		this.wingChanges.clear();
 		int stime = 0;
 		int etime = WorldModel.getInstance().getSceneSet().getLimitTime();
 		// update the data...
-		count(stime, etime);
+		this.count(stime, etime);
+	}
+
+	@Override
+	public void xmlElement(XMLBuilder builder) {
+		this.analyzeNow();
+
 		XMLBuilder wv = builder.elem("wingchanges").attr("left",
-				String.valueOf(lcount)).attr("right", String.valueOf(rcount));
+				String.valueOf(this.lcount)).attr("right", String.valueOf(this.rcount));
 		for (WingChangePass wc : this.wingChanges) {
 			wc.xmlElement(wv);
 		}

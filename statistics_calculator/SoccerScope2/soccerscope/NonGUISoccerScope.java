@@ -1,29 +1,24 @@
 package soccerscope;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.util.Properties;
-
-import org.w3c.tools.sexpr.Cons;
-import org.w3c.tools.sexpr.SExprStream;
-import org.w3c.tools.sexpr.SimpleSExprStream;
-import org.w3c.tools.sexpr.Symbol;
 
 import soccerscope.file.LogFileReader;
 import soccerscope.model.Player;
 import soccerscope.model.Scene;
+import soccerscope.model.SceneBuilder;
 import soccerscope.model.SceneSet;
 import soccerscope.model.SceneSetMaker;
 import soccerscope.model.Team;
 import soccerscope.model.WorldModel;
+import soccerscope.net.SoccerServerConnection;
 import soccerscope.util.GameAnalyzer;
 import soccerscope.util.analyze.SceneAnalyzer;
 import soccerscope.util.analyze.Xmling;
@@ -52,7 +47,7 @@ public class NonGUISoccerScope {
 
 	private static void openAndAnalyzeLogFile(final SceneSet sceneSet,
 			final String filename) throws IOException, InterruptedException {
-		final LogFileReader lfr = new LogFileReader(filename);
+		final SceneBuilder lfr = new LogFileReader(filename);
 		final SceneSetMaker ssm = new SceneSetMaker(lfr, sceneSet);
 		ssm.run();
 	}
@@ -106,86 +101,71 @@ public class NonGUISoccerScope {
 		out.flush();
 	}
 
-	public static void run(int port) throws SocketException, IOException {
-		final int BUFFERSIZE = 16 * 2048;
-		final Symbol endSymbol = Symbol.makeSymbol("end", null);
-		final Symbol timeSymbol = Symbol.makeSymbol("time", null);
+	public static void run(int port) throws SocketException, IOException,
+	InterruptedException {
 
 		DatagramSocket sock = new DatagramSocket();
 
-		NonGUISoccerScope.sendStartPacket(sock, port);
+		final String host = "localhost";
+		InetSocketAddress address = new InetSocketAddress(host, port);
+		NonGUISoccerScope.sendStartPacket(sock, address);
+		NonGUISoccerScope.openUDPViewerConnectionAndDoLiveAnalysis(sock,
+				address);
 
-		// TODO - uncomment this after making it work and remove the rest
-		// openUDPCoachConnection(sock);
-
-
-		DatagramPacket pack;
-		String data;
-		while (true) {
-			// receive
-			pack = new DatagramPacket(new byte[BUFFERSIZE], BUFFERSIZE);
-			sock.receive(pack);
-			System.out.println("rcvd: \"" + new String(pack.getData()).trim() +"\"" );
-
-			data = new String(pack.getData()).trim();
-			try {
-				InputStream datastream = new ByteArrayInputStream(data.getBytes("UTF-8"));
-				SExprStream p = new SimpleSExprStream(datastream);
-				Object e = p.parse();
-				if(e instanceof Cons) {
-					Cons expr = (Cons) e;
-					if( expr.left().equals(endSymbol) ) {
-						// confirm that received end by sending end.
-						sock.send(pack);
-						sock.close();
-						System.out.println("connection closed");
-						break;
-					} else if(expr.left().equals(timeSymbol)) {
-						assert expr.right() instanceof Cons;
-						Cons expr_right = (Cons) expr.right();
-						assert expr_right.left() instanceof Integer;
-						int time = ((Integer) expr_right.left()).intValue();
-						if((time % 10) == 0) { // every 10th message
-							byte[] message = ("(recvd "+ time +")").getBytes();
-							pack.setData(message);
-							sock.send(pack);
-							System.out.println("sent: \"" + new String(pack.getData()).trim() +"\"" );
-						}
-
-					} else {
-						System.err.println("unkown message \""+ data +"\"");
-					}
-				} else {
-					System.err.println("unkown message \""+ data +"\"");
-				}
-			} catch(Exception e) {
-				System.err.println("could not parse \""+ data +"\"");
-			}
-		}
 	}
 
-	private static void sendStartPacket(DatagramSocket sock, int port) throws IOException {
-		String host = "localhost";
-		byte[] message = "(start)".getBytes();
+	private static void sendStartPacket(DatagramSocket sock,
+			InetSocketAddress address) throws IOException {
+		final byte[] message = "(start)".getBytes();
 
 		// send "(start)"
-		InetAddress address = InetAddress.getByName(host);
 		// Initialize a datagram packet with data and address
 		DatagramPacket packet = new DatagramPacket(message, message.length,
-				address, port);
+				address);
 		sock.send(packet);
 
 	}
 
-	/*
-	private static void openUDPCoachConnection(DatagramSocket sock) {
+	private static void openUDPViewerConnectionAndDoLiveAnalysis(
+			DatagramSocket socket, InetSocketAddress address)
+	throws InterruptedException, IOException {
+		final int BUFFERSIZE = 16 * 2048;
+		final String ssHost = "localhost";
 		final WorldModel wm = WorldModel.getInstance();
-		wm.clear(); // don't think this is necessary... but ok...
+		wm.clear();
 
-		SceneBuilder cconnection = new CoachConnection(sock);
-		SceneSetMaker ssm = new SceneSetMaker(cconnection, wm.getSceneSet());
-		ssm.run();
+		SoccerServerConnection ssconnection = new SoccerServerConnection(ssHost);
+		SceneSetMaker ssm = new SceneSetMaker(ssconnection, wm.getSceneSet(),
+				new AssistantCoachRole(socket, address));
+		ssm.start();
+
+		// since we are connecting as a viewer we can just wait for the "(end)"
+		// here by blocking.
+		while (true) {
+			byte[] buf = new byte[BUFFERSIZE];
+			DatagramPacket pack = new DatagramPacket(buf, buf.length);
+			socket.receive(pack);
+			String message=(new String(buf)).trim();
+			if (message.equals("(end)")) {
+				// echo the back the "(end)" message
+				socket.send(pack);
+				ssconnection.dispbye();
+				ssm.finish();
+				break;
+			} else {
+				System.err.println("unkown message: " + message);
+			}
+		}
+		ssm.join();
 	}
-	 */
+
+	// private static void openUDPCoachConnection(DatagramSocket sock) {
+	// final WorldModel wm = WorldModel.getInstance();
+	// wm.clear(); // don't think this is necessary... but ok...
+	//
+	// SceneBuilder cconnection = new CoachConnection(sock);
+	// SceneSetMaker ssm = new SceneSetMaker(cconnection, wm.getSceneSet());
+	// ssm.run();
+	// }
 
 }

@@ -13,7 +13,7 @@ import soccerscope.util.geom.Rectangle2f;
 import com.jamesmurty.utils.XMLBuilder;
 
 public class BallPossessionByZonesAnalyzer extends SceneAnalyzer implements
-		Xmling {
+AnalyzeNow, Xmling {
 
 	public static String NAME = "Ball Possession By Zone";
 
@@ -78,25 +78,26 @@ public class BallPossessionByZonesAnalyzer extends SceneAnalyzer implements
 		@Override
 		public void xmlElement(XMLBuilder builder) {
 			XMLBuilder zoneElem = builder.elem("zone").attr("name", this.name)
-					.attr("time", String.valueOf(this.totalCount())).attr(
-							"percent", String.valueOf(this.totalPercent()));
+			.attr("time", String.valueOf(this.totalCount())).attr(
+					"percent", String.valueOf(this.totalPercent()));
 			zoneElem.elem("possession").attr("team", Team.name(Team.LEFT_SIDE))
-					.attr("percent", String.valueOf(this.leftPercent())).attr(
-							"time", String.valueOf(this.countLeft));
+			.attr("percent", String.valueOf(this.leftPercent())).attr(
+					"time", String.valueOf(this.countLeft));
 			zoneElem.elem("possession")
-					.attr("team", Team.name(Team.RIGHT_SIDE)).attr("percent",
-							String.valueOf(this.rightPercent())).attr("time",
+			.attr("team", Team.name(Team.RIGHT_SIDE)).attr("percent",
+					String.valueOf(this.rightPercent())).attr("time",
 							String.valueOf(this.countRight));
 			zoneElem.elem("possession").attr("team", Team.name(Team.NEUTRAL))
-					.attr("percent", String.valueOf(this.neutralPercent()))
-					.attr("time", String.valueOf(this.countNeutral));
+			.attr("percent", String.valueOf(this.neutralPercent()))
+			.attr("time", String.valueOf(this.countNeutral));
 		}
 
 	}
 
+	@Override
 	public void init() {
 		super.init();
-		initZones();
+		this.initZones();
 	}
 
 	private void initZones() {
@@ -142,54 +143,60 @@ public class BallPossessionByZonesAnalyzer extends SceneAnalyzer implements
 	}
 
 	/* START - cenas relacionadas com a tabela que não me importam para já. */
+	@Override
 	public String getName() {
 		return NAME;
 	}
 
+	@Override
 	public Object getValueAt(int col, int fromTime, int toTime) {
 		// ballPossesionbyRegion(fromTime, toTime);
-		count(fromTime, toTime);
+		this.count(fromTime, toTime);
 		NumberFormat nf = NumberFormat.getInstance();
 		nf.setMaximumIntegerDigits(2);
 		nf.setMaximumFractionDigits(2);
 		switch (col) {
 		case ROW_NAME:
-			return getName();
+			return this.getName();
 		case LEFT:
-			if (totalTime == 0)
+			if (this.totalTime == 0) {
 				return "0";
-			return nf.format(lcount * 100.0 / totalTime);
+			}
+			return nf.format(this.lcount * 100.0 / this.totalTime);
 		case RIGHT:
-			if (totalTime == 0)
+			if (this.totalTime == 0) {
 				return "0";
-			return nf.format(rcount * 100.0 / totalTime);
+			}
+			return nf.format(this.rcount * 100.0 / this.totalTime);
 		default:
 			return " ";
 		}
 	}
 
 	/* Ball possession count */
+	@Override
 	public void count(int fromTime, int toTime) {
-		totalTime = 0;
-		lcount = 0;
-		rcount = 0;
+		this.totalTime = 0;
+		this.lcount = 0;
+		this.rcount = 0;
 		int pTable[] = PassAnalyzer.getPossessionTable();
 		for (int i = fromTime; i <= toTime; i++) {
-			if (i >= pTable.length)
+			if (i >= pTable.length) {
 				continue;
+			}
 			switch (pTable[i]) {
 			case PassAnalyzer.PLAY_OFF:
 				break;
 			case PassAnalyzer.PLAY_ON:
-				totalTime++;
+				this.totalTime++;
 				break;
 			case PassAnalyzer.LEFT_SIDE:
-				totalTime++;
-				lcount++;
+				this.totalTime++;
+				this.lcount++;
 				break;
 			case PassAnalyzer.RIGHT_SIDE:
-				totalTime++;
-				rcount++;
+				this.totalTime++;
+				this.rcount++;
 				break;
 			}
 		}
@@ -200,7 +207,7 @@ public class BallPossessionByZonesAnalyzer extends SceneAnalyzer implements
 	/* Calculation done by zone */
 	public void ballPossesionbyRegion(int fromTime, int toTime) {
 		int totalTime = 0;
-		for (Zone z : zones) {
+		for (Zone z : this.zones) {
 			z.countLeft = 0;
 			z.countRight = 0;
 		}
@@ -209,7 +216,7 @@ public class BallPossessionByZonesAnalyzer extends SceneAnalyzer implements
 			Scene scene = WorldModel.getInstance().getSceneSet().getScene(i);
 			Point2f b = scene.ball.pos;
 			inzone = false;
-			for (Zone z : zones) {
+			for (Zone z : this.zones) {
 				if (z.contains(b)) {
 					inzone = true;
 					switch (PassAnalyzer.getPossessionTeam(i)) {
@@ -234,32 +241,40 @@ public class BallPossessionByZonesAnalyzer extends SceneAnalyzer implements
 				}
 			}
 			//if (!inzone)
-				//System.out.println("CICLE(" + i + ") Team(?); zone(UNKNOW)"+ "posicao bola:" + b);
+			//System.out.println("CICLE(" + i + ") Team(?); zone(UNKNOW)"+ "posicao bola:" + b);
 		}
 
-		for (Zone z : zones) {
+		for (Zone z : this.zones) {
 			z.totalTime = totalTime;
 		}
 	}
 
 	// DUNNO, LOL!
+	@Override
 	public GameEvent analyze(Scene scene, Scene prev) {
 		return null;
 	}
 
 	@Override
-	public void xmlElement(XMLBuilder builder) {
+	public void analyzeNow() {
 		int start = 0;
 		int end = WorldModel.getInstance().getSceneSet().getLimitTime();
+
 		// update the ball possession data
-		ballPossesionbyRegion(start, end);
-		count(start,end);
-		
+		this.ballPossesionbyRegion(start, end);
+		this.count(start,end);
+
+	}
+
+	@Override
+	public void xmlElement(XMLBuilder builder) {
+		this.analyzeNow();
+
 		builder = builder.elem("ballpossession")
-			.attr("total", String.valueOf(totalTime))
-			.attr("left", String.valueOf(lcount))
-			.attr("right", String.valueOf(rcount))
-			.attr("neutral", String.valueOf(totalTime-(rcount+lcount)));
+		.attr("total", String.valueOf(this.totalTime))
+		.attr("left", String.valueOf(this.lcount))
+		.attr("right", String.valueOf(this.rcount))
+		.attr("neutral", String.valueOf(this.totalTime-(this.rcount+this.lcount)));
 		for (Zone z : this.zones) {
 			z.xmlElement(builder);
 		}

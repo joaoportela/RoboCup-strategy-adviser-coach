@@ -16,7 +16,7 @@ import com.jamesmurty.utils.XMLBuilder;
  * calculates the wing variation according to the ball
  * position change.
  */
-public class WingVariationByPossession extends SceneAnalyzer implements Xmling {
+public class WingVariationByPossession extends SceneAnalyzer implements Xmling, AnalyzeNow {
 	public static final String NAME = "Wing Variation (by possession)";
 
 	@Override
@@ -34,7 +34,7 @@ public class WingVariationByPossession extends SceneAnalyzer implements Xmling {
 
 	@Override
 	public void init() {
-		variations.clear();
+		this.variations.clear();
 	}
 
 	public static class Variation implements Xmling {
@@ -53,7 +53,7 @@ public class WingVariationByPossession extends SceneAnalyzer implements Xmling {
 		}
 
 		public int middleTime() {
-			return (int) (((float) this.stime) * 0.5f + ((float) this.etime) * 0.5f);
+			return (int) ((this.stime) * 0.5f + (this.etime) * 0.5f);
 		}
 
 		public boolean valid() {
@@ -68,36 +68,40 @@ public class WingVariationByPossession extends SceneAnalyzer implements Xmling {
 		@Override
 		public void xmlElement(XMLBuilder builder) {
 			builder.elem("wingchange")
-					.attr("from", this.start.toString())
-					.attr("to", this.end.toString())
-					.attr("time",String.valueOf(this.stime))
-					.attr("team", Team.name(this.side));
+			.attr("from", this.start.toString())
+			.attr("to", this.end.toString())
+			.attr("time",String.valueOf(this.stime))
+			.attr("team", Team.name(this.side));
 		}
 	}
 
+	@Override
 	public Object getValueAt(int col, int fromTime, int toTime) {
-		lcount = 0;
-		rcount = 0;
-		count(fromTime, toTime);
+		this.lcount = 0;
+		this.rcount = 0;
+		this.count(fromTime, toTime);
 		switch (col) {
 		case ROW_NAME:
-			return getName();
+			return this.getName();
 		case LEFT:
-			if (lcount == -1)
+			if (this.lcount == -1) {
 				return "--";
-			return new Integer(lcount);
+			}
+			return new Integer(this.lcount);
 		case RIGHT:
-			if (rcount == -1)
+			if (this.rcount == -1) {
 				return "--";
-			return new Integer(rcount);
+			}
+			return new Integer(this.rcount);
 		default:
 			return " ";
 		}
 	}
 
+	@Override
 	public void count(int fromTime, int toTime) {
-		lcount = 0;
-		rcount = 0;
+		this.lcount = 0;
+		this.rcount = 0;
 		WING startWing = null;
 		WING endWing = null;
 		Scene prev_scene = null;
@@ -121,7 +125,7 @@ public class WingVariationByPossession extends SceneAnalyzer implements Xmling {
 
 				if (v.valid()) {
 					// update the counts and stuff...
-					countUp(v);
+					this.countUp(v);
 					String sideName = Team.name(side);
 					System.out.println("WING_CHANGE (ball possesion) "
 							+ sideName + " " + startWing + "("
@@ -140,12 +144,17 @@ public class WingVariationByPossession extends SceneAnalyzer implements Xmling {
 	}
 
 	@Override
-	public void xmlElement(XMLBuilder builder) {
+	public void analyzeNow() {
+		this.variations.clear();
 		int stime = 0;
 		int etime = WorldModel.getInstance().getSceneSet().getLimitTime();
-		count(stime, etime);
+		this.count(stime, etime);
+	}
+
+	@Override
+	public void xmlElement(XMLBuilder builder) {
 		XMLBuilder wv = builder.elem("wingchange_bypossession").attr("left",
-				String.valueOf(lcount)).attr("right", String.valueOf(rcount));
+				String.valueOf(this.lcount)).attr("right", String.valueOf(this.rcount));
 
 		for (Variation v : this.variations) {
 			v.xmlElement(wv);

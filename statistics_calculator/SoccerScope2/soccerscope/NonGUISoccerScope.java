@@ -145,7 +145,7 @@ public class NonGUISoccerScope {
 			byte[] buf = new byte[BUFFERSIZE];
 			DatagramPacket pack = new DatagramPacket(buf, buf.length);
 			socket.receive(pack);
-			String message=(new String(buf)).trim();
+			String message = (new String(buf)).trim();
 			if (message.equals("(end)")) {
 				// echo the back the "(end)" message
 				socket.send(pack);

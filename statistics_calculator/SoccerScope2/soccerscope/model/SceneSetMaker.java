@@ -11,15 +11,15 @@ import javax.swing.JProgressBar;
 import soccerscope.util.Time;
 
 public class SceneSetMaker extends Thread {
-	public static interface CoachAnalyzerInterface {
-		public void analyze(Scene current, SceneSet allScenes);
+	public static interface CoachInterface {
+		public void newScene(Scene current, SceneSet allScenes);
 	}
 
 	private SceneBuilder builder;
 	private SceneSet sceneSet;
 	private JProgressBar progress = null;
 	private boolean liveAnalysis = true;
-	private CoachAnalyzerInterface coachAnalyzer = null;
+	private CoachInterface coach = null;
 	private boolean running = true;
 
 	public SceneSetMaker(SceneBuilder builder, SceneSet sceneSet) {
@@ -28,9 +28,9 @@ public class SceneSetMaker extends Thread {
 	}
 
 	public SceneSetMaker(SceneBuilder builder, SceneSet sceneSet,
-			CoachAnalyzerInterface coachAnalyzer) {
+			CoachInterface coachAnalyzer) {
 		this(builder, sceneSet);
-		this.coachAnalyzer = coachAnalyzer;
+		this.coach = coachAnalyzer;
 	}
 
 	public SceneSetMaker(SceneBuilder builder, SceneSet sceneSet,
@@ -86,8 +86,8 @@ public class SceneSetMaker extends Thread {
 			case SceneBuilder.SHOW_MODE:
 				scene = this.builder.makeScene(packet, playmode, left, right);
 				this.sceneSet.addScene(scene, this.liveAnalysis);
-				if (this.coachAnalyzer != null) {
-					this.coachAnalyzer.analyze(scene, this.sceneSet);
+				if (this.coach != null && this.liveAnalysis) {
+					this.coach.newScene(scene, this.sceneSet);
 				}
 				System.err.print("\r" + scene.time);
 				if (this.progress != null) {

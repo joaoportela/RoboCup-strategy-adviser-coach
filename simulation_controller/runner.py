@@ -12,9 +12,8 @@ from confrontation import *
 from evaluator import *
 from utils import confrontation_metadata_files
 
-def dotest(confrontation):
+def dotest(confrontation, min_matches=1,team='fcportugal'):
     # play the number of matches I want.
-    min_matches=1
     print str(confrontation),"matches:",len(confrontation),"/",min_matches
     while len(confrontation) <  min_matches:
         confrontation.playnewmatch()
@@ -26,23 +25,25 @@ def dotest(confrontation):
     else:
         print ""
 
-    peval=PointsEvaluator(confrontation.statistics(),"fcportugalE")
+    peval=PointsEvaluator(confrontation.statistics(),team)
     print "according to the points evaluator the score is: ", peval.value()
 
-    gdiff=GoalDifferenceEvaluator(confrontation.statistics(),"fcportugalE")
+    gdiff=GoalDifferenceEvaluator(confrontation.statistics(),team)
     print "according to the goal difference evaluator the score is: ", gdiff.value()
 
-    reval=ReliefEvaluator(confrontation.statistics(),"fcportugalE")
+    reval=ReliefEvaluator(confrontation.statistics(),team)
     print "relief evaluator score ", reval.value()
 
-    marseval=MARSEvaluator(confrontation.statistics(),"fcportugalE")
+    marseval=MARSEvaluator(confrontation.statistics(),team)
     print "MARS evaluator score ", marseval.value()
 
 def main():
-    fcpE = FCPortugal({"formation" : 1}, extended=True)
-    fcpX = Team("fcportugalX")
-    fcpE_vs_fcpX = Confrontation(fcpE, fcpX)
-    dotest(fcpE_vs_fcpX)
+    #fcpE = FCPortugal({"formation" : 1}, extended=True)
+    #fcpX = Team("fcportugalX")
+    fcp=Team("fcportugal2d")
+    bahia=Team("bahia2d")
+    confrontation = Confrontation(fcp, bahia)
+    dotest(confrontation)
     # for metadata_f in confrontation_metadata_files():
     #     print metadata_f
     #     dotest(Confrontation.from_metadata(metadata_f))

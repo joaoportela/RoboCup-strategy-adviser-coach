@@ -42,8 +42,13 @@ def main():
     #fcpX = Team("fcportugalX")
     fcp=Team("fcportugal2d")
     bahia=Team("bahia2d")
-    confrontation = Confrontation(fcp, bahia)
-    dotest(confrontation)
+    kickofftug=Team("kickofftug")
+    nemesis=Team("nemesis")
+    wrighteagle=Team("wrighteagle")
+    confrontation1 = Confrontation(fcp, bahia)
+    confrontation2 = Confrontation(nemesis, wrighteagle)
+    dotest(confrontation1)
+    dotest(confrontation2, team='wrighteagle')
     # for metadata_f in confrontation_metadata_files():
     #     print metadata_f
     #     dotest(Confrontation.from_metadata(metadata_f))

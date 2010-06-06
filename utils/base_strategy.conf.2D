@@ -1,10 +1,9 @@
 # Common Framework Strategy Configuration File FC Portugal 2010 - Luis Paulo Reis
 1 # 1-2D, 2-3D, 3-MR - Strategy Type
-2 11 13 6 4 3 # Num_Tactics Num_Players Formations Player_Types Flux_Matrixes Sets_SetPlays
+$N_TACTICS$ 11 13 6 4 3 # Num_Tactics Num_Players Formations Player_Types Flux_Matrixes Sets_SetPlays
 0 # Opponent Number 0 - default
-$N_TACTICS$ 2 # Number of Time Tactics and opponents - tactic depends on result, time and opponent
-0000 3999   0  2 2 2 2 2     1  1 1 1 1 1  # Opp Numb - Losing Bad, Losing, Drawing, Winning, Winning Bad
-4000 6000   0  1 1 1 1 1     1  1 1 1 1 1 
+1 1 # Number of Time Tactics and opponents - tactic depends on result, time and opponent
+0000 6000   0  $T_IN_USE$ $T_IN_USE$ $T_IN_USE$ $T_IN_USE$ $T_IN_USE$ # Opp Numb - Losing Bad, Losing, Drawing, Winning, Winning Bad
 # Tactics Definition --------------------------------------------------------------------------
 $TACTICS$
 # Player Types Definition ----------------------------------------------------------------------
@@ -61,6 +60,18 @@ formations/433_OFF/433_OFF_their_indirect_free_kick_2D.conf # 433 offensive thei
 13 2 # Formation 13 - Type 2 - Delaunay - Formation description 13
 formations/433_OFF/433_OFF_kick_off_base_formation_2D.conf # 433 offensive kick off
   1    3 2 2 3    4 4 4    5 5 5    #Type PT_GOA PT_MID PT_DEF...
+14 2 # Formation 14 - Type 2 - Delaunay.
+formations/formations_joao/415.conf # 415 formation. (very offensive)
+  1    3 2 2 3    4 4 4    5 5 5    #Type PT_GOA PT_MID PT_DEF...
+15 2 # Formation 15 - Type 2 - Delaunay.
+formations/formations_joao/433.conf # 433 formation 
+  1    3 2 2 3    4 4 4    5 5 5    #Type PT_GOA PT_MID PT_DEF...
+16 2 # Formation 16 - Type 2 - Delaunay.
+formations/formations_joao/442_losang.conf # 442 Rhombus formation 
+  1    3 2 2 3    4 4 4    5 5 5    #Type PT_GOA PT_MID PT_DEF...
+17 2 # Formation 17 - Type 2 - Delaunay.
+formations/formations_joao/541.conf # 541 formation 
+  1    3 2 2 3    4 4 4    5 5 5    #Type PT_GOA PT_MID PT_DEF...
 # Flux Matrixes Definition ---------------------------------------------------------------------
 1 1 # Flux 1,Type 1 (old) - Types:Norm 1, Del 2 - Flux Description - Normal
  0 2 3 4 5 5 5 5 3
@@ -82,6 +93,12 @@ formations/433_OFF/433_OFF_kick_off_base_formation_2D.conf # 433 offensive kick 
 flux3_2D.conf # Name
 4 2 # Flux 4,Type 2 - Delaunay - Flux Description
 flux4_2D.conf # Name
+5 2 # Flux 5, Type 2 - Delaunay - flux that mostly uses the middle of the field.
+fluxes/middle_flux.conf
+6 2 # Flux 6, Type 2 - Delaunay - flux that mostly uses the wings of the field.
+fluxes/wings_flux.conf
+7 2 # Flux 7, Type 2 - Delaunay - flux that has very high values on the opponent area when compared with the rest.
+fluxes/opponent_area_focus.conf
 # SetPlays Definition ("setplay.conf")------------------------------------------------------------
 1 2 # Set Number and Type (1 - Old Setplays, 2 - New Setplays) - Set Description
 1 2 3 4 5 6 7 8

@@ -8,13 +8,13 @@ class Strategy(object):
     DATA = {
             "formation":
             [
-                1,
-                2,
-                3,
-                4
+                14, # 415
+                15, # 433
+                16, # 442 Rhombus
+                17  # 541
                 ]
             ,
-            "weights":
+            "weights": # WFlux, WSafe, WEasy
             [
                 "0.5 0.3 0.2",
                 "0.8 0.0 0.2",
@@ -24,9 +24,9 @@ class Strategy(object):
             ,
             "flux":
             [
-                0,
-                1,
-                2
+                5, # middle_flux.conf - flux that mostly uses the middle of the field.
+                6, # wings_flux.conf - flux that mostly uses the wings of the field.
+                7  # opponent_area_focus.conf - flux that has very high values on the opponent area when compared with the rest.
                 ]
             }
 
@@ -69,10 +69,7 @@ class Strategy(object):
             return self._possible_tactics_cache
 
     def tactics_as_str(self):
-        tactics_s=""
-        for tactic in self.itertactics():
-            tactics_s+=str(tactic)
-        return tactics_s
+        return "\n".join([str(tactic).strip() for tactic in self.itertactics()])
 
     def write(self,outfile):
         with open(outfile, 'w') as fout:
@@ -89,8 +86,8 @@ class Tactic(dict):
     # TODO - tactic by situation...
     TACTIC_STR="""{tactic_n} # Tactic {tactic_n} - Tactic Description
 {formation} {flux} 1   {weights} # Formation, Flux, SetPlans, WFlux, WSafe, WEasy
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 # Form used in each situation (Att/Def, KickOff(O/T), CornKickIn, FKick, GFKick, GKick, IndFK, Pen
-"""
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 # Form used in each situation (Att/Def, KickOff(O/T), CornKickIn, FKick, GFKick, GKick, IndFK, Pen"""
+
     def __str__(self):
         return Tactic.TACTIC_STR.format(**self)
 

@@ -1,9 +1,9 @@
 # Common Framework Strategy Configuration File FC Portugal 2010 - Luis Paulo Reis
 1 # 1-2D, 2-3D, 3-MR - Strategy Type
-$N_TACTICS$ 11 13 6 4 3 # Num_Tactics Num_Players Formations Player_Types Flux_Matrixes Sets_SetPlays
+$N_TACTICS$ 11 17 6 5 3 # Num_Tactics Num_Players Formations Player_Types Flux_Matrixes Sets_SetPlays
 0 # Opponent Number 0 - default
 1 1 # Number of Time Tactics and opponents - tactic depends on result, time and opponent
-0000 6000   0  $T_IN_USE$ $T_IN_USE$ $T_IN_USE$ $T_IN_USE$ $T_IN_USE$ # Opp Numb - Losing Bad, Losing, Drawing, Winning, Winning Bad
+0000 6000   0  $tactic$ $tactic$ $tactic$ $tactic$ $tactic$ # Opp Numb - Losing Bad, Losing, Drawing, Winning, Winning Bad
 # Tactics Definition --------------------------------------------------------------------------
 $TACTICS$
 # Player Types Definition ----------------------------------------------------------------------
@@ -89,15 +89,11 @@ formations/formations_joao/541.conf # 541 formation
  6 4 2 2 1 1 0 0 0
  2 2 1 1 1 0 0 0 0
  1 0 0 0 0 0 0 0 0
-3 2 # Flux 3,Type 2 - Delaunay - Flux Description
-flux3_2D.conf # Name
-4 2 # Flux 4,Type 2 - Delaunay - Flux Description
-flux4_2D.conf # Name
-5 2 # Flux 5, Type 2 - Delaunay - flux that mostly uses the middle of the field.
+3 2 # Flux 3, Type 2 - Delaunay, flux that mostly uses the middle of the field.
 fluxes/middle_flux.conf
-6 2 # Flux 6, Type 2 - Delaunay - flux that mostly uses the wings of the field.
+4 2 # Flux 4, Type 2 - Delaunay, flux that mostly uses the wings of the field.
 fluxes/wings_flux.conf
-7 2 # Flux 7, Type 2 - Delaunay - flux that has very high values on the opponent area when compared with the rest.
+5 2 # Flux 5, Type 2 - Delaunay, flux that has very high values on the opponent area when compared with the rest.
 fluxes/opponent_area_focus.conf
 # SetPlays Definition ("setplay.conf")------------------------------------------------------------
 1 2 # Set Number and Type (1 - Old Setplays, 2 - New Setplays) - Set Description

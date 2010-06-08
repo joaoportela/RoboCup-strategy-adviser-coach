@@ -24,13 +24,13 @@ class Strategy(object):
             ,
             "flux":
             [
-                5, # middle_flux.conf - flux that mostly uses the middle of the field.
-                6, # wings_flux.conf - flux that mostly uses the wings of the field.
-                7  # opponent_area_focus.conf - flux that has very high values on the opponent area when compared with the rest.
+                3, # middle_flux.conf - flux that mostly uses the middle of the field.
+                4, # wings_flux.conf - flux that mostly uses the wings of the field.
+                5  # opponent_area_focus.conf - flux that has very high values on the opponent area when compared with the rest.
                 ]
             }
 
-    BASE_FILE="base_strategy.conf.2D"
+    BASE_FILE="confs/base_strategy.conf.2D"
 
     def __init__(self):
         self.data=Strategy.DATA
@@ -83,8 +83,11 @@ class Strategy(object):
         return str_
 
 class Tactic(dict):
-    # TODO - tactic by situation...
+    # TODO - formation by situation...
     TACTIC_STR="""{tactic_n} # Tactic {tactic_n} - Tactic Description
+{formation} {flux} 1   {weights} # Formation, Flux, SetPlans, WFlux, WSafe, WEasy
+{formation} {formation} {formation} {formation} {formation} {formation} {formation} {formation} {formation} {formation} {formation} {formation} {formation} {formation} {formation} {formation} # Form used in each situation (Att/Def, KickOff(O/T), CornKickIn, FKick, GFKick, GKick, IndFK, Pen"""
+    TACTIC_STR_old="""{tactic_n} # Tactic {tactic_n} - Tactic Description
 {formation} {flux} 1   {weights} # Formation, Flux, SetPlans, WFlux, WSafe, WEasy
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 # Form used in each situation (Att/Def, KickOff(O/T), CornKickIn, FKick, GFKick, GKick, IndFK, Pen"""
 
@@ -103,5 +106,5 @@ if __name__ == '__main__':
     print "duration/4", total_duration/4
     print "finish @", datetime.datetime.now()+(total_duration/4)
 
-    s.write("generated_strategy.conf.2D")
+    s.write("confs/generated_base_strategy.conf")
 

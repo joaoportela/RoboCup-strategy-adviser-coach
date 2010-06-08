@@ -12,7 +12,7 @@ from confrontation import *
 from evaluator import *
 from utils import confrontation_metadata_files
 
-def dotest(confrontation, min_matches=1,team='fcportugal'):
+def dotest(confrontation, min_matches=2,team='fcportugal'):
     print str(confrontation),"matches:",len(confrontation),"/",min_matches
     while len(confrontation) <  min_matches:
         confrontation.playnewmatch()
@@ -39,7 +39,7 @@ def dotest(confrontation, min_matches=1,team='fcportugal'):
 def main():
     #fcpE = FCPortugal({"formation" : 1}, extended=True)
     #fcpX = Team("fcportugalX")
-    fcp=Team("fcportugal2d")
+    fcp=FCPortugal()
     bahia=Team("bahia2d")
     kickofftug=Team("kickofftug")
     nemesis=Team("nemesis")

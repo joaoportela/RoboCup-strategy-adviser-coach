@@ -4,6 +4,25 @@ import os
 import logging
 import datetime
 
+def _gen_strategy(base_strategy):
+    from generate_strategy import Strategy
+    s=Strategy()
+    s.write(base_strategy)
+
+def _number_of_tactics(base_strategy):
+    #garantee that the base_strategy was generated
+    _gen_strategy(base_strategy)
+    with open(base_strategy) as fin:
+        count = 0
+        for line in fin:
+            if line.startswith('#'):
+                continue
+            if count==1:
+                # on the second (index == 1) non-commented line we have the
+                # number of existing tactics
+                return int(line.split()[0])
+            count+=1
+
 # DATA START
 running_dir = "/home/joao/autorun/"
 #serverconf = "server_fast.conf"
@@ -16,43 +35,18 @@ matchhost = "127.0.0.1"
 statistics_version="1.03"
 
 # fcportugal_dynamic
-# strategy file to modify
-base_strategy="base_strategy.conf"
-# folder to put the generated strategy files.
+# strategy file to generate/modify/use
+base_strategy="generated_base_strategy.conf"
+_base_strategy_path=os.path.join("confs/",base_strategy) # h8 this line.
 strategy_folder = "strategies/"
-strategy_default={"formation": 1, "mentality": 2, "gamepace":2}
+strategy_default={"tactic": 1}
 strategy_data = {
-        "formation":
-        [
-            1,  # 433OPEN
-            2,  # 442OPEN
-            3,  # 443OPEN11Players
-            4,  # 343
-            #8,  # TUDOAMONTE
-            9,  # 433OPENDef
-            #12  # 4213 RiOne
-            ]
-        ,
-        "mentality":
-        [
-            0,
-            1,
-            2,
-            3
-            ]
-        ,
-        "gamepace":
-        [
-            0,
-            1,
-            2,
-            3
-            ]
+        "tactic": range(1,_number_of_tactics(_base_strategy_path)+1)
         }
 
 #match generation
-opponents=["wrighteagle", "bahia2d", "nemesis"] # "kickofftug",
-min_matches=9
+opponents=["wrighteagle", "bahia2d", "kickofftug", "nemesis"]
+min_matches=10
 # typical duration of a match (used for time prediction)
 duration=datetime.timedelta(minutes=12)
 size=9.5*(1024**2)#9.5MiB
@@ -64,6 +58,7 @@ rcgconvert = "/usr/local/bin/rcgconvert"
 # DATA END
 
 # metadata start
+conf_files=["serverconf", "base_strategy"]
 files = ["serverconf", "base_strategy"]
 to_write = ["logfile"]
 dirs = ["matchesdir", "teamsdir", "strategy_folder"]
@@ -90,6 +85,13 @@ def config():
     and rebuild some variables when necessary
 
     """
+    import shutil
+    # copy confs to running dir
+    for conf in conf_files:
+        value=globals()[conf]
+        src=os.path.join(scripts_dir,"confs/",value)
+        shutil.copy2(src,running_dir)
+
     for var in special_dirs:
         value = globals()[var]
         if not os.path.isdir(value):
@@ -134,7 +136,6 @@ def config():
             errmsg = "'{var}'({value}) is not a dir".format(**locals())
             logging.error(errmsg)
             raise ConfigurationError(errmsg)
-
 
     # configure log file
     FORMAT = "%(asctime)s %(levelname)s: %(message)s"

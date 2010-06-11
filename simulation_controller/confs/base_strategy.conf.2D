@@ -2,8 +2,9 @@
 1 # 1-2D, 2-3D, 3-MR - Strategy Type
 $N_TACTICS$ 11 17 6 5 3 # Num_Tactics Num_Players Formations Player_Types Flux_Matrixes Sets_SetPlays
 0 # Opponent Number 0 - default
-1 1 # Number of Time Tactics and opponents - tactic depends on result, time and opponent
-0000 6000   0  $tactic$ $tactic$ $tactic$ $tactic$ $tactic$ # Opp Numb - Losing Bad, Losing, Drawing, Winning, Winning Bad
+2 2 # Number of Time Tactics and opponents - tactic depends on result, time and opponent
+0000 3999   0  $tactic$ $tactic$ $tactic$ $tactic$ $tactic$      1  $tactic$ $tactic$ $tactic$ $tactic$ $tactic$  # Opp Numb - Losing Bad, Losing, Drawing, Winning, Winning Bad
+0000 6000   0  $tactic$ $tactic$ $tactic$ $tactic$ $tactic$      1  $tactic$ $tactic$ $tactic$ $tactic$ $tactic$  # Opp Numb - Losing Bad, Losing, Drawing, Winning, Winning Bad
 # Tactics Definition --------------------------------------------------------------------------
 $TACTICS$
 # Player Types Definition ----------------------------------------------------------------------

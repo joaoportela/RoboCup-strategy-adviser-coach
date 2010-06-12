@@ -2,10 +2,34 @@
 
 import itertools
 import datetime
+from collections import namedtuple
 
+
+Formation=namedtuple('Formation','default bysituation')
 
 class Strategy(object):
     DATA = {
+            "formation":
+            [
+                Formation('3', '3 3 13 13 8 9 4 9 5 10 6 11 7 12 1 1' ), # 433
+                Formation('14', '14 14 24 24 19 20 15 20 16 21 17 22 18 23 1 1' ) # 442
+                ]
+            ,
+            "weights": # WFlux, WSafe, WEasy
+            [
+                # "0.5 0.3 0.2",
+                # "0.8 0.0 0.2",
+                # "0.0 0.8 0.2",
+                "0.4 0.4 0.2"
+                ]
+            ,
+            "flux":
+            [
+                3, # fluxes/flux_normal_LPR_2D.conf 
+                ]
+            }
+
+    DATA_old = {
             "formation":
             [
                 14, # 415
@@ -85,9 +109,12 @@ class Strategy(object):
 class Tactic(dict):
     # TODO - formation by situation...
     TACTIC_STR="""{tactic_n} # Tactic {tactic_n} - Tactic Description
+{formation.default} {flux} 1  {weights}  1.0 0.0 # Formation, Flux, SetPlans, WFlux, WSafe, WEasy, WPass, WDrib
+{formation.bysituation} # Form used in each situation (Att/Def, KickOff(O/T), CornKickIn, FKick, GFKick, GKick, IndFK, Pen"""
+    TACTIC_STR_old2="""{tactic_n} # Tactic {tactic_n} - Tactic Description
 {formation} {flux} 1   {weights} # Formation, Flux, SetPlans, WFlux, WSafe, WEasy
 {formation} {formation} {formation} {formation} {formation} {formation} {formation} {formation} {formation} {formation} {formation} {formation} {formation} {formation} {formation} {formation} # Form used in each situation (Att/Def, KickOff(O/T), CornKickIn, FKick, GFKick, GKick, IndFK, Pen"""
-    TACTIC_STR_old="""{tactic_n} # Tactic {tactic_n} - Tactic Description
+    TACTIC_STR_old1="""{tactic_n} # Tactic {tactic_n} - Tactic Description
 {formation} {flux} 1   {weights} # Formation, Flux, SetPlans, WFlux, WSafe, WEasy
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 # Form used in each situation (Att/Def, KickOff(O/T), CornKickIn, FKick, GFKick, GKick, IndFK, Pen"""
 

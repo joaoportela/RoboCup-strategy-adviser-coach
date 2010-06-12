@@ -1,6 +1,6 @@
 # Common Framework Strategy Configuration File FC Portugal 2010 - Luis Paulo Reis
 1 # 1-2D, 2-3D, 3-MR - Strategy Type
-$N_TACTICS$ 11 17 6 5 3 # Num_Tactics Num_Players Formations Player_Types Flux_Matrixes Sets_SetPlays
+$N_TACTICS$ 11 24 6 4 3 # Num_Tactics Num_Players Formations Player_Types Flux_Matrixes Sets_SetPlays
 0 # Opponent Number 0 - default
 2 2 # Number of Time Tactics and opponents - tactic depends on result, time and opponent
 0000 3999   0  $tactic$ $tactic$ $tactic$ $tactic$ $tactic$      1  $tactic$ $tactic$ $tactic$ $tactic$ $tactic$  # Opp Numb - Losing Bad, Losing, Drawing, Winning, Winning Bad
@@ -28,74 +28,93 @@ $TACTICS$
 -48.0 -15.0 -15.0 -15.0 -15.0  -8.0  -1.0   0.0  17.0  18.0  18.5   # posx
   0.0  16.0   4.5  -4.5 -16.0   0.3  13.5 -14.0  -0.3  23.0 -23.5   # posy
   1     3     2     2     3     4     4     4     5     5     5    #Type PT_GOA PT_MID PT_DEF...
-3 2 # Formation 3 - Type 2 - Delaunay - Formation description 3
+3 2 # Formation 433-1 - Type 2 - Delaunay - Formation description 3
 formations/433_OFF/433_OFF_playon_2D.conf # 433 offensive play on mode formation
   1    3 2 2 3    4 4 4    5 5 5    #Type PT_GOA PT_MID PT_DEF...
-4 2 # Formation 4 - Type 2 - Delaunay - Formation description 4
+4 2 # Formation 433-2 - Type 2 - Delaunay - Formation description 4
 formations/433_OFF/433_OFF_our_free_kick_2D.conf # 433 offensive our free kick mode formation
   1    3 2 2 3    4 4 4    5 5 5    #Type PT_GOA PT_MID PT_DEF...
-5 2 # Formation 5 - Type 2 - Delaunay - Formation description 5
+5 2 # Formation 433-3 - Type 2 - Delaunay - Formation description 5
 formations/433_OFF/433_OFF_our_goalie_catch_2D.conf # 433 offensive our goalie catch mode formation
   1    3 2 2 3    4 4 4    5 5 5    #Type PT_GOA PT_MID PT_DEF...
-6 2 # Formation 6 - Type 2 - Delaunay - Formation description 6
+6 2 # Formation 433-4 - Type 2 - Delaunay - Formation description 6
 formations/433_OFF/433_OFF_our_goal_kick_2D.conf # 433 offensive our goal kick mode formation
   1    3 2 2 3    4 4 4    5 5 5    #Type PT_GOA PT_MID PT_DEF...
-7 2 # Formation 7 - Type 2 - Delaunay - Formation description 7
+7 2 # Formation 433-5 - Type 2 - Delaunay - Formation description 7
 formations/433_OFF/433_OFF_our_indirect_free_kick_2D.conf # 433 offensive our indirect free kick mode formation
   1    3 2 2 3    4 4 4    5 5 5    #Type PT_GOA PT_MID PT_DEF...
-8 2 # Formation 8 - Type 2 - Delaunay - Formation description 8
+8 2 # Formation 433-6 - Type 2 - Delaunay - Formation description 8
 formations/433_OFF/433_OFF_our_kick_in_2D.conf # 433 offensive our kick in mode formation
   1    3 2 2 3    4 4 4    5 5 5    #Type PT_GOA PT_MID PT_DEF...
-9 2 # Formation 9 - Type 2 - Delaunay - Formation description 9
+9 2 # Formation 433-7 - Type 2 - Delaunay - Formation description 9
 formations/433_OFF/433_OFF_their_free_kick_2D.conf # 433 offensive their free kick mode formation
   1    3 2 2 3    4 4 4    5 5 5    #Type PT_GOA PT_MID PT_DEF...
-10 2 # Formation 10 - Type 2 - Delaunay - Formation description 10
+10 2 # Formation 433-8 - Type 2 - Delaunay - Formation description 10
 formations/433_OFF/433_OFF_their_goalie_catch_2D.conf # 433 offensive their goalie catch mode formation
   1    3 2 2 3    4 4 4    5 5 5    #Type PT_GOA PT_MID PT_DEF...
-11 2 # Formation 11 - Type 2 - Delaunay - Formation description 11
+11 2 # Formation 433-9 - Type 2 - Delaunay - Formation description 11
 formations/433_OFF/433_OFF_their_goal_kick_2D.conf # 433 offensive their goal kick mode formation
   1    3 2 2 3    4 4 4    5 5 5    #Type PT_GOA PT_MID PT_DEF...
-12 2 # Formation 12 - Type 2 - Delaunay - Formation description 12
+12 2 # Formation 433-10 - Type 2 - Delaunay - Formation description 12
 formations/433_OFF/433_OFF_their_indirect_free_kick_2D.conf # 433 offensive their indirect free kick mode formation
   1    3 2 2 3    4 4 4    5 5 5    #Type PT_GOA PT_MID PT_DEF...
-13 2 # Formation 13 - Type 2 - Delaunay - Formation description 13
-formations/433_OFF/433_OFF_kick_off_base_formation_2D.conf # 433 offensive kick off
+13 2 # Formation 433-11 - Type 2 - Delaunay - Formation description 13
+formations/433_OFF/433_OFF_kick_off_2D.conf # 433 offensive kick off
   1    3 2 2 3    4 4 4    5 5 5    #Type PT_GOA PT_MID PT_DEF...
-14 2 # Formation 14 - Type 2 - Delaunay.
-formations/formations_joao/415.conf # 415 formation. (very offensive)
-  1    3 2 2 3    4 4 4    5 5 5    #Type PT_GOA PT_MID PT_DEF...
-15 2 # Formation 15 - Type 2 - Delaunay.
-formations/formations_joao/433.conf # 433 formation 
-  1    3 2 2 3    4 4 4    5 5 5    #Type PT_GOA PT_MID PT_DEF...
-16 2 # Formation 16 - Type 2 - Delaunay.
-formations/formations_joao/442_losang.conf # 442 Rhombus formation 
-  1    3 2 2 3    4 4 4    5 5 5    #Type PT_GOA PT_MID PT_DEF...
-17 2 # Formation 17 - Type 2 - Delaunay.
-formations/formations_joao/541.conf # 541 formation 
-  1    3 2 2 3    4 4 4    5 5 5    #Type PT_GOA PT_MID PT_DEF...
+14 2 # Formation 442-1 - Type 2 - Delaunay - Formation description 3
+formations/442_OFF/442_OFF_playon_2D.conf # 442 offensive play on mode formation
+  1    3 2 2 3    4 4 5    5 5 5    #Type PT_GOA PT_MID PT_DEF...
+15 2 # Formation 442-2 - Type 2 - Delaunay - Formation description 4
+formations/442_OFF/442_OFF_our_free_kick_2D.conf # 442 offensive our free kick mode formation
+  1    3 2 2 3    4 4 5    5 5 5    #Type PT_GOA PT_MID PT_DEF...
+16 2 # Formation 442-3 - Type 2 - Delaunay - Formation description 5
+formations/442_OFF/442_OFF_our_goalie_catch_2D.conf # 442 offensive our goalie catch mode formation
+  1    3 2 2 3    4 4 5    5 5 5    #Type PT_GOA PT_MID PT_DEF...
+17 2 # Formation 442-4 - Type 2 - Delaunay - Formation description 6
+formations/442_OFF/442_OFF_our_goal_kick_2D.conf # 442 offensive our goal kick mode formation
+  1    3 2 2 3    4 4 5    5 5 5    #Type PT_GOA PT_MID PT_DEF...
+18 2 # Formation 442-5 - Type 2 - Delaunay - Formation description 7
+formations/442_OFF/442_OFF_our_indirect_free_kick_2D.conf # 442 offensive our indirect free kick mode formation
+  1    3 2 2 3    4 4 5    5 5 5    #Type PT_GOA PT_MID PT_DEF...
+19 2 # Formation 442-6 - Type 2 - Delaunay - Formation description 8
+formations/442_OFF/442_OFF_our_kick_in_2D.conf # 442 offensive our kick in mode formation
+  1    3 2 2 3    4 4 5    5 5 5    #Type PT_GOA PT_MID PT_DEF...
+20 2 # Formation 442-7 - Type 2 - Delaunay - Formation description 9
+formations/442_OFF/442_OFF_their_free_kick_2D.conf # 442 offensive their free kick mode formation
+  1    3 2 2 3    4 4 5    5 5 5    #Type PT_GOA PT_MID PT_DEF...
+21 2 # Formation 442-8 - Type 2 - Delaunay - Formation description 10
+formations/442_OFF/442_OFF_their_goalie_catch_2D.conf # 442 offensive their goalie catch mode formation
+  1    3 2 2 3    4 4 5    5 5 5    #Type PT_GOA PT_MID PT_DEF...
+22 2 # Formation 442-9 - Type 2 - Delaunay - Formation description 11
+formations/442_OFF/442_OFF_their_goal_kick_2D.conf # 442 offensive their goal kick mode formation
+  1    3 2 2 3    4 4 5    5 5 5    #Type PT_GOA PT_MID PT_DEF...
+23 2 # Formation 442-10 - Type 2 - Delaunay - Formation description 12
+formations/442_OFF/442_OFF_their_indirect_free_kick_2D.conf # 442 offensive their indirect free kick mode formation
+  1    3 2 2 3    4 4 5    5 5 5    #Type PT_GOA PT_MID PT_DEF...
+24 2 # Formation 442-11 - Type 2 - Delaunay - Formation description 13
+formations/442_OFF/442_OFF_kick_off_2D.conf # 442 offensive kick off
+  1    3 2 2 3    4 4 5    5 5 5    #Type PT_GOA PT_MID PT_DEF...
 # Flux Matrixes Definition ---------------------------------------------------------------------
 1 1 # Flux 1,Type 1 (old) - Types:Norm 1, Del 2 - Flux Description - Normal
- 0 2 3 4 5 5 5 5 3
- 0 2 3 4 5 6 6 6 4
- 0 1 2 3 5 6 7 8 5
- 0 0 2 3 5 6 7 9 10
- 0 1 2 3 5 6 7 8 5
- 0 2 3 4 5 6 6 6 4
- 0 2 3 4 5 5 5 5 3
+ 00 20 30 40 50 50 50 50 30
+ 00 20 30 40 50 60 60 60 50
+ 00 10 20 30 50 60 70 80 75
+ 00 00 20 30 50 60 70 90 100
+ 00 10 20 30 50 60 70 80 75
+ 00 20 30 40 50 60 60 60 50
+ 00 20 30 40 50 50 50 50 30
 2 1 # Flux 2,Type 1 - Flux Description - Test go back with ball
-10 9 8 7 5 4 3 2 0
- 9 8 7 6 4 3 2 1 0
- 8 6 5 4 3 2 1 0 0
- 7 6 4 3 2 1 1 0 0
- 6 4 2 2 1 1 0 0 0
- 2 2 1 1 1 0 0 0 0
- 1 0 0 0 0 0 0 0 0
-3 2 # Flux 3, Type 2 - Delaunay, flux that mostly uses the middle of the field.
-fluxes/middle_flux.conf
-4 2 # Flux 4, Type 2 - Delaunay, flux that mostly uses the wings of the field.
-fluxes/wings_flux.conf
-5 2 # Flux 5, Type 2 - Delaunay, flux that has very high values on the opponent area when compared with the rest.
-fluxes/opponent_area_focus.conf
+100 90 80 70 50 40 30 20 0
+ 90 80 70 60 40 30 20 10 0
+ 80 60 50 40 30 20 10 00 0
+ 70 60 40 30 20 10 10 00 0
+ 60 40 20 20 10 10 00 00 0
+ 20 20 10 10 10 00 00 00 0
+ 10 00 00 00 00 00 00 00 0
+3 2 # Flux 3,Type 2 - Delaunay - Flux Description
+fluxes/flux_normal_LPR_2D.conf # Name
+4 2 # Flux 4,Type 2 - Delaunay - Flux Description
+fluxes/flux_normal_LPR_2D.conf # Name
 # SetPlays Definition ("setplay.conf")------------------------------------------------------------
 1 2 # Set Number and Type (1 - Old Setplays, 2 - New Setplays) - Set Description
 1 2 3 4 5 6 7 8
@@ -107,5 +126,5 @@ fluxes/opponent_area_focus.conf
 6000  3000 # Game Time, Extra Time
 105  68 # Field Size
 16.5  40.0  14.2 # Penalty Area Size and goal width
-30.0  1.1  1.0 # max kick distance, running speed/sec, agentsize
+35.0  1.1  1.0 # max kick distance, running speed/sec, agentsize
 # END OF CONFIGURATION FILE ----------------------------------------------------------------------

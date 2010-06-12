@@ -157,7 +157,7 @@ class FCPortugal(Team):
         else:
             Team.__init__(self, "fcportugal2d")
         self.extended=extended
-        self.strategy_params=config.strategy_default
+        self.strategy_params=config.strategy_default.copy()
         self.strategy_params.update(strategy_params)
         config.validate_strategy(self.strategy_params)
         # generate the strategy file

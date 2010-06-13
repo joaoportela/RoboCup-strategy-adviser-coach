@@ -28,12 +28,8 @@ teamComm="${{teamdir}}/start"
 output="${{name}}-output.log"
 outerror="${{name}}-error.log"
 
-#echo "--$name" >> le_argv.txt
-#python /home/joao/RoboCup-strategy-adviser-coach/offline/simulation_controller/print_argv.py $teamComm $matchhost $teamdir "$@" >> $matchdir/le_argv.txt
-#echo "--" >> le_argv.txt
-
 sleep 1
-echo command: \"${{teamComm}}\" \"${{matchhost}}\" \"${{teamdir}}\" {other_as_arg} > ${{output}} 2> ${{outerror}}
+echo start_${{name}}.sh: \"${{teamComm}}\" \"${{matchhost}}\" \"${{teamdir}}\" {other_as_arg} > ${{output}} 2> ${{outerror}}
 \"${{teamComm}}\" \"${{matchhost}}\" \"${{teamdir}}\" {other_as_arg} >> ${{output}} 2>> ${{outerror}}
 
 """
@@ -49,8 +45,8 @@ teamComm="${{teamdir}}/kill"
 output="${{name}}-output.log"
 outerror="${{name}}-error.log"
 
-echo $teamComm >> ${{output}} 2>> ${{outerror}}
-$teamComm >> ${{output}} 2>> ${{outerror}}
+echo stop_${{name}}.sh: ${{teamComm}} >> ${{output}} 2>> ${{outerror}}
+${{teamComm}} >> ${{output}} 2>> ${{outerror}}
 """
 # holds the team data for use in the match class...
 class Team(object):

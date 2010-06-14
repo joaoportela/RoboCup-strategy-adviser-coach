@@ -6,6 +6,8 @@ from collections import namedtuple
 
 
 Formation=namedtuple('Formation','default bysituation')
+# TODO - find a way to make the generated file have a description or something
+# like that.
 
 class Strategy(object):
     DATA = {
@@ -20,37 +22,16 @@ class Strategy(object):
                 # "0.5 0.3 0.2",
                 # "0.8 0.0 0.2",
                 # "0.0 0.8 0.2",
-                "0.4 0.4 0.2"
+                "0.4 0.4 0.2",
+                "1.0 0.0 0.0"
                 ]
             ,
             "flux":
             [
-                3, # fluxes/flux_normal_LPR_2D.conf 
-                ]
-            }
-
-    DATA_old = {
-            "formation":
-            [
-                14, # 415
-                15, # 433
-                16, # 442 Rhombus
-                17  # 541
-                ]
-            ,
-            "weights": # WFlux, WSafe, WEasy
-            [
-                "0.5 0.3 0.2",
-                "0.8 0.0 0.2",
-                "0.0 0.8 0.2",
-                "0.4 0.4 0.2"
-                ]
-            ,
-            "flux":
-            [
-                3, # middle_flux.conf - flux that mostly uses the middle of the field.
-                4, # wings_flux.conf - flux that mostly uses the wings of the field.
-                5  # opponent_area_focus.conf - flux that has very high values on the opponent area when compared with the rest.
+                # 3, # flux_normal_LPR_2D.conf
+                4, # middle_flux.conf - flux that mostly uses the middle of the field.
+                5, # wings_flux.conf - flux that mostly uses the wings of the field.
+                6  # opponent_area_focus.conf - flux with very strong focus on the opponent area
                 ]
             }
 
@@ -111,12 +92,6 @@ class Tactic(dict):
     TACTIC_STR="""{tactic_n} # Tactic {tactic_n} - Tactic Description
 {formation.default} {flux} 1  {weights}  1.0 0.0 # Formation, Flux, SetPlans, WFlux, WSafe, WEasy, WPass, WDrib
 {formation.bysituation} # Form used in each situation (Att/Def, KickOff(O/T), CornKickIn, FKick, GFKick, GKick, IndFK, Pen"""
-    TACTIC_STR_old2="""{tactic_n} # Tactic {tactic_n} - Tactic Description
-{formation} {flux} 1   {weights} # Formation, Flux, SetPlans, WFlux, WSafe, WEasy
-{formation} {formation} {formation} {formation} {formation} {formation} {formation} {formation} {formation} {formation} {formation} {formation} {formation} {formation} {formation} {formation} # Form used in each situation (Att/Def, KickOff(O/T), CornKickIn, FKick, GFKick, GKick, IndFK, Pen"""
-    TACTIC_STR_old1="""{tactic_n} # Tactic {tactic_n} - Tactic Description
-{formation} {flux} 1   {weights} # Formation, Flux, SetPlans, WFlux, WSafe, WEasy
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 # Form used in each situation (Att/Def, KickOff(O/T), CornKickIn, FKick, GFKick, GKick, IndFK, Pen"""
 
     def __str__(self):
         return Tactic.TACTIC_STR.format(**self)

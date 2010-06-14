@@ -1,6 +1,6 @@
 # Common Framework Strategy Configuration File FC Portugal 2010 - Luis Paulo Reis
 1 # 1-2D, 2-3D, 3-MR - Strategy Type
-$N_TACTICS$ 11 24 6 4 3 # Num_Tactics Num_Players Formations Player_Types Flux_Matrixes Sets_SetPlays
+$N_TACTICS$ 11 24 6 6 3 # Num_Tactics Num_Players Formations Player_Types Flux_Matrixes Sets_SetPlays
 0 # Opponent Number 0 - default
 2 2 # Number of Time Tactics and opponents - tactic depends on result, time and opponent
 0000 3999   0  $tactic$ $tactic$ $tactic$ $tactic$ $tactic$      1  $tactic$ $tactic$ $tactic$ $tactic$ $tactic$  # Opp Numb - Losing Bad, Losing, Drawing, Winning, Winning Bad
@@ -113,8 +113,12 @@ formations/442_OFF/442_OFF_kick_off_2D.conf # 442 offensive kick off
  10 00 00 00 00 00 00 00 0
 3 2 # Flux 3,Type 2 - Delaunay - Flux Description
 fluxes/flux_normal_LPR_2D.conf # Name
-4 2 # Flux 4,Type 2 - Delaunay - Flux Description
-fluxes/flux_normal_LPR_2D.conf # Name
+4 2 # Flux 4,Type 2 - Delaunay
+fluxes/middle_flux.conf # flux that mostly uses the middle of the field.
+5 2 # Flux 4,Type 2 - Delaunay 
+fluxes/wings_flux.conf # flux that mostly uses the wings of the field.
+6 2 # Flux 4,Type 2 - Delaunay 
+fluxes/opponent_area_focus.conf # flux with very strong focus on the opponent area
 # SetPlays Definition ("setplay.conf")------------------------------------------------------------
 1 2 # Set Number and Type (1 - Old Setplays, 2 - New Setplays) - Set Description
 1 2 3 4 5 6 7 8

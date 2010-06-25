@@ -48,9 +48,9 @@ def main():
     wrighteagle=Team("wrighteagle")
     confrontations=[]
     confrontations.append(Confrontation(fcp1, wrighteagle))
-    confrontations.append(Confrontation(fcp1, bahia))
-    confrontations.append(Confrontation(fcp1, kickofftug))
-    confrontations.append(Confrontation(fcp1, nemesis))
+    # confrontations.append(Confrontation(fcp1, bahia))
+    # confrontations.append(Confrontation(fcp1, kickofftug))
+    # confrontations.append(Confrontation(fcp1, nemesis))
     for c in confrontations:
         dotest(c)
     # for metadata_f in confrontation_metadata_files():

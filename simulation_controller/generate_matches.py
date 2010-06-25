@@ -123,7 +123,7 @@ def main():
 
     report.report("upload")
 
-    #runmatches(cfs,matches_missing=nmatches_missing)
+    runmatches(cfs,matches_missing=nmatches_missing)
 
 if __name__ == "__main__":
     # clean the log file

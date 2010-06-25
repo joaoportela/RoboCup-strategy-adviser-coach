@@ -13,26 +13,11 @@ class Strategy(object):
     DATA = {
             "formation":
             [
-                Formation('3', '3 3 13 13 8 9 4 9 5 10 6 11 7 12 1 1' ), # 433
+                #Formation('3', '3 3 13 13 8 9 4 9 5 10 6 11 7 12 1 1' ), # 433
                 Formation('14', '14 14 24 24 19 20 15 20 16 21 17 22 18 23 1 1' ) # 442
                 ]
             ,
-            "weights": # WFlux, WSafe, WEasy
-            [
-                # "0.5 0.3 0.2",
-                # "0.8 0.0 0.2",
-                # "0.0 0.8 0.2",
-                "0.4 0.4 0.2",
-                "1.0 0.0 0.0"
-                ]
-            ,
-            "flux":
-            [
-                # 3, # flux_normal_LPR_2D.conf
-                4, # middle_flux.conf - flux that mostly uses the middle of the field.
-                5, # wings_flux.conf - flux that mostly uses the wings of the field.
-                6  # opponent_area_focus.conf - flux with very strong focus on the opponent area
-                ]
+            "setplans": range(1,15+1)
             }
 
     BASE_FILE="confs/base_strategy.conf.2D"
@@ -90,7 +75,7 @@ class Strategy(object):
 class Tactic(dict):
     # TODO - formation by situation...
     TACTIC_STR="""{tactic_n} # Tactic {tactic_n} - Tactic Description
-{formation.default} {flux} 1  {weights}  1.0 0.0 # Formation, Flux, SetPlans, WFlux, WSafe, WEasy, WPass, WDrib
+{formation.default} 3 {setplans}  0.7 0.3 0.0  0.5 0.5 # Formation, Flux, SetPlans, WFlux, WSafe, WEasy, WPass, WDrib
 {formation.bysituation} # Form used in each situation (Att/Def, KickOff(O/T), CornKickIn, FKick, GFKick, GKick, IndFK, Pen"""
 
     def __str__(self):

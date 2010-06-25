@@ -40,7 +40,8 @@ def main():
     #fcpE = FCPortugal({"formation" : 1}, extended=True)
     #fcpX = Team("fcportugalX")
     fcp1 = FCPortugal(strategy_params={'tactic':1})
-    fcp2 = FCPortugal(strategy_params={'tactic':2})
+    #fcp2 = FCPortugal(strategy_params={'tactic':2})
+    #fcp = Team("fcportugal2d")
     bahia=Team("bahia2d")
     kickofftug=Team("kickofftug")
     nemesis=Team("nemesis")
@@ -50,10 +51,6 @@ def main():
     confrontations.append(Confrontation(fcp1, bahia))
     confrontations.append(Confrontation(fcp1, kickofftug))
     confrontations.append(Confrontation(fcp1, nemesis))
-    confrontations.append(Confrontation(fcp2, wrighteagle))
-    confrontations.append(Confrontation(fcp2, bahia))
-    confrontations.append(Confrontation(fcp2, kickofftug))
-    confrontations.append(Confrontation(fcp2, nemesis))
     for c in confrontations:
         dotest(c)
     # for metadata_f in confrontation_metadata_files():

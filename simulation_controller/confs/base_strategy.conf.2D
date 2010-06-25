@@ -1,6 +1,6 @@
 # Common Framework Strategy Configuration File FC Portugal 2010 - Luis Paulo Reis
 1 # 1-2D, 2-3D, 3-MR - Strategy Type
-$N_TACTICS$ 11 24 6 6 3 # Num_Tactics Num_Players Formations Player_Types Flux_Matrixes Sets_SetPlays
+$N_TACTICS$ 11 24 6 4 15 # Num_Tactics Num_Players Formations Player_Types Flux_Matrixes Sets_SetPlays
 0 # Opponent Number 0 - default
 2 2 # Number of Time Tactics and opponents - tactic depends on result, time and opponent
 0000 3999   0  $tactic$ $tactic$ $tactic$ $tactic$ $tactic$      1  $tactic$ $tactic$ $tactic$ $tactic$ $tactic$  # Opp Numb - Losing Bad, Losing, Drawing, Winning, Winning Bad
@@ -121,11 +121,35 @@ fluxes/wings_flux.conf # flux that mostly uses the wings of the field.
 fluxes/opponent_area_focus.conf # flux with very strong focus on the opponent area
 # SetPlays Definition ("setplay.conf")------------------------------------------------------------
 1 2 # Set Number and Type (1 - Old Setplays, 2 - New Setplays) - Set Description
-1 2 3 4 5 6 7 8
-2 2 # Set Number and Type 2 - New Setplays - Set Description
-1 2 3 4
-3 2 # Set Number and Type 2 - New Setplays - Set Description
-1 2 8
+37
+2 2 # Set Number and Type (1 - Old Setplays, 2 - New Setplays) - Set Description
+38
+3 2 # Set Number and Type (1 - Old Setplays, 2 - New Setplays) - Set Description
+39
+4 2 # Set Number and Type (1 - Old Setplays, 2 - New Setplays) - Set Description
+41
+5 2 # Set Number and Type (1 - Old Setplays, 2 - New Setplays) - Set Description
+42
+6 2 # Set Number and Type (1 - Old Setplays, 2 - New Setplays) - Set Description
+43
+7 2 # Set Number and Type (1 - Old Setplays, 2 - New Setplays) - Set Description
+44
+8 2 # Set Number and Type (1 - Old Setplays, 2 - New Setplays) - Set Description
+45
+9 2 # Set Number and Type (1 - Old Setplays, 2 - New Setplays) - Set Description
+48
+10 2 # Set Number and Type (1 - Old Setplays, 2 - New Setplays) - Set Description
+49
+11 2 # Set Number and Type (1 - Old Setplays, 2 - New Setplays) - Set Description
+35
+12 2 # Set Number and Type (1 - Old Setplays, 2 - New Setplays) - Set Description
+36
+13 2 # Set Number and Type (1 - Old Setplays, 2 - New Setplays) - Set Description
+46
+14 2 # Set Number and Type (1 - Old Setplays, 2 - New Setplays) - Set Description
+47
+15 2 # Set Number and Type (1 - Old Setplays, 2 - New Setplays) - Set Description
+50
 # General Domain Parameters
 6000  3000 # Game Time, Extra Time
 105  68 # Field Size

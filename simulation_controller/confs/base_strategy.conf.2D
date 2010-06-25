@@ -1,6 +1,6 @@
 # Common Framework Strategy Configuration File FC Portugal 2010 - Luis Paulo Reis
 1 # 1-2D, 2-3D, 3-MR - Strategy Type
-$N_TACTICS$ 11 24 6 4 15 # Num_Tactics Num_Players Formations Player_Types Flux_Matrixes Sets_SetPlays
+$N_TACTICS$ 11 24 6 4 16 # Num_Tactics Num_Players Formations Player_Types Flux_Matrixes Sets_SetPlays
 0 # Opponent Number 0 - default
 2 2 # Number of Time Tactics and opponents - tactic depends on result, time and opponent
 0000 3999   0  $tactic$ $tactic$ $tactic$ $tactic$ $tactic$      1  $tactic$ $tactic$ $tactic$ $tactic$ $tactic$  # Opp Numb - Losing Bad, Losing, Drawing, Winning, Winning Bad
@@ -113,46 +113,52 @@ formations/442_OFF/442_OFF_kick_off_2D.conf # 442 offensive kick off
  10 00 00 00 00 00 00 00 0
 3 2 # Flux 3,Type 2 - Delaunay - Flux Description
 fluxes/flux_normal_LPR_2D.conf # Name
-4 2 # Flux 4,Type 2 - Delaunay
-fluxes/middle_flux.conf # flux that mostly uses the middle of the field.
-5 2 # Flux 4,Type 2 - Delaunay 
-fluxes/wings_flux.conf # flux that mostly uses the wings of the field.
-6 2 # Flux 4,Type 2 - Delaunay 
-fluxes/opponent_area_focus.conf # flux with very strong focus on the opponent area
+4 2 # Flux 4,Type 2 - Delaunay - Flux Description
+fluxes/flux_normal_LPR_2D.conf # Name
 # SetPlays Definition ("setplay.conf")------------------------------------------------------------
 1 2 # Set Number and Type (1 - Old Setplays, 2 - New Setplays) - Set Description
-37
+10 2 43 41
 2 2 # Set Number and Type (1 - Old Setplays, 2 - New Setplays) - Set Description
-38
+10 2 43 36
 3 2 # Set Number and Type (1 - Old Setplays, 2 - New Setplays) - Set Description
-39
+10 2 45 41
 4 2 # Set Number and Type (1 - Old Setplays, 2 - New Setplays) - Set Description
-41
+10 2 45 36
 5 2 # Set Number and Type (1 - Old Setplays, 2 - New Setplays) - Set Description
-42
+10 37 43 41
 6 2 # Set Number and Type (1 - Old Setplays, 2 - New Setplays) - Set Description
-43
+10 37 43 36
 7 2 # Set Number and Type (1 - Old Setplays, 2 - New Setplays) - Set Description
-44
+10 37 45 41
 8 2 # Set Number and Type (1 - Old Setplays, 2 - New Setplays) - Set Description
-45
+10 37 45 36
 9 2 # Set Number and Type (1 - Old Setplays, 2 - New Setplays) - Set Description
-48
+29 2 43 41
 10 2 # Set Number and Type (1 - Old Setplays, 2 - New Setplays) - Set Description
-49
+29 2 43 36
 11 2 # Set Number and Type (1 - Old Setplays, 2 - New Setplays) - Set Description
-35
+29 2 45 41
 12 2 # Set Number and Type (1 - Old Setplays, 2 - New Setplays) - Set Description
-36
+29 2 45 36
 13 2 # Set Number and Type (1 - Old Setplays, 2 - New Setplays) - Set Description
-46
+29 37 43 41
 14 2 # Set Number and Type (1 - Old Setplays, 2 - New Setplays) - Set Description
-47
+29 37 43 36
 15 2 # Set Number and Type (1 - Old Setplays, 2 - New Setplays) - Set Description
-50
+29 37 45 41
+16 2 # Set Number and Type (1 - Old Setplays, 2 - New Setplays) - Set Description
+29 37 45 36
 # General Domain Parameters
 6000  3000 # Game Time, Extra Time
 105  68 # Field Size
 16.5  40.0  14.2 # Penalty Area Size and goal width
 35.0  1.1  1.0 # max kick distance, running speed/sec, agentsize
+#CBR DEFINITIONS
+cbr # cbr file prefix
+1 # Use CBR
+0 # Write To File
+0 # Write To File After each execution (for training only...)
+4 # Weight this game
+2 # Weight this team
+1 # Weight other teams
 # END OF CONFIGURATION FILE ----------------------------------------------------------------------

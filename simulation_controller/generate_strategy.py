@@ -9,15 +9,19 @@ Formation=namedtuple('Formation','default bysituation')
 # TODO - find a way to make the generated file have a description or something
 # like that.
 
+# >>>setplays_by_group=[(10,29),(2,37),(43,45),(41,36)]
+# >>>setplays_combinations=list(itertools.product(*setplays_by_group))
+# [(10, 2, 43, 41), (10, 2, 43, 36), (10, 2, 45, 41), (10, 2, 45, 36), (10, 37, 43, 41), (10, 37, 43, 36), (10, 37, 45, 41), (10, 37, 45, 36), (29, 2, 43, 41), (29, 2, 43, 36), (29, 2, 45, 41), (29, 2, 45, 36), (29, 37, 43, 41), (29, 37, 43, 36), (29, 37, 45, 41), (29, 37, 45, 36)]
+
 class Strategy(object):
     DATA = {
             "formation":
             [
-                #Formation('3', '3 3 13 13 8 9 4 9 5 10 6 11 7 12 1 1' ), # 433
+                Formation('3', '3 3 13 13 8 9 4 9 5 10 6 11 7 12 1 1' ), # 433
                 Formation('14', '14 14 24 24 19 20 15 20 16 21 17 22 18 23 1 1' ) # 442
                 ]
             ,
-            "setplans": range(1,15+1)
+            "setplans": range(1,16+1)
             }
 
     BASE_FILE="confs/base_strategy.conf.2D"
@@ -85,13 +89,14 @@ if __name__ == '__main__':
     s=Strategy()
     print s
     match_duration=datetime.timedelta(minutes=12)
-    n_runs = s.tactics_count * 4 * 10
+    n_runs = s.tactics_count * 3 * 10 # 3 oppoents 10 repetitions
     total_duration=match_duration*n_runs
+    print "n_tactics", s.tactics_count
     print "n_runs", n_runs
     print "duration", total_duration
     print "finish @", datetime.datetime.now()+total_duration
-    print "duration/4", total_duration/4
-    print "finish @", datetime.datetime.now()+(total_duration/4)
+    print "duration/7", total_duration/7
+    print "finish @", datetime.datetime.now()+(total_duration/7)
 
     s.write("confs/generated_base_strategy.conf")
 

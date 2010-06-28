@@ -36,32 +36,7 @@ def median(numeric_values):
         return (float(lower + upper)) / 2
 
 STRATEGY_DATA = {
-        "formation":
-        [
-            1,  # 433OPEN
-            2,  # 442OPEN
-            3,  # 443OPEN11Players
-            4,  # 343
-            #8,  # TUDOAMONTE
-            9,  # 433OPENDef
-            #12  # 4213 RiOne
-            ]
-        ,
-        "mentality":
-        [
-            0,
-            1,
-            2,
-            3
-            ]
-        ,
-        "gamepace":
-        [
-            0,
-            1,
-            2,
-            3
-            ]
+        "tactic" : range(1,32+1)
         }
 
 def fcpd_configurations(data=STRATEGY_DATA):
@@ -73,16 +48,9 @@ def fcpd_configurations(data=STRATEGY_DATA):
 
 def args_to_str(args):
         dynamic_part = []
-        # hack - because at first the data was not in alphabetic order...
-        # and after generating a lot of data I have to use it like this.
-        PREDEFINED_ORDER=["formation", "mentality", "gamepace"]
-        for name in PREDEFINED_ORDER:
-            value = str(args[name])
-            dynamic_part.append("{name}{value}".format(**locals()))
         for name, value in sorted(args.items()):
-            if name not in PREDEFINED_ORDER: # this is part of the hack too
-                value = str(value)
-                dynamic_part.append("{name}{value}".format(**locals()))
+            value = str(value)
+            dynamic_part.append("{name}{value}".format(**locals()))
         return "_".join(dynamic_part)
 
 def fcpd_configurations_str(data=STRATEGY_DATA):

@@ -57,6 +57,9 @@ def naive_prediction(data=config.strategy_data, opponents=config.opponents,
         matchsize=config.size):
     """predicts the number of matches missing."""
     nconfigs=reduce(lambda x,y: x*len(y), data.values(), 1)
+    # print "nconfigs", nconfigs
+    # print "nopponents", len(opponents)
+    # print "min_matches", min_matches
     nruns=min_matches*len(opponents)*nconfigs
     duration=matchduration*nruns
     disk_space=matchsize*nruns

@@ -28,12 +28,8 @@ teamComm="${{teamdir}}/start"
 output="${{name}}-output.log"
 outerror="${{name}}-error.log"
 
-#echo "--$name" >> le_argv.txt
-#python /home/joao/RoboCup-strategy-adviser-coach/offline/simulation_controller/print_argv.py $teamComm $matchhost $teamdir "$@" >> $matchdir/le_argv.txt
-#echo "--" >> le_argv.txt
-
 sleep 1
-echo command: \"${{teamComm}}\" \"${{matchhost}}\" \"${{teamdir}}\" {other_as_arg} > ${{output}} 2> ${{outerror}}
+echo start_${{name}}.sh: \"${{teamComm}}\" \"${{matchhost}}\" \"${{teamdir}}\" {other_as_arg} > ${{output}} 2> ${{outerror}}
 \"${{teamComm}}\" \"${{matchhost}}\" \"${{teamdir}}\" {other_as_arg} >> ${{output}} 2>> ${{outerror}}
 
 """
@@ -49,8 +45,8 @@ teamComm="${{teamdir}}/kill"
 output="${{name}}-output.log"
 outerror="${{name}}-error.log"
 
-echo $teamComm >> ${{output}} 2>> ${{outerror}}
-$teamComm >> ${{output}} 2>> ${{outerror}}
+echo stop_${{name}}.sh: ${{teamComm}} >> ${{output}} 2>> ${{outerror}}
+${{teamComm}} >> ${{output}} 2>> ${{outerror}}
 """
 # holds the team data for use in the match class...
 class Team(object):
@@ -150,13 +146,14 @@ class Team(object):
         return [team for team in teams if has_start(team) and has_kill(team)]
 
 class FCPortugal(Team):
-    def __init__(self, strategy_params, extended=False):
+    def __init__(self, strategy_params={}, extended=False):
         if extended:
-            Team.__init__(self, "fcportugalE")
+            # TODO - this line does not work on purpose.
+            Team.__init__(self, "fcportugal_extended")
         else:
-            Team.__init__(self, "fcportugalD")
+            Team.__init__(self, "fcportugal2d")
         self.extended=extended
-        self.strategy_params=config.strategy_default
+        self.strategy_params=config.strategy_default.copy()
         self.strategy_params.update(strategy_params)
         config.validate_strategy(self.strategy_params)
         # generate the strategy file
@@ -188,16 +185,9 @@ class FCPortugal(Team):
 
     def params_summary(self):
         dynamic_part = []
-        # hack - because at first the data was not in alphabetic order...
-        # and after generating a lot of data I have to use it like this.
-        PREDEFINED_ORDER=["formation", "mentality", "gamepace"]
-        for name in PREDEFINED_ORDER:
-            value = str(self.strategy_params[name])
-            dynamic_part.append("{name}{value}".format(**locals()))
         for name, value in sorted(self.strategy_params.items()):
-            if name not in PREDEFINED_ORDER: # this is part of the hack too
-                value = str(value)
-                dynamic_part.append("{name}{value}".format(**locals()))
+            value = str(value)
+            dynamic_part.append("{name}{value}".format(**locals()))
         return "_".join(dynamic_part)
 
     def encode(self):

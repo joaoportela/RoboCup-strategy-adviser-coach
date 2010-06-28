@@ -13,7 +13,6 @@ from evaluator import *
 from utils import confrontation_metadata_files
 
 def dotest(confrontation, min_matches=1,team='fcportugal'):
-    # play the number of matches I want.
     print str(confrontation),"matches:",len(confrontation),"/",min_matches
     while len(confrontation) <  min_matches:
         confrontation.playnewmatch()
@@ -40,15 +39,20 @@ def dotest(confrontation, min_matches=1,team='fcportugal'):
 def main():
     #fcpE = FCPortugal({"formation" : 1}, extended=True)
     #fcpX = Team("fcportugalX")
-    fcp=Team("fcportugal2d")
+    fcp1 = FCPortugal(strategy_params={'tactic':1})
+    #fcp2 = FCPortugal(strategy_params={'tactic':2})
+    #fcp = Team("fcportugal2d")
     bahia=Team("bahia2d")
     kickofftug=Team("kickofftug")
     nemesis=Team("nemesis")
     wrighteagle=Team("wrighteagle")
-    confrontation1 = Confrontation(fcp, bahia)
-    confrontation2 = Confrontation(nemesis, wrighteagle)
-    dotest(confrontation1)
-    dotest(confrontation2, team='wrighteagle')
+    confrontations=[]
+    confrontations.append(Confrontation(fcp1, wrighteagle))
+    # confrontations.append(Confrontation(fcp1, bahia))
+    # confrontations.append(Confrontation(fcp1, kickofftug))
+    # confrontations.append(Confrontation(fcp1, nemesis))
+    for c in confrontations:
+        dotest(c)
     # for metadata_f in confrontation_metadata_files():
     #     print metadata_f
     #     dotest(Confrontation.from_metadata(metadata_f))

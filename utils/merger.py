@@ -182,7 +182,7 @@ def merge(target,sources, move=False):
             migrate(j(source,directory), j(target,directory), move=move)
 
 def main2():
-    """ the main that moves the files..."""
+    """ the main that moves the files, and fixes the ids..."""
     move=False
     for i,arg in enumerate(sys.argv):
         if arg == "--move":
@@ -214,5 +214,5 @@ def main():
     pass
 
 if __name__ == '__main__':
-    main()
+    main2()
 

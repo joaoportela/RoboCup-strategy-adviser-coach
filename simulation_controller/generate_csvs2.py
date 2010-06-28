@@ -16,7 +16,7 @@ import shutil
 import tarfile
 from functools import partial
 
-T_CONFIG_NAMES=["formation","mentality","gamepace"]
+T_CONFIG_NAMES=config.strategy_data.keys()
 
 def walk_statistics(dir_):
     for xml in walk_xmls(dir_):
@@ -82,7 +82,7 @@ def gen_group3(matchesdir, filename=None):
     for st in walk_statistics(matchesdir):
         for side in ["left", "right"]:
             st.side=side
-            if not(st.team.lower() == "fcportugald"):
+            if not(st.team.lower().startswith("fcportugal")):
                 # each row contains fcportugal data only
                 continue
 
@@ -90,9 +90,8 @@ def gen_group3(matchesdir, filename=None):
             teamdata.update(bonus_info(st))
             teamdata.update(evaluators(st))
             t_config=discoverteamconfig(st.xml,st.side)[0]
-            teamdata["formation"]=t_config["formation"]
-            teamdata["mentality"]=t_config["mentality"]
-            teamdata["gamepace"]=t_config["gamepace"]
+            for confname in T_CONFIG_NAMES:
+                teamdata[confname]=t_config[confname]
 
             # another row.
             rows.append(teamdata)
@@ -109,7 +108,7 @@ def gen_group3(matchesdir, filename=None):
 def teams_sides(st):
     backup=st.side
     st.side="left"
-    if st.team.lower() == "fcportugald":
+    if st.team.lower().startswith("fcportugal"):
         fcp="left"
         other="right"
     else:
@@ -118,7 +117,7 @@ def teams_sides(st):
 
         # sanity check
         st.side="right"
-        assert st.team.lower() == "fcportugald"
+        assert st.team.lower().startswith("fcportugal")
 
     st.side=backup
 
@@ -135,9 +134,8 @@ def gen_group4(matchesdir, filename=None):
         teamsdata.update(bonus_info(st))
         teamsdata.update(evaluators(st))
         t_config=discoverteamconfig(st.xml,st.side)[0]
-        teamsdata["formation"]=t_config["formation"]
-        teamsdata["mentality"]=t_config["mentality"]
-        teamsdata["gamepace"]=t_config["gamepace"]
+        for confname in T_CONFIG_NAMES:
+            teamsdata[confname]=t_config[confname]
 
         st.side=other
         teamsdata["opponent"]=st.team

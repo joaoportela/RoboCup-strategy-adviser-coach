@@ -2,7 +2,7 @@
 
 """
 csv data that needs to be generated. this module is more complex and
-complete.
+complete than the previous one.
 """
 
 __all__ = ["BONUS_INFO_KEYS", "bonus_info", "STATISTICS14_KEYS", "statistics14", "EVALUATORS_KEYS", "evaluators"]

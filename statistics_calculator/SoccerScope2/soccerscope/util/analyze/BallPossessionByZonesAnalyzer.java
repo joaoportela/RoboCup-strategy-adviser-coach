@@ -19,6 +19,7 @@ AnalyzeNow, Xmling {
 
 	private int totalTime;
 	private ArrayList<Zone> zones;
+	// private ArrayList<Zone> validationzones;
 
 	public class Zone implements Xmling {
 		Rectangle2f area;
@@ -98,7 +99,50 @@ AnalyzeNow, Xmling {
 	public void init() {
 		super.init();
 		this.initZones();
+		//this.initValidationZones();
 	}
+
+	//	private void initValidationZones(){
+	//		this.validationzones = new ArrayList<Zone>(12);
+	//
+	//		// LEFTFIELD
+	//		this.validationzones.add(new Zone("TopLeftleft", new Rectangle2f(new Point2f(
+	//				-52.5f, -34.00f), 26.25f, 22.67f)));
+	//		this.validationzones.add(new Zone("TopLeftright", new Rectangle2f(new Point2f(
+	//				-26.25f, -34.00f), 26.25f, 22.67f)));
+	//		this.validationzones.add(new Zone("MiddleLeftleft", new Rectangle2f(new Point2f(
+	//				-52.5f, -11.33f), 26.25f, 22.67f)));
+	//		this.validationzones.add(new Zone("MiddleLeftright", new Rectangle2f(new Point2f(
+	//				-26.25f, -11.33f), 26.25f, 22.67f)));
+	//		this.validationzones.add(new Zone("BottomLeftleft", new Rectangle2f(new Point2f(
+	//				-52.5f, 11.33f), 26.25f, 22.67f)));
+	//		this.validationzones.add(new Zone("BottomLeftright", new Rectangle2f(new Point2f(
+	//				-26.25f, 11.33f), 26.25f, 22.67f)));
+	//
+	//		// RIGHTFIELD
+	//		this.validationzones.add(new Zone("TopRightleft", new Rectangle2f(new Point2f(
+	//				0.0f, -34.00f), 26.25f, 22.67f)));
+	//		this.validationzones.add(new Zone("TopRightright", new Rectangle2f(new Point2f(
+	//				26.25f, -34.00f), 26.25f, 22.67f)));
+	//		this.validationzones.add(new Zone("MiddleRightleft", new Rectangle2f(new Point2f(
+	//				0.0f, -11.33f), 26.25f, 22.67f)));
+	//		this.validationzones.add(new Zone("MiddleRightright", new Rectangle2f(
+	//				new Point2f(26.25f, -11.33f), 26.25f, 22.67f)));
+	//		this.validationzones.add(new Zone("BottomRightleft", new Rectangle2f(new Point2f(
+	//				0.0f, 11.33f), 26.25f, 22.67f)));
+	//		this.validationzones.add(new Zone("BottomRightright", new Rectangle2f(
+	//				new Point2f(26.25f, 11.33f), 26.25f, 22.67f)));
+	//
+	//		// OUTSIDES
+	//		this.validationzones.add(new Zone("OutsideLeft", new Rectangle2f(new Point2f(
+	//				-54.00f, -35.5f), 1.49f, 68.00f)));
+	//		this.validationzones.add(new Zone("OutsideRight", new Rectangle2f(new Point2f(
+	//				52.51f, -35.5f), 1.49f, 68f)));
+	//		this.validationzones.add(new Zone("OutsideTop", new Rectangle2f(new Point2f(
+	//				-52.5f, -35.5f), 105.00f, 1.49f)));
+	//		this.validationzones.add(new Zone("OutsideBottom", new Rectangle2f(new Point2f(
+	//				-52.5f, 35.5f), 105.00f, -1.49f)));
+	//	}
 
 	private void initZones() {
 		this.zones = new ArrayList<Zone>(12);
@@ -249,6 +293,50 @@ AnalyzeNow, Xmling {
 		}
 	}
 
+	//	public void ballPossesionbyRegionValidation(int fromTime, int toTime) {
+	//		int totalTime = 0;
+	//		for (Zone z : this.validationzones) {
+	//			z.countLeft = 0;
+	//			z.countRight = 0;
+	//		}
+	//		boolean inzone = false;
+	//		for (int i = fromTime; i <= toTime; i++) {
+	//			Scene scene = WorldModel.getInstance().getSceneSet().getScene(i);
+	//			Point2f b = scene.ball.pos;
+	//			inzone = false;
+	//			for (Zone z : this.validationzones) {
+	//				if (z.contains(b)) {
+	//					inzone = true;
+	//					switch (PassAnalyzer.getPossessionTeam(i)) {
+	//					case PassAnalyzer.LEFT_SIDE:
+	//						//System.out.println("CICLE(" +i+ ") Team(LEFT_TEAM); zone(" + z.name + ")");
+	//						z.countLeft++;
+	//						totalTime++;
+	//						break;
+	//					case PassAnalyzer.RIGHT_SIDE:
+	//						//System.out.println("CICLE(" +i+ ") Team(RIGHT_TEAM); zone(" + z.name + ")");
+	//						z.countRight++;
+	//						totalTime++;
+	//						break;
+	//					case PassAnalyzer.PLAY_ON:
+	//						z.countNeutral++;
+	//						totalTime++;
+	//						//System.out.println("CICLE(" + i + ") Team(NONE); zone("+ z.name + ")");
+	//						break;
+	//					default:
+	//						break;
+	//					}
+	//				}
+	//			}
+	//			//if (!inzone)
+	//			//System.out.println("CICLE(" + i + ") Team(?); zone(UNKNOW)"+ "posicao bola:" + b);
+	//		}
+	//
+	//		for (Zone z : this.validationzones) {
+	//			z.totalTime = totalTime;
+	//		}
+	//	}
+
 	// DUNNO, LOL!
 	@Override
 	public GameEvent analyze(Scene scene, Scene prev) {
@@ -262,8 +350,8 @@ AnalyzeNow, Xmling {
 
 		// update the ball possession data
 		this.ballPossesionbyRegion(start, end);
+		// this.ballPossesionbyRegionValidation(746, 1346);
 		this.count(start,end);
-
 	}
 
 	@Override
@@ -278,6 +366,12 @@ AnalyzeNow, Xmling {
 		for (Zone z : this.zones) {
 			z.xmlElement(builder);
 		}
+
+		//		builder = builder.elem("ballpossession_validation")
+		//		.attr("total", String.valueOf(this.totalTime));
+		//		for (Zone z : this.validationzones) {
+		//			z.xmlElement(builder);
+		//		}
 	}
 
 }

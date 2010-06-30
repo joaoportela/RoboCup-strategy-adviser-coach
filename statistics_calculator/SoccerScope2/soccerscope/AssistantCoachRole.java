@@ -52,7 +52,6 @@ public class AssistantCoachRole implements SceneSetMaker.CoachInterface {
 		public StatisticsAccessFacilitator(List<SceneAnalyzer> analyzerList) {
 			this.analyzers = analyzerList;
 		}
-
 	}
 
 }

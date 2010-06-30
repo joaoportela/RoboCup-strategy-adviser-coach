@@ -46,8 +46,6 @@ def process_file(infile, outfolder):
             (team, k)=team_k(line)
             ensure_default(data, team, k)
             data[team][k].append(line)
-            # if team == "WrightEagle":
-            #     print team, k
 
     for team, teamdata in data.iteritems():
         for k, lines in teamdata.iteritems():

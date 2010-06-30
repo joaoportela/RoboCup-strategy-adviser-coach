@@ -24,7 +24,7 @@ def walk_statistics(dir_):
         yield Statistics(xml)
 
 def gen_group1(dir_, filename=None):
-    ROWS_HEAD=BONUS_INFO_KEYS+STATISTICS14_KEYS+"GoalDifferenceEvaluator"
+    ROWS_HEAD=BONUS_INFO_KEYS+STATISTICS14_KEYS
     rows=[]
     for st in walk_statistics(dir_):
         for side in ["left", "right"]:

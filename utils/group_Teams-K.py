@@ -41,18 +41,33 @@ def process_file(infile, outfolder):
     with open(infile) as f:
         firstline=f.readline() #the first line
 
-        data={}
+        data_by_teamk={}
+        data_by_k={}
         for line in f:
             (team, k)=team_k(line)
-            ensure_default(data, team, k)
-            data[team][k].append(line)
 
-    for team, teamdata in data.iteritems():
+            # by team-k
+            ensure_default(data_by_teamk, team, k)
+            data_by_teamk[team][k].append(line)
+
+            # by k only
+            if k not in data_by_k:
+                data_by_k[k]=[]
+            data_by_k[k].append(line)
+
+
+    for team, teamdata in data_by_teamk.iteritems():
         for k, lines in teamdata.iteritems():
             outfile=os.path.join(outfolder, team+"_"+k+".csv")
             with open(outfile, 'w') as f:
                 f.write(firstline)
                 f.write("".join(lines))
+
+    for k, lines in data_by_k.iteritems():
+        outfile=os.path.join(outfolder, "k"+k+".csv")
+        with open(outfile, 'w') as f:
+            f.write(firstline)
+            f.write("".join(lines))
 
 if __name__ == '__main__':
     import doctest

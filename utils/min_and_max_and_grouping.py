@@ -39,6 +39,17 @@ STRATEGY_DATA = {
         "tactic" : range(1,32+1)
         }
 
+NUMBER_OF_MATCHES=10
+
+def n_strategies(data=STRATEGY_DATA):
+    nconfigs=reduce(lambda x,y: x*len(y), data.values(), 1)
+    return nconfigs
+
+def runs_per_team(data=STRATEGY_DATA, number_of_matches=NUMBER_OF_MATCHES):
+    """predicts the number of matches missing."""
+    nconfigs=n_strategies(data)
+    return number_of_matches*nconfigs
+
 def fcpd_configurations(data=STRATEGY_DATA):
     for values in itertools.product(*data.itervalues()):
         args={}
@@ -72,7 +83,9 @@ def initial_configs_groupeddata(configs=list(fcpd_configurations_str())):
 
 def which_config_is(str_with_config,configs=list(fcpd_configurations_str())):
     for conf in configs:
-        if conf in str_with_config:
+        if conf+"/" in str_with_config:
+            return conf
+        if conf+"_" in str_with_config:
             return conf
     else:
         assert False, "unknown configuration "+str_with_config
@@ -87,9 +100,10 @@ def merge(lines):
     outline=[]
     config=which_config_is(config_column(lines[0]))
     outline.append(config) # column 0 (xmlpath->config)
-    outline.append(name_column(lines[0])) # column 1 (team name -> team name)
+    outline.append(name_column(lines[0])) # column 1 (team name->team name)
 
-    # prepare the lines
+    # prepare the lines by turning them into lists and removing extra chars
+    # like '"'
     for i, line in enumerate(lines):
         newline=[]
         for col in line.split(";"):
@@ -128,43 +142,57 @@ def gather_data(fname, configs):
 
     return counter, grouped_data, file_header
 
-def print_minmax(fname_,counter):
-        cnt_items=counter.items()
-        n_appearances=lambda x: x[1]
-        # find the min and the max.
-        min_=min(cnt_items,key=n_appearances)
-        max_=max(cnt_items,key=n_appearances)
+def print_minmax(counter):
+    cnt_items=counter.items()
+    n_appearances=lambda x: x[1]
+    # find the min and the max.
+    min_=min(cnt_items,key=n_appearances)
+    max_=max(cnt_items,key=n_appearances)
 
-        only_mins=lambda x: x[1]==min_[1]
-        only_max=lambda x: x[1]==max_[1]
-        min_count=len(filter(only_mins,cnt_items))
-        max_count=len(filter(only_max,cnt_items))
+    only_mins=lambda x: x[1]==min_[1]
+    only_max=lambda x: x[1]==max_[1]
+    min_count=len(filter(only_mins,cnt_items))
+    max_count=len(filter(only_max,cnt_items))
 
-        nozeros=lambda x: x[1] != 0
-        value_only=lambda x:x[1]
-        game_values_no_zeros=map(value_only,filter(nozeros,cnt_items))
-        average_=average(game_values_no_zeros)
-        print_str="{fname_} {min_[1]}({min_count}) "
-        print_str+="{max_[1]}({max_count}) "
-        print_str+="{average_}"
-        print print_str.format(**locals())
+    nozeros=lambda x: x[1] != 0
+    value_only=lambda x:x[1]
+    game_values_no_zeros=map(value_only,filter(nozeros,cnt_items))
+    average_=average(game_values_no_zeros)
+    onlyzeros=lambda x: x[1] == 0
+    n_excluded_configs=len(filter(onlyzeros, cnt_items))
+    print_str="\tmin occurrences is {min_[1]}, {min_count} times. "
+    print_str+="max occurrences is {max_[1]}, {max_count} times."
+    print_str+="\n\tAverage number of strategy repetitions (in this cluster): {average_}"
+    print_str+="\n\tnumber of excluded configs: {n_excluded_configs}"
+    print print_str.format(**locals())
+
+def print_strategy_count(counter):
+    for strategy,count in counter.iteritems():
+        if count != 0:
+            print "\t", strategy, count
 
 def write_grouped_data(fname_out, grouped_data, file_header):
-        with open(fname_out,'w') as fout:
-            fout.write(file_header)
-            for config, lines in grouped_data.iteritems():
-                if lines:
-                    newline=merge(lines)
-                    fout.write(newline)
+    with open(fname_out,'w') as fout:
+        fout.write(file_header)
+        for config, lines in grouped_data.iteritems():
+            if lines:
+                newline=merge(lines)
+                fout.write(newline)
 
-def find_minmax(files, configs=list(fcpd_configurations_str())):
+def main(files, configs=list(fcpd_configurations_str())):
     for fname in files:
         (counter, grouped_data, file_header)=gather_data(fname, configs)
 
         path, basename = os.path.split(fname)
-        print_minmax(basename,counter)
 
-        fname_out=fname+".merged"
+        print basename+":"
+        print_minmax(counter)
+        #print_strategy_count(counter)
+
+        outdir=os.path.join(path, "merged")
+        if not os.path.isdir(outdir):
+            os.mkdir(outdir)
+        fname_out=os.path.join(outdir,basename)
         write_grouped_data(fname_out, grouped_data,file_header)
 
 if __name__ == '__main__':
@@ -173,5 +201,5 @@ if __name__ == '__main__':
         print usage()
         sys.exit(0)
 
-    find_minmax(sys.argv[1:])
+    main(sys.argv[1:])
 

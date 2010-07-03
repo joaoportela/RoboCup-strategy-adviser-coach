@@ -32,7 +32,7 @@ deploy:
 
 # Dependencies tracking:
 # implicit dependencies
-%.o: %.hpp
+%.o: %.cpp %.hpp
 # generated dependencies
 -include ./*.d
 

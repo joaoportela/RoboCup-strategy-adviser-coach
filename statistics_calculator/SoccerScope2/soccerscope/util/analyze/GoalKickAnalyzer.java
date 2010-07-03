@@ -41,9 +41,8 @@ public class GoalKickAnalyzer extends SceneAnalyzer implements Xmling {
 
 		@Override
 		public void xmlElement(final XMLBuilder builder) {
-			builder.elem("goalkick")
-			.attr("team", Team.name(this.side))
-			.attr("time", String.valueOf(this.time));
+			builder.elem("goalkick").attr("team", Team.name(this.side)).attr(
+					"time", String.valueOf(this.time));
 		}
 	}
 
@@ -72,13 +71,23 @@ public class GoalKickAnalyzer extends SceneAnalyzer implements Xmling {
 
 	@Override
 	public void countUp(final int side, final int time) {
-		this.goalkicksList.add(new GoalKick(side,time));
-		if(side==Team.LEFT_SIDE) {
+		this.goalkicksList.add(new GoalKick(side, time));
+		if (side == Team.LEFT_SIDE) {
 			this.countUpLeft(time);
-		}else if (side == Team.RIGHT_SIDE) {
+		} else if (side == Team.RIGHT_SIDE) {
 			this.countUpRight(time);
 		}
 
+	}
+
+	public int getCount(int side) {
+		if(side == Team.LEFT_SIDE) {
+			return this.lcount;
+		}else if (side == Team.RIGHT_SIDE) {
+			return this.rcount;
+		}
+		assert false;
+		return 0;
 	}
 
 	@Override
@@ -87,7 +96,7 @@ public class GoalKickAnalyzer extends SceneAnalyzer implements Xmling {
 				String.valueOf(this.lcount)).attr("right",
 						String.valueOf(this.rcount));
 
-		for (final GoalKick gk: this.goalkicksList) {
+		for (final GoalKick gk : this.goalkicksList) {
 			gk.xmlElement(goalkicks);
 		}
 

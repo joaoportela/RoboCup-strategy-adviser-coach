@@ -23,9 +23,9 @@ AnalyzeNow, Xmling {
 
 	public class Zone implements Xmling {
 		Rectangle2f area;
-		int countLeft;
-		int countRight;
-		int countNeutral;
+		public int countLeft;
+		public int countRight;
+		public int countNeutral;
 		int totalTime;
 
 		String name;
@@ -336,6 +336,15 @@ AnalyzeNow, Xmling {
 	//			z.totalTime = totalTime;
 	//		}
 	//	}
+
+	public Zone getZone(String zone) {
+		for (Zone z : this.zones) {
+			if(z.name.equalsIgnoreCase(zone)) {
+				return z;
+			}
+		}
+		throw new AssertionError("invalid zone:" + zone);
+	}
 
 	// DUNNO, LOL!
 	@Override

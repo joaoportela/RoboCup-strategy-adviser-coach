@@ -3,7 +3,6 @@ package soccerscope.decision;
 import java.util.List;
 
 import soccerscope.model.Team;
-import soccerscope.util.GameAnalyzer;
 import soccerscope.util.analyze.AnalyzeNow;
 import soccerscope.util.analyze.BallPossessionByZonesAnalyzer;
 import soccerscope.util.analyze.GoalKickAnalyzer;
@@ -79,17 +78,6 @@ public class StatisticsAccessFacilitator {
 		}
 	}
 
-	// private static class AnalyzerMissing extends Exception {
-	// /**
-	// *
-	// */
-	// private static final long serialVersionUID = 1L;
-	//
-	// public AnalyzerMissing(Class<?> c) {
-	// super("Analyzer " + c.getCanonicalName() + " not found");
-	// }
-	// }
-
 	private List<SceneAnalyzer> analyzers;
 	private int side;
 	private int time;
@@ -109,7 +97,7 @@ public class StatisticsAccessFacilitator {
 	}
 
 	private SceneAnalyzer getAnalyzer(Class<?> c) {
-		for (final SceneAnalyzer analyzer : GameAnalyzer.analyzerList) {
+		for (final SceneAnalyzer analyzer : this.analyzers) {
 			if (c.isInstance(analyzer)) {
 				return analyzer;
 			}
@@ -143,7 +131,6 @@ public class StatisticsAccessFacilitator {
 		return gc.getCount(this.side);
 	}
 
-	// TODO - ballpossessionbyzones (hard work!)
 	public int ballPossession(ZoneEnum zone) {
 		BallPossessionByZonesAnalyzer bpbz = (BallPossessionByZonesAnalyzer) this
 		.getAnalyzer(BallPossessionByZonesAnalyzer.class);

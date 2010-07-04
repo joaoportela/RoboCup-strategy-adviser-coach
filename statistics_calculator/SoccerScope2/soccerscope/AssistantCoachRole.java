@@ -25,7 +25,7 @@ public class AssistantCoachRole implements SceneSetMaker.CoachInterface {
 	 */
 	private final int INTERVAL = 1000;
 	private DecisionTree dt;
-	private int side;
+	private int opponentside;
 
 	public AssistantCoachRole(DatagramSocket socket, InetSocketAddress address) {
 		this.socket = socket;
@@ -33,25 +33,33 @@ public class AssistantCoachRole implements SceneSetMaker.CoachInterface {
 
 		// TODO - a way to figure out the TreeType and the side
 		DecisionTreeFactory.DecisionTreeType treetype = DecisionTreeType.RANDOMFOREST_BAHIA;
-		this.side = Team.LEFT_SIDE;
+		this.opponentside = Team.RIGHT_SIDE; // the opponent is usually the right team.
 
 		this.dt = DecisionTreeFactory.getDecisionTree(treetype);
-	}
-
-	private int k_to_tactic(int k) {
-		return 1;
 	}
 
 	@Override
 	public void newScene(Scene current, SceneSet allScenes) {
 		try {
+			if(current.time == 0) {
+				return; // skip
+			}
+			// a bit after the match started print the teams names.
+			if(current.time == 2) {
+				System.out.println("left team name:" + current.left.name);
+				System.out.println("right team name:" + current.right.name);
+
+				// should i figure out the side now??
+
+				// should i inform of the strategy now??
+			}
 			if (current.time % this.INTERVAL == 0) {
 				System.err.println("assistant coach 'is' analyzing scene "
 						+ current.time);
 				StatisticsAccessFacilitator statistics = new StatisticsAccessFacilitator(
-						GameAnalyzer.analyzerList, this.side, current.time);
-				int k=this.dt.whichK(statistics);
-				int tactic = this.k_to_tactic(k);
+						GameAnalyzer.analyzerList, this.opponentside, current.time);
+
+				int tactic=this.dt.Tactic(statistics);
 
 				byte[] message = ("(tactic " + tactic + ")").getBytes();
 				DatagramPacket packet;

@@ -11,12 +11,15 @@ RMFLAGS = -vf
 FILES_TO_DEPLOY = assistantcoach.hpp assistantcoach.cpp *.jar
 DEPLOY_TARGET = ~/FCPortugal/2D/trunk/fcportugal/coach/
 
-.PHONY: all clean depend fullclean deploy
+.PHONY: all clean depend fullclean deploy jars
 
-all: $(EXECUTABLE)
+all: jars $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJECTS) 
 	$(LD) $(LDFLAGS) $(OBJECTS) -o $@
+
+jars:
+	cd ../statistics_calculator/SoccerScope2/; make deploy
 
 clean:
 	$(RM) $(EXECUTABLE) $(OBJECTS) $(RMFLAGS)
@@ -27,7 +30,7 @@ fullclean: clean
 depend:
 	gcc -MM $(CXXFLAGS) *.cpp > makefile.d
 
-deploy:
+deploy: $(EXECUTABLE) jars
 	cp $(FILES_TO_DEPLOY) $(DEPLOY_TARGET)
 
 # Dependencies tracking:

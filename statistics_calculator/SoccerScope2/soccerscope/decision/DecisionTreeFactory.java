@@ -3,15 +3,35 @@
  */
 package soccerscope.decision;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author João Portela
  * 
  */
 public class DecisionTreeFactory {
 	public static enum DecisionTreeType {
-		RANDOMFOREST_BAHIA, SVM_BAHIA, BAGGING_BAHIA,
-		RANDOMFOREST_NEMESIS, SVM_NEMESIS, BAGGING_NEMESIS,
-		RANDOMFOREST_WRIGHTEAGLE, SVM_WRIGHTEAGLE, BAGGING_WRIGHTEAGLE;
+		RANDOMFOREST_BAHIA(new RandomForestBahia()),
+		SVM_BAHIA(new SVMBahia()),
+		BAGGING_BAHIA(new BaggingBahia()),
+
+		RANDOMFOREST_NEMESIS(new RandomForestNemesis()),
+		SVM_NEMESIS(new SVMNemesis()),
+		BAGGING_NEMESIS(new BaggingNemesis()),
+
+		RANDOMFOREST_WRIGHTEAGLE(new RandomForestWrighteagle()),
+		SVM_WRIGHTEAGLE(new SVMWrighteagle()),
+		BAGGING_WRIGHTEAGLE(new BaggingWrighteagle());
+
+		DecisionTree dt;
+		private DecisionTreeType(DecisionTree dt) {
+			this.dt=dt;
+		}
+
+		public DecisionTree getDecisionTree() {
+			return this.dt;
+		}
 
 		public static DecisionTreeType typeFor(String opponentname,
 				String algorithm) {
@@ -48,33 +68,160 @@ public class DecisionTreeFactory {
 	}
 
 	/**
-	 * Decision tree interface, 'nuff said.
+	 * Abstract decision tree, 'nuff said.
 	 * 
 	 * @author João Portela
 	 * 
 	 */
-	public static interface DecisionTree {
-		public int whichK(StatisticsAccessFacilitator s);
+	public static abstract class DecisionTree {
+		Map<Integer, Integer> k_to_tactic_map;
+
+		protected DecisionTree(int map_size_hint) {
+			this.k_to_tactic_map=new HashMap<Integer, Integer>(map_size_hint);
+		}
+
+		public int Tactic(StatisticsAccessFacilitator s) {
+			return this.k_to_tactic_map.get(this.whichK(s));
+		}
+
+		protected abstract int whichK(StatisticsAccessFacilitator s);
 	}
 
-	public static class RandomForestBahia implements DecisionTree {
-		public int whichK(StatisticsAccessFacilitator s) {
+	public static class RandomForestBahia extends DecisionTree {
+
+		public RandomForestBahia() {
+			super(1);
+			this.k_to_tactic_map.put(9, 19); // could also be tactic 26
+		}
+
+		@Override
+		protected int whichK(StatisticsAccessFacilitator s) {
 			return 9;
 		}
 
 	}
 
+	public static class RandomForestWrighteagle extends DecisionTree {
+
+		public RandomForestWrighteagle() {
+			super(1);
+			// this.k_to_tactic_map.put(...);
+		}
+
+		@Override
+		protected int whichK(StatisticsAccessFacilitator s) {
+			throw new AssertionError(); // TODO
+		}
+	}
+
+	public static class RandomForestNemesis extends DecisionTree {
+
+		public RandomForestNemesis() {
+			super(1);
+			// this.k_to_tactic_map.put(...);
+		}
+
+		@Override
+		protected int whichK(StatisticsAccessFacilitator s) {
+			throw new AssertionError(); // TODO
+		}
+	}
+
+	public static class SVMBahia extends DecisionTree {
+
+		public SVMBahia() {
+			super(1);
+			// this.k_to_tactic_map.put(...);
+		}
+
+		@Override
+		protected int whichK(StatisticsAccessFacilitator s) {
+			throw new AssertionError(); // TODO
+		}
+	}
+
+	public static class SVMWrighteagle extends DecisionTree {
+
+		public SVMWrighteagle() {
+			super(1);
+			// this.k_to_tactic_map.put(...);
+		}
+
+		@Override
+		protected int whichK(StatisticsAccessFacilitator s) {
+			throw new AssertionError(); // TODO
+		}
+	}
+
+	public static class SVMNemesis extends DecisionTree {
+
+		public SVMNemesis() {
+			super(1);
+			// this.k_to_tactic_map.put(...);
+		}
+
+		@Override
+		protected int whichK(StatisticsAccessFacilitator s) {
+			throw new AssertionError(); // TODO
+		}
+	}
+
+	public static class BaggingBahia extends DecisionTree {
+
+		public BaggingBahia() {
+			super(1);
+			// this.k_to_tactic_map.put(...);
+		}
+
+		@Override
+		protected int whichK(StatisticsAccessFacilitator s) {
+			throw new AssertionError(); // TODO
+		}
+	}
+
+
+	public static class BaggingWrighteagle extends DecisionTree {
+
+		public BaggingWrighteagle() {
+			super(1);
+			// this.k_to_tactic_map.put(...);
+		}
+
+		@Override
+		protected int whichK(StatisticsAccessFacilitator s) {
+			throw new AssertionError(); // TODO
+		}
+	}
+
+	public static class BaggingNemesis extends DecisionTree {
+
+		public BaggingNemesis() {
+			super(1);
+			// this.k_to_tactic_map.put(...);
+		}
+
+		@Override
+		protected int whichK(StatisticsAccessFacilitator s) {
+			throw new AssertionError(); // TODO
+		}
+	}
+
 	/**
 	 * Fetches the decision tree for $treetype$.
 	 * 
-	 * @return the decision tree or null if the DecisionTreeType is unknown
+	 * @return the decision tree
 	 */
 	public static DecisionTree getDecisionTree(DecisionTreeType treetype) {
-		switch (treetype) {
-		case RANDOMFOREST_BAHIA:
-			return new RandomForestBahia();
+		return treetype.getDecisionTree();
+	}
+
+	public static void main(String [] args) {
+		for(DecisionTreeType dtt: DecisionTreeType.values()) {
+			DecisionTree dt=dtt.getDecisionTree();
+			System.out.println(dt.toString());
+			System.out.println(dt.getClass().toString());
+			System.out.println("-");
 		}
-		return null;
 	}
 
 }

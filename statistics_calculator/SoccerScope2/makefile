@@ -5,15 +5,17 @@ JAR_FILE=soccerscope.jar
 DEPEND_JARS=java-xmlbuilder-0.3.jar sexpr.jar
 ALL_JARS=$(JAR_FILE) $(DEPEND_JARS)
 
-.PHONY: all soccerscope build clean
+.PHONY: all soccerscope build clean deploy
 
 all: soccerscope
 
 build: $(ALL_JARS)
+
+deploy: build
 	@echo "deploying jars in the simulation_controler"
-	@(cp $+ ../../simulation_controller/ -v)
+	@(cp $(ALL_JARS) ../../simulation_controller/ -v)
 	@echo "deploying jars in the plugable_coach"
-	@(cp $+ ../../plugable_coach/ -v)
+	@(cp $(ALL_JARS) ../../plugable_coach/ -v)
 
 sexpr.jar:
 	@(cd ../SExpr; $(MAKE) $@)

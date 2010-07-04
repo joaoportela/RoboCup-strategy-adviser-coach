@@ -8,8 +8,10 @@ CXX = g++
 LD = g++
 RM = rm
 RMFLAGS = -vf
-FILES_TO_DEPLOY = assistantcoach.hpp assistantcoach.cpp *.jar
-DEPLOY_TARGET = ~/FCPortugal/2D/trunk/fcportugal/coach/
+SOURCE_FILES_TO_DEPLOY = assistantcoach.hpp assistantcoach.cpp
+SOURCE_FILES_DEPLOY_TARGET = ~/FCPortugal/2D/trunk/fcportugal/coach/
+JARS_TO_DEPLOY =  *.jar
+JARS_TARGET = ~/FCPortugal/2D/trunk/fcportugal/
 
 .PHONY: all clean depend fullclean deploy jars
 
@@ -31,7 +33,8 @@ depend:
 	gcc -MM $(CXXFLAGS) *.cpp > makefile.d
 
 deploy: $(EXECUTABLE) jars
-	cp $(FILES_TO_DEPLOY) $(DEPLOY_TARGET)
+	cp $(SOURCE_FILES_TO_DEPLOY) $(SOURCE_FILES_DEPLOY_TARGET)
+	cp $(JARS_TO_DEPLOY) $(JARS_TARGET)
 
 # Dependencies tracking:
 # implicit dependencies

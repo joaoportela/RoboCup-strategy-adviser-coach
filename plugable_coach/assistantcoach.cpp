@@ -68,7 +68,7 @@ AssistantCoach::AssistantCoach(userhandler_t rcvfunc, int listen_port):
 
     if (error) 
     {
-        cerr << "error waiting for \"(start)\"" << endl;
+        cerr << "ACOACH: error waiting for \"(start)\"" << endl;
         throw boost::system::system_error(error);
     }
 
@@ -77,7 +77,7 @@ AssistantCoach::AssistantCoach(userhandler_t rcvfunc, int listen_port):
     from_child << this->current_time() << "[thread:" << boost::this_thread::get_id()  << "]" << recvdata << endl;
 #endif
     if(recvdata != "(start)"){
-        cerr << "recvdata != start" << endl;
+        cerr << "ACOACH: recvdata != start" << endl;
         // TODO - what? exception?
     }
 
@@ -102,7 +102,7 @@ AssistantCoach::~AssistantCoach()
     // wait for the worker and the child to terminate.
     bp::status s = this->child->wait();
     if (s.exited()) {
-        cout << "acoach-child exit status: " << s.exit_status() << endl;
+        cout << "ACOACH: acoach-child exit status: " << s.exit_status() << endl;
     }
     async_worker.join();
 
@@ -156,7 +156,7 @@ void AssistantCoach::handle_send(boost::shared_ptr<std::string> message_ptr,
 {
     if (error)
     {
-        cerr << "error sending message: " << *message_ptr << endl;
+        cerr << "ACOACH: error sending message: " << *message_ptr << endl;
         throw boost::system::system_error(error);
     }
 
@@ -172,7 +172,7 @@ void AssistantCoach::handle_receive(
 {
     if(error) 
     {
-        cerr << "error receiving message" << endl;
+        cerr << "ACOACH: error receiving message" << endl;
         throw boost::system::system_error(error);
     }
 
@@ -194,7 +194,7 @@ void AssistantCoach::handle_receive(
     }
     else
     {
-        cerr << "not installing handler" << endl;
+        cerr << "ACOACH: not installing handler" << endl;
     }
 
 }

@@ -2,6 +2,7 @@
 
 __all__ = ["Match"]
 
+import time
 import logging
 import os
 import xml.dom.minidom as minidom
@@ -176,6 +177,9 @@ class Match(object):
             errmsg = "something went wrong while running the match.\n"
             errmsg+= "consider checking {0}".format(self.matchdir+"/server-error.log")
             logging.error(errmsg)
+
+        # give some time for the teams to stop by themselves
+        time.sleep(0.2)
 
         # stop teams
         self.team_l.stop()

@@ -39,7 +39,8 @@ def dotest(confrontation, min_matches=1,team='fcportugal'):
 def main():
     #fcpE = FCPortugal({"formation" : 1}, extended=True)
     #fcpX = Team("fcportugalX")
-    fcp1 = FCPortugal(strategy_params={'tactic':1})
+    fcp1 = FCPortugal(strategy_params={'tactic':1},
+            decision_tree="randomforest")
     #fcp2 = FCPortugal(strategy_params={'tactic':2})
     #fcp = Team("fcportugal2d")
     bahia=Team("bahia2d")
@@ -47,7 +48,7 @@ def main():
     nemesis=Team("nemesis")
     wrighteagle=Team("wrighteagle")
     confrontations=[]
-    confrontations.append(Confrontation(fcp1, wrighteagle))
+    confrontations.append(Confrontation(fcp1, bahia))
     # confrontations.append(Confrontation(fcp1, bahia))
     # confrontations.append(Confrontation(fcp1, kickofftug))
     # confrontations.append(Confrontation(fcp1, nemesis))

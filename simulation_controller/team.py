@@ -24,7 +24,7 @@ matchhost=\"{matchhost}\"
 {other}
 
 cd $matchdir
-teamComm="${{teamdir}}/start"
+teamComm="${{teamdir}}/{start_script}"
 output="${{name}}-output.log"
 outerror="${{name}}-error.log"
 
@@ -57,6 +57,7 @@ class Team(object):
             raise TeamError(errmsg)
         self.name = name
         self.teamdir=os.path.join(config.teamsdir,name)
+        self.start_script='start'
         self.matchdir=None
         # bonus args is to be filled in the format ("varname", "varvalue")
         self.bonus_args = []
@@ -68,6 +69,7 @@ class Team(object):
         self.matchdir=matchdir
         # variables required: matchdir, teamdir, teamname, matchhost,
         # other, other_as_arg
+        start_script = self.start_script
         teamdir = self.teamdir
         teamname = self.name
         # the match host (usually 127.0.0.1)
@@ -146,13 +148,16 @@ class Team(object):
         return [team for team in teams if has_start(team) and has_kill(team)]
 
 class FCPortugal(Team):
-    def __init__(self, strategy_params={}, extended=False):
-        if extended:
-            # TODO - this line does not work on purpose.
-            Team.__init__(self, "fcportugal_extended")
-        else:
-            Team.__init__(self, "fcportugal2d")
-        self.extended=extended
+    def __init__(self, strategy_params={}, decision_tree=None):
+        Team.__init__(self, "fcportugal2d")
+        self.start_script='start_withstrategy'
+        if decision_tree:
+            if decision_tree not in ["bagging", "randomforest", "svm"]:
+                raise TeamError("unkown decision tree algorithm %s" %
+                        "decision_tree")
+            self.start_script='start_withstrategyandtree'
+
+        self.decision_tree=decision_tree
         self.strategy_params=config.strategy_default.copy()
         self.strategy_params.update(strategy_params)
         config.validate_strategy(self.strategy_params)
@@ -160,6 +165,8 @@ class FCPortugal(Team):
         strategy_fname = self._gen_strategy_file()
         # pass the generated strategy file as argument to the team
         self.bonus_args.append(("strategy_file", strategy_fname))
+        if decision_tree:
+            self.bonus_args.append(("decision_tree", self.decision_tree))
 
     def _gen_strategy_file(self):
         # calculate_file_name
@@ -188,10 +195,12 @@ class FCPortugal(Team):
         for name, value in sorted(self.strategy_params.items()):
             value = str(value)
             dynamic_part.append("{name}{value}".format(**locals()))
+        if self.decision_tree:
+            dynamic_part.append(self.decision_tree)
         return "_".join(dynamic_part)
 
     def encode(self):
-        return ("FCPortugal", [self.strategy_params, self.extended])
+        return ("FCPortugal", [self.strategy_params, self.decision_tree])
 
     def __str__(self):
         return self.name+"-"+self.params_summary()

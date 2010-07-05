@@ -267,8 +267,7 @@ class Match(object):
     def _archive_outputs(self):
         # tar outputs (for future checking if necessary)
         filestotar=[]
-        filestotar+=glob.glob(os.path.join(self.matchdir,"*-output.log"))
-        filestotar+=glob.glob(os.path.join(self.matchdir,"*-error.log"))
+        filestotar+=glob.glob(os.path.join(self.matchdir,"*.log"))
         filestotar+=glob.glob(os.path.join(self.matchdir,"out.csv"))
         logging.debug("archiving {0}.".format(filestotar))
 

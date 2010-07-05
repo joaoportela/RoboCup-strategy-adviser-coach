@@ -11,13 +11,14 @@
  * http://www.justsoftwaresolutions.co.uk/threading/implementing-a-thread-safe-queue-using-condition-variables.html
  * for the guidelines.
  *
- * Maybe in the future I can extend this to allow simultaneous push and pop ;) 
+ * Maybe in the future I can extend this to allow simultaneous (not mutually excluded by
+ * mutex) push and pop ;) 
  * Although it would probably require that I did not use a std::queue.
  */
 template <typename T>
 class SyncronizedQueue {
     /**
-     * the undelying stl queue that contains the data.
+     * the underlying stl queue that contains the data.
      */
     std::queue<T> _queue;
     /**
@@ -45,6 +46,9 @@ class SyncronizedQueue {
     /**
      * pops the first element from the queue. When the queue is empty it locks
      * until it can pop.
+     *
+     * note: It has come to my attention that pp should return void in order to
+     * make clear that it has side-effects on the SyncronizedQueue object.
      */
     const T& pop() {
         // lock

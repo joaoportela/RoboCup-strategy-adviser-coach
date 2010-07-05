@@ -85,6 +85,7 @@ public class SoccerServerConnection extends SceneBuilder {
 			msg = new String("(dispinit version 2)");
 		}
 		try {
+			System.err.println("dispinit:" + msg);
 			this.sendMessage(msg);
 		} catch (IOException ie) {
 			throw ie;

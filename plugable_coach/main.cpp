@@ -44,7 +44,7 @@ int main( int /*argc*/, const char* /*argv*/[] )
 
     // instanciate the assistant coach
     BOOST_ASSERT(!acoach_ptr);
-    acoach_ptr.reset(new AssistantCoach(report_struct()));
+    acoach_ptr.reset(new AssistantCoach(report_struct(), "svm", 1000, "teste/"));
 
     for(int i =0; i < 110; ++i) 
     {

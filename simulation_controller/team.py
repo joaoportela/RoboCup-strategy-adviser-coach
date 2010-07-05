@@ -147,17 +147,29 @@ class Team(object):
         # filter
         return [team for team in teams if has_start(team) and has_kill(team)]
 
+def _xor(a,b):
+    return (a and not b) or (not a and b)
+
 class FCPortugal(Team):
-    def __init__(self, strategy_params={}, decision_tree=None):
+    def __init__(self, strategy_params={}, decision_tree=None, window_size=None):
         Team.__init__(self, "fcportugal2d")
         self.start_script='start_withstrategy'
-        if decision_tree:
+        # sanity check of decision_tree and window_size (either they are both
+        # set or both None)
+        if _xor(decision_tree, window_size):
+            raise TeamError("decision_tree and window_size are set or none is.")
+        if decision_tree and window_size:
             if decision_tree not in ["bagging", "randomforest", "svm"]:
                 raise TeamError("unkown decision tree algorithm %s" %
                         "decision_tree")
             self.start_script='start_withstrategyandtree'
 
-        self.decision_tree=decision_tree
+            self.window_size=window_size
+            self.decision_tree=decision_tree
+        else:
+            self.window_size=None
+            self.decision_tree=None
+
         self.strategy_params=config.strategy_default.copy()
         self.strategy_params.update(strategy_params)
         config.validate_strategy(self.strategy_params)
@@ -165,8 +177,9 @@ class FCPortugal(Team):
         strategy_fname = self._gen_strategy_file()
         # pass the generated strategy file as argument to the team
         self.bonus_args.append(("strategy_file", strategy_fname))
-        if decision_tree:
+        if self.decision_tree and self.window_size:
             self.bonus_args.append(("decision_tree", self.decision_tree))
+            self.bonus_args.append(("window_size", self.window_size))
 
     def _gen_strategy_file(self):
         # calculate_file_name
@@ -200,7 +213,8 @@ class FCPortugal(Team):
         return "_".join(dynamic_part)
 
     def encode(self):
-        return ("FCPortugal", [self.strategy_params, self.decision_tree])
+        return ("FCPortugal", [self.strategy_params, self.decision_tree,
+            self.window_size])
 
     def __str__(self):
         return self.name+"-"+self.params_summary()

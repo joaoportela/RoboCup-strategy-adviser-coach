@@ -32,7 +32,7 @@ typedef boost::function<void(std::string)> userhandler_t;
 class AssistantCoach 
 {
     public:
-        AssistantCoach(userhandler_t rcvfunc, int listen_port=0xbeef);
+        AssistantCoach(userhandler_t rcvfunc, std::string decisionalgorithm, int windowsize = 1000, std::string matchdir="./", int listen_port=0xbeef);
         virtual ~AssistantCoach();
 
         /**

@@ -85,6 +85,7 @@ public class DecisionTreeFactory {
 		}
 
 		protected abstract int whichK(StatisticsAccessFacilitator s);
+		public abstract int defaultTactic();
 	}
 
 	public static class RandomForestBahia extends DecisionTree {
@@ -97,6 +98,11 @@ public class DecisionTreeFactory {
 		@Override
 		protected int whichK(StatisticsAccessFacilitator s) {
 			return 9;
+		}
+
+		@Override
+		public int defaultTactic() {
+			return 19;
 		}
 
 	}
@@ -112,6 +118,11 @@ public class DecisionTreeFactory {
 		protected int whichK(StatisticsAccessFacilitator s) {
 			throw new AssertionError(); // TODO
 		}
+
+		@Override
+		public int defaultTactic() {
+			throw new AssertionError(); // TODO
+		}
 	}
 
 	public static class RandomForestNemesis extends DecisionTree {
@@ -123,6 +134,11 @@ public class DecisionTreeFactory {
 
 		@Override
 		protected int whichK(StatisticsAccessFacilitator s) {
+			throw new AssertionError(); // TODO
+		}
+
+		@Override
+		public int defaultTactic() {
 			throw new AssertionError(); // TODO
 		}
 	}
@@ -138,6 +154,11 @@ public class DecisionTreeFactory {
 		protected int whichK(StatisticsAccessFacilitator s) {
 			throw new AssertionError(); // TODO
 		}
+
+		@Override
+		public int defaultTactic() {
+			throw new AssertionError(); // TODO
+		}
 	}
 
 	public static class SVMWrighteagle extends DecisionTree {
@@ -149,6 +170,11 @@ public class DecisionTreeFactory {
 
 		@Override
 		protected int whichK(StatisticsAccessFacilitator s) {
+			throw new AssertionError(); // TODO
+		}
+
+		@Override
+		public int defaultTactic() {
 			throw new AssertionError(); // TODO
 		}
 	}
@@ -164,6 +190,11 @@ public class DecisionTreeFactory {
 		protected int whichK(StatisticsAccessFacilitator s) {
 			throw new AssertionError(); // TODO
 		}
+
+		@Override
+		public int defaultTactic() {
+			throw new AssertionError(); // TODO
+		}
 	}
 
 	public static class BaggingBahia extends DecisionTree {
@@ -175,6 +206,11 @@ public class DecisionTreeFactory {
 
 		@Override
 		protected int whichK(StatisticsAccessFacilitator s) {
+			throw new AssertionError(); // TODO
+		}
+
+		@Override
+		public int defaultTactic() {
 			throw new AssertionError(); // TODO
 		}
 	}
@@ -191,6 +227,11 @@ public class DecisionTreeFactory {
 		protected int whichK(StatisticsAccessFacilitator s) {
 			throw new AssertionError(); // TODO
 		}
+
+		@Override
+		public int defaultTactic() {
+			throw new AssertionError(); // TODO
+		}
 	}
 
 	public static class BaggingNemesis extends DecisionTree {
@@ -202,6 +243,11 @@ public class DecisionTreeFactory {
 
 		@Override
 		protected int whichK(StatisticsAccessFacilitator s) {
+			throw new AssertionError(); // TODO
+		}
+
+		@Override
+		public int defaultTactic() {
 			throw new AssertionError(); // TODO
 		}
 	}

@@ -8,6 +8,8 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/asio.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/format.hpp>
+#include <boost/exception/diagnostic_information.hpp> 
 #define foreach BOOST_FOREACH
 
 #ifdef CHILD_REDIRECT_TO_FILE
@@ -15,31 +17,41 @@
 #include <unistd.h>
 #endif
 
+
 using namespace std;
 
 // initialization of static constants.
 const string AssistantCoach::exec = bp::find_executable_in_path("java");
 const string AssistantCoach::classpath="soccerscope.jar:java-xmlbuilder-0.3.jar:sexpr.jar";
 
-vector<string> buildargs(int listen_port) 
+vector<string> buildargs(int listen_port, string decisionalgorithm, int windowsize)
 {
-    return (boost::assign::list_of(string("java"))
+    return (
+            boost::assign::list_of(string("java"))
             ("soccerscope.SoccerScope") ("--udp")
-            (boost::lexical_cast<string>(listen_port)));
+            (boost::lexical_cast<string>(listen_port))
+            (decisionalgorithm) 
+            (boost::lexical_cast<string>(windowsize))
+            );
 }
 
-AssistantCoach::AssistantCoach(userhandler_t rcvfunc, int listen_port):
+string join(string dir, string file) 
+{
+    return (boost::format("%s/%s") % dir % file).str();
+}
+
+AssistantCoach::AssistantCoach(userhandler_t rcvfunc, string decisionalgorithm, int windowsize, std::string matchdir, int listen_port):
     receive(rcvfunc),
     //_finished(false),
-    args(buildargs(listen_port)),
+    args(buildargs(listen_port, decisionalgorithm, windowsize)),
     socket(this->io_service, udp::endpoint(udp::v4(), listen_port))
 #ifdef LOG_COMMUNICATION
-    ,to_child("messages-tochild.log"),
-    from_child("messages-fromchild.log")
+    ,to_child(join(matchdir, "messages-tochild.log").c_str()),
+    from_child(join(matchdir, "messages-fromchild.log").c_str())
 #endif
 #ifdef CHILD_REDIRECT_TO_FILE
-    ,childoutput(creat("child-output.log", 0644)),
-    childerror(creat("child-error.log", 0644))
+    ,childoutput(creat(join(matchdir,"child-output.log").c_str(), 0644)),
+    childerror(creat(join(matchdir,"child-error.log").c_str(), 0644))
 #endif
 {
     bp::context ctx; 
@@ -59,6 +71,12 @@ AssistantCoach::AssistantCoach(userhandler_t rcvfunc, int listen_port):
     BOOST_ASSERT(!this->child);
     // spawn child process
     this->child.reset(new bp::child(bp::launch(AssistantCoach::exec, this->args, ctx)));
+
+#ifndef NDEBUG
+    ofstream bla("/tmp/process_debug.txt", ios_base::out | ios_base::app);
+    bla << "child " << this->child->get_id() << " started." << endl;
+    bla.close();
+#endif
 
     // listen on udp socket for the message "(start)"
     rcv_container_t recv_buf;
@@ -89,31 +107,41 @@ AssistantCoach::AssistantCoach(userhandler_t rcvfunc, int listen_port):
 
 AssistantCoach::~AssistantCoach()
 {
-    // send udp message "(end)"
-    string message("(end)");
+    cerr << "ACOACH: destructor start" << endl;
 
+    // tell the child to terminate by sending the udp message "(end)"
+    string message("(end)");
     boost::system::error_code ignored_error;
     this->socket.send_to(boost::asio::buffer(message),
              this->child_address, 0, ignored_error);
 #ifdef LOG_COMMUNICATION
     to_child << this->current_time() << "(" << boost::this_thread::get_id()  << ")" << message << endl;
 #endif
-
-    // wait for the worker and the child to terminate.
-    bp::status s = this->child->wait();
-    if (s.exited()) {
-        cout << "ACOACH: acoach-child exit status: " << s.exit_status() << endl;
-    }
+    // wait that it responds with and '(end)' -> the async_worker shutting down is that signal.
     async_worker.join();
-
 #ifdef LOG_COMMUNICATION
+    // communication with the child ended. Close the streams
     to_child.close();
     from_child.close();
 #endif
+
+    // child should have terminated by now, confirm.
+    try {
+        bp::status s = this->child->wait();
+        if (s.exited()) {
+            cout << "ACOACH: child exit status: " << s.exit_status() << endl;
+        }
+    } catch ( boost::exception & e ) {
+        cerr << "OMG!" << boost::diagnostic_information(e) << endl;
+        // force termination
+        this->child->terminate();
+    }
+
 #ifdef CHILD_REDIRECT_TO_FILE
     close(this->childoutput);
     close(this->childerror);
 #endif
+    cerr << "ACOACH: destructor ended successfully" << endl;
 }
 
 #if 0
@@ -194,7 +222,7 @@ void AssistantCoach::handle_receive(
     }
     else
     {
-        cerr << "ACOACH: not installing handler" << endl;
+        cerr << "ACOACH: assistant coach terminating. Not installing handler." << endl;
     }
 
 }

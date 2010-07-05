@@ -40,7 +40,7 @@ def main():
     #fcpE = FCPortugal({"formation" : 1}, extended=True)
     #fcpX = Team("fcportugalX")
     fcp1 = FCPortugal(strategy_params={'tactic':1},
-            decision_tree="randomforest")
+            decision_tree="randomforest", window_size=500)
     #fcp2 = FCPortugal(strategy_params={'tactic':2})
     #fcp = Team("fcportugal2d")
     bahia=Team("bahia2d")

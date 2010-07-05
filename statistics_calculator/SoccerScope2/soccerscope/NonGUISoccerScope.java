@@ -101,7 +101,7 @@ public class NonGUISoccerScope {
 		out.flush();
 	}
 
-	public static void run(int port) throws SocketException, IOException,
+	public static void run(int port, String treealgorithm, int window_size) throws SocketException, IOException,
 	InterruptedException {
 
 		DatagramSocket sock = new DatagramSocket();
@@ -110,7 +110,7 @@ public class NonGUISoccerScope {
 		InetSocketAddress address = new InetSocketAddress(host, port);
 		NonGUISoccerScope.sendStartPacket(sock, address);
 		NonGUISoccerScope.openUDPViewerConnectionAndDoLiveAnalysis(sock,
-				address);
+				address, treealgorithm, window_size);
 
 	}
 
@@ -127,7 +127,7 @@ public class NonGUISoccerScope {
 	}
 
 	private static void openUDPViewerConnectionAndDoLiveAnalysis(
-			DatagramSocket socket, InetSocketAddress address)
+			DatagramSocket socket, InetSocketAddress address, String treealgorithm, int window_size)
 	throws InterruptedException, IOException {
 		final int BUFFERSIZE = 16 * 2048;
 		final String ssHost = "localhost";
@@ -136,7 +136,9 @@ public class NonGUISoccerScope {
 
 		SoccerServerConnection ssconnection = new SoccerServerConnection(ssHost);
 		SceneSetMaker ssm = new SceneSetMaker(ssconnection, wm.getSceneSet(),
-				new AssistantCoachRole(socket, address));
+				new AssistantCoachRole(socket, address, treealgorithm, window_size));
+		ssconnection.dispinit();
+		Thread.sleep(1000);
 		ssm.start();
 
 		// since we are connecting as a viewer we can just wait for the "(end)"
@@ -147,15 +149,17 @@ public class NonGUISoccerScope {
 			socket.receive(pack);
 			String message = (new String(buf)).trim();
 			if (message.equals("(end)")) {
+				System.err.println("terminating...");
 				// echo the back the "(end)" message
 				socket.send(pack);
 				ssconnection.dispbye();
 				ssm.finish();
 				break;
 			} else {
-				System.err.println("unkown message: " + message);
+				System.err.println("unkown message: '" + message + "'");
 			}
 		}
+		System.err.println("waiting for SceneSetMaker to terminate");
 		ssm.join();
 	}
 

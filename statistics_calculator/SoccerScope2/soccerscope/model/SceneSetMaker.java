@@ -59,6 +59,8 @@ public class SceneSetMaker extends Thread {
 			this.sceneSet.init();
 		}
 		System.out.println();
+		//System.err.println("variables: this.liveAnalysis(" + this.liveAnalysis
+		//		+ ") this.coach(" + this.coach + ")");
 		while (this.isrunning()) {
 			int size;
 			try {

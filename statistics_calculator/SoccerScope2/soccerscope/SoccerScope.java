@@ -52,10 +52,12 @@ public class SoccerScope extends JFrame {
 					System.exit(1);
 				}
 				return;
-			} else if(args[0].equals("--udp") && args.length == 2) {
+			} else if(args[0].equals("--udp") && args.length == 4) {
 				int port = Integer.parseInt(args[1]);
+				String treealgorithm = args[2];
+				int window_size = Integer.parseInt(args[3]);
 				try {
-					NonGUISoccerScope.run(port);
+					NonGUISoccerScope.run(port, treealgorithm, window_size);
 				} catch (Exception e) {
 					System.err.println("udp mode failed...");
 					e.printStackTrace();

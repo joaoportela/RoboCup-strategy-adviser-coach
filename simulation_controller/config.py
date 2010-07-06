@@ -44,9 +44,13 @@ strategy_data = {
         "tactic": range(1,_number_of_tactics(_base_strategy_path)+1)
         }
 
+# decision_tree
+decision_trees=["randomforest"]#["bagging","randomforest", "svm"]
+window_sizes=[1000,2000,3000]
+
 #match generation
-opponents=["wrighteagle", "bahia2d", "nemesis"] # "kickofftug",
-min_matches=10
+opponents=["bahia2d"]#["wrighteagle", "bahia2d", "nemesis"]
+min_matches=1
 # typical duration of a match (used for time prediction)
 duration=datetime.timedelta(minutes=12)
 size=9.5*(1024**2)#9.5MiB

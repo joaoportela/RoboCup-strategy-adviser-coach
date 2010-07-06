@@ -13,18 +13,18 @@ import report
 import sys
 
 
-def fcpd_configurations(data=config.strategy_data):
+def fcpd_configurations_by_strategy(data=config.strategy_data):
     for values in itertools.product(*data.values()):
         args={}
         for i, key in enumerate(data.keys()):
             args[key] = values[i]
         yield args
 
-def confrontations(data=config.strategy_data,opponents=config.opponents):
+def confrontations_by_strategy(data=config.strategy_data,opponents=config.opponents):
     for opponent in opponents:
-        for conf in fcpd_configurations(data):
+        for conf in fcpd_configurations_by_strategy(data):
                 # initialize the teams...
-                fcpD = FCPortugal(conf)
+                fcpD = FCPortugal(strategy_params=conf)
                 opp = Team(opponent)
 
                 # instantiate the confrontation
@@ -32,7 +32,28 @@ def confrontations(data=config.strategy_data,opponents=config.opponents):
 
                 yield fcpD_vs_opp
 
-def smart_prediction(confrontations=confrontations(), min_matches=config.min_matches,
+def fcpd_configurations_by_decisiontree(decision_trees,window_sizes):
+    for dt in decision_trees:
+        for ws in window_sizes:
+            res={}
+            res['decision_tree']=dt
+            res['window_size']=ws
+            yield res
+
+
+def confrontations_by_decisiontree(decision_trees=config.decision_trees,
+        window_sizes=config.window_sizes, opponents=config.opponents):
+    for opponent in opponents:
+        for tree_conf in fcpd_configurations_by_decisiontree(decision_trees,window_sizes):
+            fcpD = FCPortugal(**tree_conf)
+            opp = Team(opponent)
+
+            # instantiate the confrontation
+            fcpD_vs_opp = Confrontation(fcpD, opp)
+
+            yield fcpD_vs_opp
+
+def smart_prediction(confrontations=confrontations_by_strategy(), min_matches=config.min_matches,
         matchduration=config.duration, matchsize=config.size):
     """calculates the duration of generating the required matches
 
@@ -55,7 +76,8 @@ def smart_prediction(confrontations=confrontations(), min_matches=config.min_mat
 def naive_prediction(data=config.strategy_data, opponents=config.opponents,
         min_matches=config.min_matches, matchduration=config.duration,
         matchsize=config.size):
-    """predicts the number of matches missing."""
+    """predicts the number of matches missing.
+    does not work for decision tree runs."""
     nconfigs=reduce(lambda x,y: x*len(y), data.values(), 1)
     # print "nconfigs", nconfigs
     # print "nopponents", len(opponents)
@@ -65,7 +87,7 @@ def naive_prediction(data=config.strategy_data, opponents=config.opponents,
     disk_space=matchsize*nruns
     return (nruns, duration, disk_space)
 
-def runmatches(confrontations=confrontations(), min_matches=config.min_matches,
+def runmatches(confrontations=confrontations_by_strategy(), min_matches=config.min_matches,
         matches_missing=0, matchduration=config.duration):
     """confrontations with the matches that have to be run
 
@@ -111,7 +133,7 @@ def main():
     print naive_prediction_msg
     logging.info(naive_prediction_msg)
 
-    cfs=list(confrontations())
+    cfs=list(confrontations_by_decisiontree())
     (nmatches_missing, duration, size)=smart_prediction(cfs)
     print "{0} expected duration time.".format(duration)
     print "{0} expected size.".format(human_size(size))
@@ -121,11 +143,17 @@ def main():
     print expected_finish_str
     logging.info(expected_finish_str)
 
-    report.report("upload")
+    report.report("upload",passwd=passwd)
 
     runmatches(cfs,matches_missing=nmatches_missing)
 
 if __name__ == "__main__":
+    # get the upload pass
+    global passwd
+    passwd=None
+    if len(sys.argv) == 2:
+        passwd=sys.argv[1]
+
     # clean the log file
     with open(config.logfile,"w") as f:
         f.truncate(0) # no need for this line because "w" already truncates...
@@ -138,11 +166,6 @@ if __name__ == "__main__":
         logging.exception("Unforeseen exception:")
         raise
     finally:
-        # get the upload pass
-        passwd=None
-        if len(sys.argv) == 2:
-            passwd=sys.argv[1]
-
         # report
         report.report("upload", passwd=passwd)
 

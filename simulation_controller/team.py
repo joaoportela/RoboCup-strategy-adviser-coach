@@ -210,7 +210,7 @@ class FCPortugal(Team):
             dynamic_part.append("{name}{value}".format(**locals()))
         if self.decision_tree and self.window_size:
             dynamic_part.append(self.decision_tree)
-            dynamic_part.append(self.window_size)
+            dynamic_part.append(str(self.window_size))
         return "_".join(dynamic_part)
 
     def encode(self):

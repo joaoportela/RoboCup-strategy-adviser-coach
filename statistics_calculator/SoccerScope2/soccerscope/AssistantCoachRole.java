@@ -94,7 +94,7 @@ public class AssistantCoachRole implements SceneSetMaker.CoachInterface {
 					GameAnalyzer.analyzerList, this.opponentside,
 					current.time);
 
-			int tactic = this.dt.Tactic(statistics);
+			int tactic = this.dt.tactic(statistics);
 			if(current.time == this.lastcommcycle && tactic == this.lasttactic) {
 				// no need to repeat yourself
 				return;

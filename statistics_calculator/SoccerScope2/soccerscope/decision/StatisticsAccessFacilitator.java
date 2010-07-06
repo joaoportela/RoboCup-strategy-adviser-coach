@@ -4,79 +4,15 @@ import java.util.List;
 
 import soccerscope.model.Team;
 import soccerscope.util.analyze.AnalyzeNow;
+import soccerscope.util.analyze.AttackAnalyzer;
 import soccerscope.util.analyze.BallPossessionByZonesAnalyzer;
 import soccerscope.util.analyze.GoalKickAnalyzer;
 import soccerscope.util.analyze.PassChainAnalyzer;
+import soccerscope.util.analyze.PassMissAnalyzer;
 import soccerscope.util.analyze.SceneAnalyzer;
 
 public class StatisticsAccessFacilitator {
 	public static final int GAMETIME = 6000;
-
-	public static enum ZoneEnum {
-		leftwing_1stquarter, leftwing_2ndquarter, middlewing_1stquarter, middlewing_2ndquarter, rightwing_1stquarter, rightwing_2ndquarter, leftwing_3rdquarter, leftwing_4thquarter, middlewing_3rdquarter, middlewing_4thquarter, rightwing_3rdquarter, rightwing_4thquarter;
-
-		public String toAbsoluteNamingString(int side) {
-			assert (side == Team.LEFT_SIDE || side == Team.RIGHT_SIDE);
-			if (side == Team.LEFT_SIDE) {
-				switch (this) {
-				case leftwing_1stquarter:
-					return "TopLeftleft";
-				case leftwing_2ndquarter:
-					return "TopLeftright";
-				case middlewing_1stquarter:
-					return "MiddleLeftleft";
-				case middlewing_2ndquarter:
-					return "MiddleLeftright";
-				case rightwing_1stquarter:
-					return "BottomLeftleft";
-				case rightwing_2ndquarter:
-					return "BottomLeftright";
-				case leftwing_3rdquarter:
-					return "TopRightleft";
-				case leftwing_4thquarter:
-					return "TopRightright";
-				case middlewing_3rdquarter:
-					return "MiddleRightleft";
-				case middlewing_4thquarter:
-					return "MiddleRightright";
-				case rightwing_3rdquarter:
-					return "BottomRightleft";
-				case rightwing_4thquarter:
-					return "BottomRightright";
-				}
-
-			} else {
-				// RIGHT_SIDE
-				switch (this) {
-				case rightwing_4thquarter:
-					return "TopLeftleft";
-				case rightwing_3rdquarter:
-					return "TopLeftright";
-				case middlewing_4thquarter:
-					return "MiddleLeftleft";
-				case middlewing_3rdquarter:
-					return "MiddleLeftright";
-				case leftwing_4thquarter:
-					return "BottomLeftleft";
-				case leftwing_3rdquarter:
-					return "BottomLeftright";
-				case rightwing_2ndquarter:
-					return "TopRightleft";
-				case rightwing_1stquarter:
-					return "TopRightright";
-				case middlewing_2ndquarter:
-					return "MiddleRightleft";
-				case middlewing_1stquarter:
-					return "MiddleRightright";
-				case leftwing_2ndquarter:
-					return "BottomRightleft";
-				case leftwing_1stquarter:
-					return "BottomRightright";
-				}
-			}
-			return null;
-		}
-	}
 
 	private List<SceneAnalyzer> analyzers;
 	private int side;
@@ -115,7 +51,7 @@ public class StatisticsAccessFacilitator {
 		return StatisticsAccessFacilitator.scale(this.passChains(), this.time);
 	}
 
-	public int passChains() {
+	private int passChains() {
 		PassChainAnalyzer pc = (PassChainAnalyzer) this
 		.getAnalyzer(PassChainAnalyzer.class);
 		return pc.nChains(this.side);
@@ -125,22 +61,58 @@ public class StatisticsAccessFacilitator {
 		return StatisticsAccessFacilitator.scale(this.goalkicks(), this.time);
 	}
 
-	public int goalkicks() {
+	private int goalkicks() {
 		GoalKickAnalyzer gc = (GoalKickAnalyzer) this
 		.getAnalyzer(GoalKickAnalyzer.class);
 		return gc.getCount(this.side);
 	}
 
-	public int ballPossession(ZoneEnum zone) {
+	public float attacksScaled() {
+		return StatisticsAccessFacilitator.scale(this.attacks(), this.time);
+	}
+
+	private int attacks() {
+		AttackAnalyzer at = (AttackAnalyzer) this
+		.getAnalyzer(AttackAnalyzer.class);
+		return at.getCount(this.side);
+	}
+
+	public float ballPossessionScaled(ZoneEnum zone) {
+		return StatisticsAccessFacilitator.scale(this.ballPossession(zone),
+				this.time);
+	}
+
+	private int ballPossession(ZoneEnum zone) {
 		BallPossessionByZonesAnalyzer bpbz = (BallPossessionByZonesAnalyzer) this
 		.getAnalyzer(BallPossessionByZonesAnalyzer.class);
-		BallPossessionByZonesAnalyzer.Zone z = bpbz.getZone(zone.toAbsoluteNamingString(this.side));
-		if(this.side == Team.LEFT_SIDE) {
+		BallPossessionByZonesAnalyzer.Zone z = bpbz.getZone(zone
+				.toAbsoluteNamingString(this.side));
+		if (this.side == Team.LEFT_SIDE) {
 			return z.countLeft;
 		} else {
 			// RIGHT_SIDE
 			return z.countRight;
 		}
-
 	}
+
+	public float passMissesScaled() {
+		return StatisticsAccessFacilitator.scale(this.passMisses(), this.time);
+	}
+
+	private int passMisses() {
+		PassMissAnalyzer pm = (PassMissAnalyzer) this
+		.getAnalyzer(PassMissAnalyzer.class);
+		return pm.nPassMiss(this.side);
+	}
+
+	public float passMissesOffsideScaled() {
+		return StatisticsAccessFacilitator.scale(this.passMissesOffside(), this.time);
+	}
+
+	private int passMissesOffside() {
+		PassMissAnalyzer pm = (PassMissAnalyzer) this
+		.getAnalyzer(PassMissAnalyzer.class);
+		return pm.nPassMissOffside(this.side);
+	}
+
 }

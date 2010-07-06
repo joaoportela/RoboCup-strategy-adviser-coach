@@ -1,0 +1,105 @@
+Bagging-Bahia X
+
+1) root k=9 
+  2) passchains< 8.5 k=1 
+    4) goalkicks< 2.5 k=1 
+      8) middlewing_1stquarter_possession< 84 k=1 *
+      9) middlewing_1stquarter_possession>=84 k=3 *
+    5) goalkicks>= 2.5 k=2 *
+  3) passchains>=8.5 k=9 *
+
+--
+Bagging-Nemesis  X
+
+ 1) root k=4
+   2) rightwing_3rdquarter_possession>=252.5 k=4
+     4) all_attacks< 18.5 k=4 *
+     5) all_attacks>=18.5 k=8 *
+   3) rightwing_3rdquarter_possession< 252.5 k=6 
+     6) middlewing_4thquarter_possession< 46.5 k=4 *
+     7) middlewing_4thquarter_possession>=46.5 k=6 
+      14) leftwing_1stquarter_possession< 33 k=6 *
+      15) leftwing_1stquarter_possession>=33 k=7  *
+
+--
+Bagging-WrightEagle X
+
+1) root k=6 
+  2) leftwing_1stquarter_possession< 34.5 k=6 *
+  3) leftwing_1stquarter_possession>=34.5 k=7 *
+
+--
+RandomForest-Bahia X
+
+1) root k=9 *
+
+--
+Randomforest-Nemesis X
+
+ 1) root k=4 
+   2) rightwing_3rdquarter_possession >= 182 k=4 
+     4) passmisses>=17.5 k=4 *
+     5) passmisses< 17.5 k=4 
+      10) leftwing_2ndquarter_possession >= 74.5 k=4 
+        20) rightwing_3rdquarter_possession>=243 k=4 *
+        21) rightwing_3rdquarter_possession < 243 k=6 *
+      11) leftwing_2ndquarter_possession < 74.5 k=6 
+        22) rightwing_3rdquarter_possession>=358.5 k=4 *
+        23) rightwing_3rdquarter_possession < 358.5 k=6 *
+   3) rightwing_3rdquarter_possession < 182 k=6 *
+
+---
+Randomforest-Wrighteagle X
+
+ 1) root k=6
+   2) leftwing_1stquarter_possession< 36.5 k=6 
+     4) leftwing_1stquarter_possession< 30.5 k=6 *
+     5) leftwing_1stquarter_possession>=30.5 k=6 
+      10) middlewing_4thquarter_possession>=128 k=6 *
+      11) middlewing_4thquarter_possession< 128 k=7 *
+   3) leftwing_1stquarter_possession>=36.5 k=7 *
+
+--
+SVM-Bahia X
+
+ 1) root k=9 
+   2) middlewing_2ndquarter_possession< 166.5 k=9 
+     4) middlewing_1stquarter_possession>=103 k=3 *
+     5) middlewing_1stquarter_possession< 103 k=9  
+      10) passmisses< 20.5 k=1 *
+      11) passmisses>=20.5 k=9 *
+   3) middlewing_2ndquarter_possession>=166.5 k=9 
+     6) leftwing_2ndquarter_possession>=141 k=5 *
+     7) leftwing_2ndquarter_possession< 141 k=9 *
+
+--
+SVM-Nemesis X
+
+ 1) root k=4 
+   2) rightwing_3rdquarter_possession>=250.5 k=4 
+     4) rightwing_3rdquarter_possession>=335.5 k=4 *
+     5) rightwing_3rdquarter_possession< 335.5 k=4 
+      10) middlewing_2ndquarter_possession>=89.5 k=4 *
+      11) middlewing_2ndquarter_possession< 89.5 k=6
+        22) passmisses>=18.5 k=4 *
+        23) passmisses< 18.5 k=6 *
+   3) rightwing_3rdquarter_possession< 250.5 k=6 
+     6) passmisses>=19.5 k=4 
+      12) middlewing_4thquarter_possession< 107.5 k=4 
+        24) goalkicks>=0.5 k=1 *
+        25) goalkicks< 0.5 k=4 *
+      13) middlewing_4thquarter_possession>=107.5 k=6 *
+     7) passmisses< 19.5 k=6 *
+
+--
+SVM-Wrighteagle X
+
+ 1) root k=6 
+   2) leftwing_1stquarter_possession< 37.5 k=6 
+     4) leftwing_1stquarter_possession< 30.5 k=6 *
+     5) leftwing_1stquarter_possession>=30.5 k=6 
+      10) passmisses_offside< 2.5 k=6 *
+      11) passmisses_offside>=2.5 k=7 *
+   3) leftwing_1stquarter_possession>=37.5 k=7 *
+
+--

@@ -354,10 +354,20 @@ public class PassMissAnalyzer extends SceneAnalyzer implements Xmling {
 
 	}
 
-	private int nPassMiss(int side) {
+	public int nPassMiss(int side) {
 		int count = 0;
 		for (PassMiss p : this.passMissList) {
 			if (p.side == side) {
+				count++;
+			}
+		}
+		return count;
+	}
+
+	public int nPassMissOffside(int side) {
+		int count = 0;
+		for (PassMiss p : this.passMissList) {
+			if (p.side == side && p.receiver.offside) {
 				count++;
 			}
 		}

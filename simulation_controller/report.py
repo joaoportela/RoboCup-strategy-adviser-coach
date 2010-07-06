@@ -40,7 +40,13 @@ def report(*rtypes, **kwargs):
         if passwd is None:
             logging.error("cannot upload without password")
         else:
-            dotheupload(config.logfile, passwd)
+            try:
+                dotheupload(config.logfile, passwd)
+            except:
+                import sys, traceback
+                print >> sys.stderr, "upload failed, reason:"
+                traceback.print_exc()
+
     if "sound" in rtypes:
         os.system("aplay beep.wav")
     if "eject" in rtypes:

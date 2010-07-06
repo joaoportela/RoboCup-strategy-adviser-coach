@@ -13,7 +13,7 @@ def dotheupload(filename, passwd):
     URL="http://ni.fe.up.pt/~poncio/files/sp_upload.php"
 
     br = Browser()
-    r=br.open(URL)
+    r=br.open(URL,timeout=2)
     # print br.viewing_html()
     # print "'{0}'".format(r.info())
     # print "'{0}'".format(r.read())
@@ -44,8 +44,8 @@ def report(*rtypes, **kwargs):
                 dotheupload(config.logfile, passwd)
             except:
                 import sys, traceback
-                print >> sys.stderr, "upload failed, reason:"
-                traceback.print_exc()
+                print >> sys.stderr, "upload failed."
+                # traceback.print_exc()
 
     if "sound" in rtypes:
         os.system("aplay beep.wav")

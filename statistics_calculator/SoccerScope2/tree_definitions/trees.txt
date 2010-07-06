@@ -13,20 +13,20 @@ Bagging-Nemesis
 
  1) root k=4
    2) rightwing_3rdquarter_possession>=252.5 k=4
-     4) all_attacks< 18.5 k=4 *
-     5) all_attacks>=18.5 k=8 *
+     4) all_attacks< 18.5 k=4 * tactic9 (201006281814)/ tactic17 (201006282308)/ tactic18 (201006282322)
+     5) all_attacks>=18.5 k=8 * tactic16
    3) rightwing_3rdquarter_possession< 252.5 k=6 
-     6) middlewing_4thquarter_possession< 46.5 k=4 *
+     6) middlewing_4thquarter_possession< 46.5 k=4 * tactic9 (201006281814)/ tactic17 (201006282308)/ tactic18 (201006282322)
      7) middlewing_4thquarter_possession>=46.5 k=6 
-      14) leftwing_1stquarter_possession< 33 k=6 *
-      15) leftwing_1stquarter_possession>=33 k=7  *
+      14) leftwing_1stquarter_possession< 33 k=6 * tactic15
+      15) leftwing_1stquarter_possession>=33 k=7  * tactic32 (201006291347)/ tactic3 (201006281426)
 
 --
 Bagging-WrightEagle
 
 1) root k=6 
-  2) leftwing_1stquarter_possession< 34.5 k=6 *
-  3) leftwing_1stquarter_possession>=34.5 k=7 *
+  2) leftwing_1stquarter_possession< 34.5 k=6 * tactic13
+  3) leftwing_1stquarter_possession>=34.5 k=7 * tactic9 (201006282017)/tactic6 (201006281731)/tactic12 (201006282228)/tactic29(201006262348)/tactic7 (201006281831)/tactic21 (201006261527)/tactic28(201006291124/201006291101)/tactic27 (201006291037)/tactic25(201006262001/201006261937/201006261925)
 
 --
 RandomForest-Bahia
@@ -38,68 +38,69 @@ Randomforest-Nemesis
 
  1) root k=4 
    2) rightwing_3rdquarter_possession>=182 k=4 
-     4) passmisses>=17.5 k=4 *
+     4) passmisses>=17.5 k=4 * tactic9 (201006281814)/tactic17 (201006282308)/ tactic18 (201006282322)
      5) passmisses< 17.5 k=4 
       10) leftwing_2ndquarter_possession>=74.5 k=4 
-        20) rightwing_3rdquarter_possession>=243 k=4 *
-        21) rightwing_3rdquarter_possession< 243 k=6 *
+        20) rightwing_3rdquarter_possession>=243 k=4 * tactic9 (201006281814)/tactic17 (201006282308)/ tactic18 (201006282322)
+        21) rightwing_3rdquarter_possession< 243 k=6 * tactic27 (201006291014)/tactic16 (201006282208)/tactic8 (201006281736)/tactic3 (201006281528)
       11) leftwing_2ndquarter_possession< 74.5 k=6 
-        22) rightwing_3rdquarter_possession>=358.5 k=4 *
-        23) rightwing_3rdquarter_possession< 358.5 k=6 *
-   3) rightwing_3rdquarter_possession< 182 k=6 *
+        22) rightwing_3rdquarter_possession>=358.5 k=4 * tactic9 (201006281814)/tactic17 (201006282308)/ tactic18 (201006282322)
+        23) rightwing_3rdquarter_possession< 358.5 k=6 * tactic27 (201006291014)/tactic16 (201006282208)/tactic8 (201006281736)/tactic3 (201006281528)
+   3) rightwing_3rdquarter_possession< 182 k=6 * tactic27 (201006291014)/tactic16 (201006282208)/tactic8 (201006281736)/tactic3 (201006281528)
 
 ---
 Randomforest-Wrighteagle
 
  1) root k=6
    2) leftwing_1stquarter_possession< 36.5 k=6 
-     4) leftwing_1stquarter_possession< 30.5 k=6 *
+     4) leftwing_1stquarter_possession< 30.5 k=6 * tactic13 (201006282327)
      5) leftwing_1stquarter_possession>=30.5 k=6 
-      10) middlewing_4thquarter_possession>=128 k=6 *
-      11) middlewing_4thquarter_possession< 128 k=7 *
-   3) leftwing_1stquarter_possession>=36.5 k=7 *
+      10) middlewing_4thquarter_possession>=128 k=6 * tactic13 (201006282327)
+      11) middlewing_4thquarter_possession< 128 k=7 * tactic9 (201006282017)/tactic6 (201006281731)/ tactic12 (201006282228)/tactic29 (201006262348)/tactic7 (201006281831)/tactic21 (201006261527)/tactic28 (201006291124/201006291101)/tactic19 (201006261352)/tactic27 (201006291037)/tactic25 (201006262001/201006261937/201006261925)
+   3) leftwing_1stquarter_possession>=36.5 k=7 * tactic9 (201006282017)/tactic6 (201006281731)/ tactic12 (201006282228)/tactic29 (201006262348)/tactic7 (201006281831)/tactic21 (201006261527)/tactic28 (201006291124/201006291101)/tactic19 (201006261352)/tactic27 (201006291037)/tactic25 (201006262001/201006261937/201006261925)
 
 --
 SVM-Bahia
 
  1) root k=9 
    2) middlewing_2ndquarter_possession< 166.5 k=9 
-     4) middlewing_1stquarter_possession>=103 k=3 *
-     5) middlewing_1stquarter_possession< 103 k=9 
-      10) passmisses< 20.5 k=1 *
-      11) passmisses>=20.5 k=9 *
+     4) middlewing_1stquarter_possession>=103 k=3 * tactic3 (201006281521)
+     5) middlewing_1stquarter_possession< 103 k=9  
+      10) passmisses< 20.5 k=1 * tactic25 (201006290919)
+      11) passmisses>=20.5 k=9 * tactic26 (201006290515)/ tactic9 (201006282031)
    3) middlewing_2ndquarter_possession>=166.5 k=9 
-     6) leftwing_2ndquarter_possession>=141 k=5 *
-     7) leftwing_2ndquarter_possession< 141 k=9 *
+     6) leftwing_2ndquarter_possession>=141 k=5 * tactic17 (201006291518)
+     7) leftwing_2ndquarter_possession< 141 k=9 * tactic26 (201006290515)/ tactic9 (201006282031)
 
 --
 SVM-Nemesis
 
  1) root k=4 
    2) rightwing_3rdquarter_possession>=250.5 k=4 
-     4) rightwing_3rdquarter_possession>=335.5 k=4 *
+     4) rightwing_3rdquarter_possession>=335.5 k=4 * tactic9 (201006281814)/ tactic17 (201006282308)/ tactic18 (201006282322)
      5) rightwing_3rdquarter_possession< 335.5 k=4 
-      10) middlewing_2ndquarter_possession>=89.5 k=4 *
+      10) middlewing_2ndquarter_possession>=89.5 k=4 * tactic9 (201006281814)/ tactic17 (201006282308)/ tactic18 (201006282322)
       11) middlewing_2ndquarter_possession< 89.5 k=6
-        22) passmisses>=18.5 k=4 *
-        23) passmisses< 18.5 k=6 *
+        22) passmisses>=18.5 k=4 * tactic9 (201006281814)/ tactic17 (201006282308)/ tactic18 (201006282322)
+        23) passmisses< 18.5 k=6 * tactic27 (201006291014)/ tactic29 (201006290554)/ tactic16 (201006282208)/tactic8 (201006281736)/ tactic3 (201006281528)
    3) rightwing_3rdquarter_possession< 250.5 k=6 
      6) passmisses>=19.5 k=4 
       12) middlewing_4thquarter_possession< 107.5 k=4 
-        24) goalkicks>=0.5 k=1 *
-        25) goalkicks< 0.5 k=4 *
-      13) middlewing_4thquarter_possession>=107.5 k=6 *
-     7) passmisses< 19.5 k=6 *
+        24) goalkicks>=0.5 k=1 * tactic18 (201006282344)
+        25) goalkicks< 0.5 k=4 * tactic9 (201006281814)/ tactic17 (201006282308)/ tactic18 (201006282322)
+      13) middlewing_4thquarter_possession>=107.5 k=6 * tactic27 (201006291014)/ tactic29 (201006290554)/ tactic16 (201006282208)/tactic8 (201006281736)/ tactic3 (201006281528)
+     7) passmisses< 19.5 k=6 * tactic27 (201006291014)/ tactic29 (201006290554)/ tactic16 (201006282208)/tactic8 (201006281736)/ tactic3 (201006281528)
 
 --
 SVM-Wrighteagle
 
  1) root k=6 
    2) leftwing_1stquarter_possession< 37.5 k=6 
-     4) leftwing_1stquarter_possession< 30.5 k=6 *
+     4) leftwing_1stquarter_possession< 30.5 k=6 * tactic13(201006282327)
      5) leftwing_1stquarter_possession>=30.5 k=6 
-      10) passmisses_offside< 2.5 k=6 *
-      11) passmisses_offside>=2.5 k=7 *
-   3) leftwing_1stquarter_possession>=37.5 k=7 *
+      10) passmisses_offside< 2.5 k=6 * tactic13(201006282327)
+      11) passmisses_offside>=2.5 k=7 * tactic9(201006282017)/ tactic6 (201006281731)/ tactic12 (201006282228)/ tactic29 (201006262348)/ tactic7 (201006281831)/ tactic21 (201006261527)/ tactic28 (201006291124)/ tactic19 (201006261352)/ tactic27 (201006291037)/ tactic25 (201006262001/201006290837/201006261937/201006261925)
+	  
+   3) leftwing_1stquarter_possession>=37.5 k=7 * tactic9(201006282017)/ tactic6 (201006281731)/ tactic12 (201006282228)/ tactic29 (201006262348)/ tactic7 (201006281831)/ tactic21 (201006261527)/ tactic28 (201006291124)/ tactic19 (201006261352)/ tactic27 (201006291037)/ tactic25 (201006262001/201006290837/201006261937/201006261925)
 
 --

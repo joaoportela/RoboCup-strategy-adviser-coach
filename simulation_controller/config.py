@@ -45,12 +45,12 @@ strategy_data = {
         }
 
 # decision_tree
-decision_trees=["randomforest"]#["bagging","randomforest", "svm"]
-window_sizes=[1000,2000,3000]
+decision_trees=["bagging", "randomforest", "svm"]
+window_sizes=[500, 1000,2000]
 
 #match generation
-opponents=["bahia2d"]#["wrighteagle", "bahia2d", "nemesis"]
-min_matches=1
+opponents=["wrighteagle", "bahia2d", "nemesis"]
+min_matches=10
 # typical duration of a match (used for time prediction)
 duration=datetime.timedelta(minutes=12)
 size=9.5*(1024**2)#9.5MiB

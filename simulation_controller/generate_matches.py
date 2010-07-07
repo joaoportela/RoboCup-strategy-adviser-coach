@@ -145,7 +145,7 @@ def main():
 
     report.report("upload",passwd=passwd)
 
-    # runmatches(cfs,matches_missing=nmatches_missing)
+    runmatches(cfs,matches_missing=nmatches_missing)
 
 if __name__ == "__main__":
     # get the upload pass

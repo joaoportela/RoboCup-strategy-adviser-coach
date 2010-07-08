@@ -183,7 +183,7 @@ def main():
             naive_prediction=naive_prediction_for_controlgroup
 
 
-        logging.info("generating matches of type {0}".format(generation_type))
+        logging.info("GENERATING MATCHES OF TYPE {0}".format(generation_type))
         (nmatches, naive_duration, naive_size)=naive_prediction()
         naive_prediction_msg="naive prediction: {1} runs, {0} duration".format(naive_duration, nmatches)
         print naive_prediction_msg

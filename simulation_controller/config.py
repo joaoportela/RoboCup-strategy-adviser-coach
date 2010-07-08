@@ -55,12 +55,12 @@ decision_trees=["bagging", "randomforest", "svm"]
 window_sizes=[500, 1000,2000]
 
 #match generation
-generation_types=GenerationType.all_types
+generation_types=[GenerationType.Strategy, GenerationType.DecisionTree, GenerationType.ControlGroup]
 opponents=["wrighteagle", "bahia2d", "nemesis"]
-min_matches=10
+min_matches=40
 # typical duration of a match (used for time prediction)
 duration=datetime.timedelta(minutes=12)
-size=9.5*(1024**2)#9.5MiB
+size=9.5*(2**20)#9.5MiB
 
 # scripts...
 scripts_dir=os.getcwd()

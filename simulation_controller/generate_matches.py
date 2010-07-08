@@ -5,6 +5,7 @@ import datetime
 import logging
 
 import config
+from config import GenerationType
 import logging
 from team import *
 from confrontation import *
@@ -181,9 +182,19 @@ def main():
         elif generation_type is GenerationType.ControlGroup:
             cfs=list(confrontations_controlgroup())
             naive_prediction=naive_prediction_for_controlgroup
+        else:
+            print generation_type, "is", GenerationType.DecisionTree, (generation_type is
+                    GenerationType.DecisionTree)
+            print generation_type, "is", GenerationType.Strategy, (generation_type is
+                    GenerationType.Strategy)
+            print generation_type, "is", GenerationType.ControlGroup, (generation_type is
+                    GenerationType.ControlGroup)
+            assert False, "this is not meant to happen..."
 
 
-        logging.info("GENERATING MATCHES OF TYPE {0}".format(generation_type))
+        outmsg="GENERATING MATCHES OF TYPE {0}".format(generation_type)
+        print outmsg
+        logging.info(outmsg)
         (nmatches, naive_duration, naive_size)=naive_prediction()
         naive_prediction_msg="naive prediction: {1} runs, {0} duration".format(naive_duration, nmatches)
         print naive_prediction_msg

@@ -40,7 +40,6 @@ def fcpd_configurations_by_decisiontree(decision_trees,window_sizes):
             res['window_size']=ws
             yield res
 
-
 def confrontations_by_decisiontree(decision_trees=config.decision_trees,
         window_sizes=config.window_sizes, opponents=config.opponents):
     for opponent in opponents:
@@ -52,6 +51,64 @@ def confrontations_by_decisiontree(decision_trees=config.decision_trees,
             fcpD_vs_opp = Confrontation(fcpD, opp)
 
             yield fcpD_vs_opp
+
+def confrontations_controlgroup(opponents=config.opponents):
+    for opp in opponents:
+        fcp=Team('fcportugal2d')
+        opp=Team(opp)
+
+        # instantiate the confrontation
+        fcp_vs_opp = Confrontation(fcp, opp)
+
+        yield fcp_vs_opp
+
+def naive_prediction_for_decisiontree(decision_trees=config.decision_trees,
+        window_sizes=config.window_sizes, opponents=config.opponents,
+        min_matches=config.min_matches, matchduration=config.duration,
+        matchsize=config.size):
+    """
+    predicts the number of matches missing when generating decision trees
+    matches.
+    """
+    nconfigs=len(decision_trees)*len(window_sizes)
+    # print "nconfigs", nconfigs
+    # print "nopponents", len(opponents)
+    # print "min_matches", min_matches
+    nruns=min_matches*len(opponents)*nconfigs
+    duration=matchduration*nruns
+    disk_space=matchsize*nruns
+    return (nruns, duration, disk_space)
+
+def naive_prediction_for_strategy(data=config.strategy_data, opponents=config.opponents,
+        min_matches=config.min_matches, matchduration=config.duration,
+        matchsize=config.size):
+    """
+    predicts the number of matches missing when generating 'strategies' matches.
+    """
+    nconfigs=reduce(lambda x,y: x*len(y), data.values(), 1)
+    # print "nconfigs", nconfigs
+    # print "nopponents", len(opponents)
+    # print "min_matches", min_matches
+    nruns=min_matches*len(opponents)*nconfigs
+    duration=matchduration*nruns
+    disk_space=matchsize*nruns
+    return (nruns, duration, disk_space)
+
+def naive_prediction_for_controlgroup(opponents=config.opponents,
+        min_matches=config.min_matches, matchduration=config.duration,
+        matchsize=config.size):
+    """
+    predicts the number of matches missing when generating the control group
+    matches.
+    """
+    nconfigs=1
+    # print "nconfigs", nconfigs
+    # print "nopponents", len(opponents)
+    # print "min_matches", min_matches
+    nruns=min_matches*len(opponents)*nconfigs
+    duration=matchduration*nruns
+    disk_space=matchsize*nruns
+    return (nruns, duration, disk_space)
 
 def smart_prediction(confrontations=confrontations_by_strategy(), min_matches=config.min_matches,
         matchduration=config.duration, matchsize=config.size):
@@ -72,20 +129,6 @@ def smart_prediction(confrontations=confrontations_by_strategy(), min_matches=co
     totalduration=matchduration*runsmissing
     totalsize=matchsize*runsmissing
     return (runsmissing, totalduration, totalsize)
-
-def naive_prediction(data=config.strategy_data, opponents=config.opponents,
-        min_matches=config.min_matches, matchduration=config.duration,
-        matchsize=config.size):
-    """predicts the number of matches missing.
-    does not work for decision tree runs."""
-    nconfigs=reduce(lambda x,y: x*len(y), data.values(), 1)
-    # print "nconfigs", nconfigs
-    # print "nopponents", len(opponents)
-    # print "min_matches", min_matches
-    nruns=min_matches*len(opponents)*nconfigs
-    duration=matchduration*nruns
-    disk_space=matchsize*nruns
-    return (nruns, duration, disk_space)
 
 def runmatches(confrontations=confrontations_by_strategy(), min_matches=config.min_matches,
         matches_missing=0, matchduration=config.duration):
@@ -128,24 +171,36 @@ def print_progress(matches_played, matches_missing, matchduration=config.duratio
     print msg
 
 def main():
-    (nmatches, naive_duration, naive_size)=naive_prediction()
-    naive_prediction_msg="naive prediction: {1} runs, {0} duration".format(naive_duration, nmatches)
-    print naive_prediction_msg
-    logging.info(naive_prediction_msg)
+    for generation_type in config.generation_types:
+        if generation_type is GenerationType.DecisionTree:
+            cfs=list(confrontations_by_decisiontree())
+            naive_prediction=naive_prediction_for_decisiontree
+        elif generation_type is GenerationType.Strategy:
+            cfs=list(confrontations_by_strategy())
+            naive_prediction=naive_prediction_for_strategy
+        elif generation_type is GenerationType.ControlGroup:
+            cfs=list(confrontations_controlgroup())
+            naive_prediction=naive_prediction_for_controlgroup
 
-    cfs=list(confrontations_by_decisiontree())
-    (nmatches_missing, duration, size)=smart_prediction(cfs)
-    print "{0} expected duration time.".format(duration)
-    print "{0} expected size.".format(human_size(size))
-    finish=datetime.datetime.now()+duration
 
-    expected_finish_str="expected to finish @ {0}".format(finish)
-    print expected_finish_str
-    logging.info(expected_finish_str)
+        logging.info("generating matches of type {0}".format(generation_type))
+        (nmatches, naive_duration, naive_size)=naive_prediction()
+        naive_prediction_msg="naive prediction: {1} runs, {0} duration".format(naive_duration, nmatches)
+        print naive_prediction_msg
+        logging.info(naive_prediction_msg)
 
-    report.report("upload",passwd=passwd)
+        (nmatches_missing, duration, size)=smart_prediction(cfs)
+        print "{0} expected duration time.".format(duration)
+        print "{0} expected size.".format(human_size(size))
+        finish=datetime.datetime.now()+duration
 
-    runmatches(cfs,matches_missing=nmatches_missing)
+        expected_finish_str="expected to finish @ {0}".format(finish)
+        print expected_finish_str
+        logging.info(expected_finish_str)
+
+        report.report("upload",passwd=passwd)
+
+        runmatches(cfs,matches_missing=nmatches_missing)
 
 if __name__ == "__main__":
     # get the upload pass

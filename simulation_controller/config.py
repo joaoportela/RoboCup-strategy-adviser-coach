@@ -4,6 +4,12 @@ import os
 import logging
 import datetime
 
+class GenerationType:
+    Strategy='Strategy'
+    DecisionTree='DecisionTree'
+    ControlGroup='ControlGroup'
+    all_types=[Strategy, DecisionTree, ControlGroup]
+
 def _gen_strategy(base_strategy):
     from generate_strategy import Strategy
     s=Strategy()
@@ -49,6 +55,7 @@ decision_trees=["bagging", "randomforest", "svm"]
 window_sizes=[500, 1000,2000]
 
 #match generation
+generation_types=GenerationType.all_types
 opponents=["wrighteagle", "bahia2d", "nemesis"]
 min_matches=10
 # typical duration of a match (used for time prediction)

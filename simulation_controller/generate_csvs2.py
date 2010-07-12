@@ -89,7 +89,7 @@ def gen_group3(matchesdir, filename=None):
             teamdata=SortedDict()
             teamdata.update(bonus_info(st))
             teamdata.update(evaluators(st))
-            t_config=discoverteamconfig(st.xml,st.side)[0]
+            t_config=discoverteamconfig(st.xml,st.side)
             teamdata["config"]=t_config
             # for confname in T_CONFIG_NAMES:
             #     teamdata[confname]=t_config[confname]
@@ -134,7 +134,7 @@ def gen_group4(matchesdir, filename=None):
         st.side=fcp
         teamsdata.update(bonus_info(st))
         teamsdata.update(evaluators(st))
-        t_config=discoverteamconfig(st.xml,st.side)[0]
+        t_config=discoverteamconfig(st.xml,st.side)
         teamsdata["config"]=t_config
         # for confname in T_CONFIG_NAMES:
         #     teamsdata[confname]=t_config[confname]

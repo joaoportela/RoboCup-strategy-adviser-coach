@@ -69,7 +69,7 @@ def gen_group2(matchesdir, target_dir=None):
         for teamname, teamdata in teams.iteritems():
             fname=os.path.join(target_dir, teamname+".csv")
             with open(fname, "w") as f:
-                f.write(";".join(STATISTICS14_KEYS)+"\n")
+                f.write(";".join(ROWS_HEAD)+"\n")
                 for row in teamdata:
                     f.write(";".join([str(value) for _, value in row.iteritems()]))
                     f.write("\n")
@@ -77,7 +77,7 @@ def gen_group2(matchesdir, target_dir=None):
     return teams
 
 def gen_group3(matchesdir, filename=None):
-    ROWS_HEAD=BONUS_INFO_KEYS+EVALUATORS_KEYS+T_CONFIG_NAMES
+    ROWS_HEAD=BONUS_INFO_KEYS+EVALUATORS_KEYS+["config"]
     rows=[]
     for st in walk_statistics(matchesdir):
         for side in ["left", "right"]:
@@ -89,9 +89,10 @@ def gen_group3(matchesdir, filename=None):
             teamdata=SortedDict()
             teamdata.update(bonus_info(st))
             teamdata.update(evaluators(st))
-            t_config=discoverteamconfig(st.xml,st.side)[0]
-            for confname in T_CONFIG_NAMES:
-                teamdata[confname]=t_config[confname]
+            t_config=discoverteamconfig(st.xml,st.side)
+            teamdata["config"]=t_config
+            # for confname in T_CONFIG_NAMES:
+            #     teamdata[confname]=t_config[confname]
 
             # another row.
             rows.append(teamdata)
@@ -124,7 +125,7 @@ def teams_sides(st):
     return (fcp,other)
 
 def gen_group4(matchesdir, filename=None):
-    ROWS_HEAD=BONUS_INFO_KEYS+EVALUATORS_KEYS+T_CONFIG_NAMES+["opponent"]+STATISTICS14_KEYS
+    ROWS_HEAD=BONUS_INFO_KEYS+EVALUATORS_KEYS+["config"]+["opponent"]+STATISTICS14_KEYS
     rows=[]
     for st in walk_statistics(matchesdir):
         fcp,other = teams_sides(st)
@@ -133,9 +134,10 @@ def gen_group4(matchesdir, filename=None):
         st.side=fcp
         teamsdata.update(bonus_info(st))
         teamsdata.update(evaluators(st))
-        t_config=discoverteamconfig(st.xml,st.side)[0]
-        for confname in T_CONFIG_NAMES:
-            teamsdata[confname]=t_config[confname]
+        t_config=discoverteamconfig(st.xml,st.side)
+        teamsdata["config"]=t_config
+        # for confname in T_CONFIG_NAMES:
+        #     teamsdata[confname]=t_config[confname]
 
         st.side=other
         teamsdata["opponent"]=st.team

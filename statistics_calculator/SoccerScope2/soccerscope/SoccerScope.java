@@ -16,6 +16,7 @@ import java.util.prefs.Preferences;
 
 import javax.swing.JFrame;
 
+import soccerscope.decision.RSVM;
 import soccerscope.file.LogFileReader;
 import soccerscope.model.SceneSet;
 import soccerscope.model.SceneSetMaker;
@@ -64,8 +65,15 @@ public class SoccerScope extends JFrame {
 					System.exit(1);
 				}
 				return;
-			}
-			else {
+			} else if(args[0].equals("--svm")) {
+				RSVM r = new RSVM();
+				r.init("/home/joao/RoboCup-strategy-adviser-coach/svm_training_csvs/Bahia2D.csv");
+				System.out.println("1=="+r.classify(26, 1, 4, 1, 1, 0, 3, 41, 33, 44, 106,
+						37, 48, 6));
+				// r.mainloop();
+				r.end();
+				return;
+			} else {
 				System.out.format("invalid option %s or wrong"
 						+ " number of arguments (0 or 2)\n", args[0]);
 				System.out.println("usage [--batch input_file output_file]"

@@ -46,9 +46,8 @@ public class KickInAnalyzer extends SceneAnalyzer implements Xmling {
 
 		@Override
 		public void xmlElement(final XMLBuilder builder) {
-			builder.elem("kickin")
-			.attr("team", Team.name(this.side))
-			.attr("time", String.valueOf(this.time));
+			builder.elem("kickin").attr("team", Team.name(this.side)).attr(
+					"time", String.valueOf(this.time));
 		}
 	}
 
@@ -79,6 +78,16 @@ public class KickInAnalyzer extends SceneAnalyzer implements Xmling {
 		if (side == Team.RIGHT_SIDE) {
 			this.countUpRight(time);
 		}
+	}
+
+	public int nKicksin(int side) {
+		if(side == Team.LEFT_SIDE) {
+			return this.lcount;
+		}else if (side == Team.RIGHT_SIDE) {
+			return this.rcount;
+		}
+		assert false;
+		return 0;
 	}
 
 	@Override

@@ -94,7 +94,7 @@ public class GameAnalyzer {
 		Scene prev = null;
 		GameEvent ge;
 
-		init();
+		GameAnalyzer.init();
 		while (sceneit.hasNext()) {
 			prev = scene;
 			scene = sceneit.next();
@@ -138,9 +138,10 @@ public class GameAnalyzer {
 	public static SceneAnalyzer getAnalyzer(String name) {
 		Iterator<SceneAnalyzer> it = analyzerList.iterator();
 		while (it.hasNext()) {
-			SceneAnalyzer sa = (SceneAnalyzer) it.next();
-			if (name.compareTo(sa.getName()) == 0)
+			SceneAnalyzer sa = it.next();
+			if (name.compareTo(sa.getName()) == 0) {
 				return sa;
+			}
 		}
 		return null;
 	}
@@ -152,6 +153,7 @@ public class GameAnalyzer {
 			 */
 			private static final long serialVersionUID = 1L;
 
+			@Override
 			public String getColumnName(int col) {
 				switch (col) {
 				case SceneAnalyzer.ROW_NAME:
@@ -172,7 +174,7 @@ public class GameAnalyzer {
 			}
 
 			public Object getValueAt(int row, int col) {
-				return ((SceneAnalyzer) analyzerList.get(row)).getValueAt(col);
+				return (analyzerList.get(row)).getValueAt(col);
 			}
 		};
 
@@ -188,9 +190,11 @@ public class GameAnalyzer {
 			 */
 			private static final long serialVersionUID = 1L;
 
+			@Override
 			public String getColumnName(int col) {
-				if (col == 0)
+				if (col == 0) {
 					return " ";
+				}
 				return ((col - 1) * timeSlice + 1) + " - " + (col * timeSlice);
 			}
 
@@ -203,10 +207,11 @@ public class GameAnalyzer {
 			}
 
 			public Object getValueAt(int row, int col) {
-				if (col == 0)
-					return ((SceneAnalyzer) analyzerList.get(row))
-							.getValueAt(col);
-				return ((SceneAnalyzer) analyzerList.get(row)).getLeftValueAt(
+				if (col == 0) {
+					return (analyzerList.get(row))
+					.getValueAt(col);
+				}
+				return (analyzerList.get(row)).getLeftValueAt(
 						((col - 1) * timeSlice + 1), (col * timeSlice));
 			}
 		};
@@ -221,9 +226,11 @@ public class GameAnalyzer {
 			 */
 			private static final long serialVersionUID = 1L;
 
+			@Override
 			public String getColumnName(int col) {
-				if (col == 0)
+				if (col == 0) {
 					return " ";
+				}
 				return ((col - 1) * timeSlice + 1) + " - " + (col * timeSlice);
 			}
 
@@ -236,10 +243,11 @@ public class GameAnalyzer {
 			}
 
 			public Object getValueAt(int row, int col) {
-				if (col == 0)
-					return ((SceneAnalyzer) analyzerList.get(row))
-							.getValueAt(col);
-				return ((SceneAnalyzer) analyzerList.get(row)).getRightValueAt(
+				if (col == 0) {
+					return (analyzerList.get(row))
+					.getValueAt(col);
+				}
+				return (analyzerList.get(row)).getRightValueAt(
 						((col - 1) * timeSlice + 1), (col * timeSlice));
 			}
 		};

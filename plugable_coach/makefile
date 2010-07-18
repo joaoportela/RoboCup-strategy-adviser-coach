@@ -35,6 +35,7 @@ depend:
 deploy: $(EXECUTABLE) jars
 	cp $(SOURCE_FILES_TO_DEPLOY) $(SOURCE_FILES_DEPLOY_TARGET)
 	cp $(JARS_TO_DEPLOY) $(JARS_TARGET)
+	cp runchild $(JARS_TARGET)
 
 # Dependencies tracking:
 # implicit dependencies

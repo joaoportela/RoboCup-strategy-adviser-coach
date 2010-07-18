@@ -6,10 +6,14 @@ import soccerscope.model.Team;
 import soccerscope.util.analyze.AnalyzeNow;
 import soccerscope.util.analyze.AttackAnalyzer;
 import soccerscope.util.analyze.BallPossessionByZonesAnalyzer;
+import soccerscope.util.analyze.CornerKickAnalyzer;
+import soccerscope.util.analyze.GoalAnalyzer;
 import soccerscope.util.analyze.GoalKickAnalyzer;
+import soccerscope.util.analyze.KickInAnalyzer;
 import soccerscope.util.analyze.PassChainAnalyzer;
 import soccerscope.util.analyze.PassMissAnalyzer;
 import soccerscope.util.analyze.SceneAnalyzer;
+import soccerscope.util.analyze.AttackAnalyzer.AttackType;
 
 public class StatisticsAccessFacilitator {
 	public static final int GAMETIME = 6000;
@@ -82,6 +86,16 @@ public class StatisticsAccessFacilitator {
 				this.time);
 	}
 
+	private int attacks(AttackType t) {
+		AttackAnalyzer at = (AttackAnalyzer) this
+		.getAnalyzer(AttackAnalyzer.class);
+		return at.getCount(this.side, t);
+	}
+
+	public float attacksScaled(AttackType t) {
+		return StatisticsAccessFacilitator.scale(this.attacks(t), this.time);
+	}
+
 	private int ballPossession(ZoneEnum zone) {
 		BallPossessionByZonesAnalyzer bpbz = (BallPossessionByZonesAnalyzer) this
 		.getAnalyzer(BallPossessionByZonesAnalyzer.class);
@@ -113,6 +127,33 @@ public class StatisticsAccessFacilitator {
 		PassMissAnalyzer pm = (PassMissAnalyzer) this
 		.getAnalyzer(PassMissAnalyzer.class);
 		return pm.nPassMissOffside(this.side);
+	}
+
+	public float goalsScaled() {
+		return StatisticsAccessFacilitator.scale(this.goals(), this.time);
+	}
+
+	private int goals() {
+		GoalAnalyzer ga = (GoalAnalyzer) this.getAnalyzer(GoalAnalyzer.class);
+		return ga.nGoals(this.side);
+	}
+
+	private int corners() {
+		CornerKickAnalyzer cka = (CornerKickAnalyzer) this.getAnalyzer(CornerKickAnalyzer.class);
+		return cka.nCorners(this.side);
+	}
+
+	public float cornersScaled() {
+		return StatisticsAccessFacilitator.scale(this.corners(), this.time);
+	}
+
+	private int kicksin() {
+		KickInAnalyzer kia = (KickInAnalyzer) this.getAnalyzer(KickInAnalyzer.class);
+		return kia.nKicksin(this.side);
+	}
+
+	public float kicksinScaled() {
+		return StatisticsAccessFacilitator.scale(this.kicksin(), this.time);
 	}
 
 }

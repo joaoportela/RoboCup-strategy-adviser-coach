@@ -6,7 +6,7 @@ import math
 
 def usage():
     import sys
-    return "usage: python {0} <file_to_minmax>+"
+    return "usage: python {0} <file_to_minmax>+".format(sys.argv[0])
 
 def valid_arguments(args):
     if len(args) < 1:
@@ -187,7 +187,7 @@ def main(files, configs=list(fcpd_configurations_str())):
 
         print basename+":"
         print_minmax(counter)
-        #print_strategy_count(counter)
+        # print_strategy_count(counter)
 
         outdir=os.path.join(path, "merged")
         if not os.path.isdir(outdir):

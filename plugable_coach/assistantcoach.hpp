@@ -99,10 +99,22 @@ class AssistantCoach
         bool _finished;
 #endif
 
+        // auxiliar method.
+        static std::vector<std::string> buildargs(int listen_port, std::string
+                decisionalgorithm, int windowsize);
+
         // parameters to launch the child.
         const std::vector<std::string> args;
         static const std::string exec;
-        static const std::string classpath;
+
+        // environment variables
+        // static const std::string jripath;
+        // static const std::string classpath;
+        // static const std::string rsharedir;
+        // static const std::string rincludedir;
+        // static const std::string rdocdir;
+        // static const std::string rhome;
+        // static const std::string jrildpath;
 
         boost::asio::io_service io_service;
 

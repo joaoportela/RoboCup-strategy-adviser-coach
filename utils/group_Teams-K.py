@@ -34,7 +34,7 @@ def team_k(line):
     TeamK(team='Bahia2D', k='2')
     """
 
-    line_sp=line.strip().split(';')
+    line_sp=line.strip().strip(';').split(';')
     return TeamK(team=line_sp[1].strip("\""), k=line_sp[-1])
 
 def process_file(infile, outfolder):
@@ -59,12 +59,22 @@ def process_file(infile, outfolder):
     for team, teamdata in data_by_teamk.iteritems():
         for k, lines in teamdata.iteritems():
             outfile=os.path.join(outfolder, team+"_"+k+".csv")
+            print outfile
             with open(outfile, 'w') as f:
                 f.write(firstline)
                 f.write("".join(lines))
 
+    for team, teamdata in data_by_teamk.iteritems():
+        outfile=os.path.join(outfolder, team+".csv")
+        print outfile
+        with open(outfile, 'w') as f:
+            f.write(firstline)
+            for lines in teamdata.itervalues():
+                f.write("".join(lines))
+
     for k, lines in data_by_k.iteritems():
         outfile=os.path.join(outfolder, "k"+k+".csv")
+        print outfile
         with open(outfile, 'w') as f:
             f.write(firstline)
             f.write("".join(lines))

@@ -29,8 +29,8 @@ public class AssistantCoachRole implements SceneSetMaker.CoachInterface {
 	private int opponentside;
 	private String algorithmname;
 	private boolean initialized;
-	int lasttactic=0;
-	int lastcommcycle=0;
+	int lasttactic = 0;
+	int lastcommcycle = 0;
 
 	public AssistantCoachRole(DatagramSocket socket, InetSocketAddress address,
 			String treealgorithm, int window_size) {
@@ -71,6 +71,7 @@ public class AssistantCoachRole implements SceneSetMaker.CoachInterface {
 		.typeFor(opponentname, this.algorithmname);
 
 		this.dt = DecisionTreeFactory.getDecisionTree(treetype);
+		this.dt.init();
 		this.changeTactic(this.dt.defaultTactic());
 
 		this.initialized = true;
@@ -87,7 +88,6 @@ public class AssistantCoachRole implements SceneSetMaker.CoachInterface {
 			if (current.time % this.window_size == 0) {
 				assert this.initialized : "NEVER do analysis not-initialized";
 
-
 			System.err.println("assistant coach 'is' analyzing scene "
 					+ current.time);
 			StatisticsAccessFacilitator statistics = new StatisticsAccessFacilitator(
@@ -95,11 +95,13 @@ public class AssistantCoachRole implements SceneSetMaker.CoachInterface {
 					current.time);
 
 			int tactic = this.dt.tactic(statistics);
-			if(current.time == this.lastcommcycle && tactic == this.lasttactic) {
+			if (current.time == this.lastcommcycle
+					&& tactic == this.lasttactic) {
 				// no need to repeat yourself
 				return;
 			}
-			System.err.println(current.time + ") assistant coach is changing tactic to "+ tactic);
+			System.err.println(current.time
+					+ ") assistant coach is changing tactic to " + tactic);
 			this.changeTactic(tactic);
 
 			this.lasttactic = tactic;

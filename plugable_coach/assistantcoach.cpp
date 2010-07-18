@@ -20,15 +20,26 @@
 
 using namespace std;
 
-// initialization of static constants.
-const string AssistantCoach::exec = bp::find_executable_in_path("java");
-const string AssistantCoach::classpath="soccerscope.jar:java-xmlbuilder-0.3.jar:sexpr.jar";
 
-vector<string> buildargs(int listen_port, string decisionalgorithm, int windowsize)
+// initialization of static constants.
+const string AssistantCoach::exec = "./runchild";
+
+// environment variables
+// const string AssistantCoach::jripath="/usr/local/lib/R/site-library/rJava/jri/";
+// const string AssistantCoach::classpath="soccerscope.jar:java-xmlbuilder-0.3.jar:sexpr.jar:JRI.jar";
+// const string AssistantCoach::rsharedir = "/usr/share/R/share";
+// const string AssistantCoach::rincludedir = "/usr/share/R/include";
+// const string AssistantCoach::rdocdir = "/usr/share/R/doc";
+// const string AssistantCoach::rhome = "/usr/lib/R";
+// const string AssistantCoach::jrildpath= AssistantCoach::rhome+"/lib:"+AssistantCoach::rhome+"/bin";
+
+// auxiliar function to get java child arguments.
+vector<string> AssistantCoach::buildargs(int listen_port, string decisionalgorithm, int windowsize)
 {
     return (
-            boost::assign::list_of(string("java"))
-            ("soccerscope.SoccerScope") ("--udp")
+            boost::assign::list_of(string("runchild"))
+            ("soccerscope.SoccerScope")
+            ("--udp")
             (boost::lexical_cast<string>(listen_port))
             (decisionalgorithm) 
             (boost::lexical_cast<string>(windowsize))
@@ -43,7 +54,7 @@ string join(string dir, string file)
 AssistantCoach::AssistantCoach(userhandler_t rcvfunc, string decisionalgorithm, int windowsize, std::string matchdir, int listen_port):
     receive(rcvfunc),
     //_finished(false),
-    args(buildargs(listen_port, decisionalgorithm, windowsize)),
+    args(AssistantCoach::buildargs(listen_port, decisionalgorithm, windowsize)),
     socket(this->io_service, udp::endpoint(udp::v4(), listen_port))
 #ifdef LOG_COMMUNICATION
     ,to_child(join(matchdir, "messages-tochild.log").c_str()),
@@ -56,8 +67,19 @@ AssistantCoach::AssistantCoach(userhandler_t rcvfunc, string decisionalgorithm, 
 {
     bp::context ctx; 
     ctx.environment = bp::self::get_environment(); 
-    ctx.environment["CLASSPATH"] = AssistantCoach::classpath;
+    // ctx.environment["CLASSPATH"] = AssistantCoach::classpath;
+    // ctx.environment["R_SHARE_DIR"] = AssistantCoach::rsharedir;
+    // ctx.environment["R_INCLUDE_DIR"] = AssistantCoach::rincludedir;
+    // ctx.environment["R_DOC_DIR"] = AssistantCoach::rdocdir;
+    // ctx.environment["R_HOME"] = AssistantCoach::rhome;
+    // string ldlibrarypath=ctx.environment["LD_LIBRARY_PATH"];
+    // if(ldlibrarypath.size() > 0) {
+    //     ldlibrarypath+=":";
+    // }
+    // ldlibrarypath+=AssistantCoach::jrildpath;
+    // ctx.environment["LD_LIBRARY_PATH"] = ldlibrarypath;
 
+ 
 #ifdef CHILD_REDIRECT_TO_FILE
     // this is not the proper way to check but i use it just for debug.
     BOOST_ASSERT(this->childoutput != -1);

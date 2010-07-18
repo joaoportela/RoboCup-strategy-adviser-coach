@@ -1,8 +1,9 @@
 include sources
 OBJECTS= $(subst .java,.class,$(SOURCES))#this macro didn't work: $(SOURCES,.java=.class)
-JPATH=.:java-xmlbuilder-0.3.jar:sexpr.jar
+JRI_JAR=/usr/local/lib/R/site-library/rJava/jri/JRI.jar
+JPATH=.:java-xmlbuilder-0.3.jar:sexpr.jar:$(JRI_JAR)
 JAR_FILE=soccerscope.jar
-DEPEND_JARS=java-xmlbuilder-0.3.jar sexpr.jar
+DEPEND_JARS=java-xmlbuilder-0.3.jar sexpr.jar $(JRI_JAR)
 ALL_JARS=$(JAR_FILE) $(DEPEND_JARS)
 
 .PHONY: all soccerscope build clean deploy

@@ -41,15 +41,13 @@ def main():
     #fcpX = Team("fcportugalX")
     fcp1 = FCPortugal(strategy_params={'tactic':1},
             decision_tree="svm", window_size=500)
-    #fcp2 = FCPortugal(strategy_params={'tactic':2})
-    #fcp = Team("fcportugal2d")
+    fcp = Team("fcportugal2d")
     bahia=Team("bahia2d")
     kickofftug=Team("kickofftug")
     nemesis=Team("nemesis")
     wrighteagle=Team("wrighteagle")
     confrontations=[]
     confrontations.append(Confrontation(fcp1, bahia))
-    # confrontations.append(Confrontation(fcp1, bahia))
     # confrontations.append(Confrontation(fcp1, kickofftug))
     # confrontations.append(Confrontation(fcp1, nemesis))
     for c in confrontations:

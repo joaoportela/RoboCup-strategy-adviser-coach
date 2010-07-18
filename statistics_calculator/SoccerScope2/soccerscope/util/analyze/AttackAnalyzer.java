@@ -406,6 +406,18 @@ public class AttackAnalyzer extends SceneAnalyzer implements Xmling {
 		return 0;
 	}
 
+	public int getCount(int side, AttackType t) {
+		int c=0;
+		for(Attack attack: this.attacks) {
+			if(attack.team == side) {
+				if(attack.attackType() == t) {
+					c++;
+				}
+			}
+		}
+		return c;
+	}
+
 	@Override
 	public void xmlElement(XMLBuilder builder) {
 		XMLBuilder attacksBuilder = builder.elem("attacks").attr("left",

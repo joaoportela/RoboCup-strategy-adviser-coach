@@ -66,7 +66,7 @@ public class GoalAnalyzer extends SceneAnalyzer implements Xmling {
 		public void xmlElement(XMLBuilder builder) {
 			XMLBuilder goal = builder.elem("goal").attr("time",
 					String.valueOf(this.time)).attr("team",
-					Team.name(this.kicker.team));
+							Team.name(this.kicker.team));
 			this.kicker.xmlElement(goal);
 		}
 	}
@@ -90,12 +90,13 @@ public class GoalAnalyzer extends SceneAnalyzer implements Xmling {
 		public void xmlElement(XMLBuilder builder) {
 			XMLBuilder goalmiss = builder.elem("goalmiss").attr("time",
 					String.valueOf(this.time)).attr("type",
-					this.missType.toString()).attr("team",
-					Team.name(this.kicker.team));
+							this.missType.toString()).attr("team",
+									Team.name(this.kicker.team));
 			this.kicker.xmlElement(goalmiss);
 		}
 	}
 
+	@Override
 	public String getName() {
 		return NAME;
 	}
@@ -108,10 +109,10 @@ public class GoalAnalyzer extends SceneAnalyzer implements Xmling {
 		private int team;
 
 		public Kicker() {
-			time = 0;
-			unum = 0;
-			pos = null;
-			shotZone = null;
+			this.time = 0;
+			this.unum = 0;
+			this.pos = null;
+			this.shotZone = null;
 		}
 
 		public Kicker(int time, int unum, int team, Point2f pos, Zone shotZone) {
@@ -122,23 +123,25 @@ public class GoalAnalyzer extends SceneAnalyzer implements Xmling {
 			this.team = team;
 		}
 
+		@Override
 		public String toString() {
-			return "kicker ::" + time + ": " + unum + ": " + team + ": "
-					+ kickZone();
+			return "kicker ::" + this.time + ": " + this.unum + ": " + this.team + ": "
+			+ this.kickZone();
 
 		}
 
 		public String kickZone() {
-			if (shotZone != null)
-				return shotZone.areaType.toString();
+			if (this.shotZone != null) {
+				return this.shotZone.areaType.toString();
+			}
 			return AreaType.FAR_SHOT.toString();
 		}
 
 		@Override
 		public void xmlElement(XMLBuilder builder) {
 			builder.elem("kick").attr("player", String.valueOf(this.unum))
-					.attr("time", String.valueOf(this.time)).attr("team",
-							Team.name(this.team)).attr("zone", this.kickZone());
+			.attr("time", String.valueOf(this.time)).attr("team",
+					Team.name(this.team)).attr("zone", this.kickZone());
 		}
 	}
 
@@ -188,26 +191,28 @@ public class GoalAnalyzer extends SceneAnalyzer implements Xmling {
 				new Rectangle2f(new Point2f(36f, -20.15f), 16.5f, 40.3f)));
 	}
 
+	@Override
 	public void init() {
 		super.init();
-		initZones();
+		this.initZones();
 		this.lmissCount = 0;
 		this.rmissCount = 0;
 		this.goalList.clear();
 		this.goalMissList.clear();
 	}
 
+	@Override
 	public GameEvent analyze(Scene scene, Scene prev) {
 		GameEvent ge = null;
 		/* ������⡼�ɤϻ��郎�ߤޤ뤿�ᡢprev�򸫤ơ�������⡼�ɤˤʤä��ִ֤����򡢼����� */
 		// Standard goal
 		if (prev != null) {
-			if (isPlayModeChanged(scene, prev, PlayMode.PM_AfterGoal_Left)) {
-				scoredGoalLeft(scene.time);
+			if (this.isPlayModeChanged(scene, prev, PlayMode.PM_AfterGoal_Left)) {
+				this.scoredGoalLeft(scene.time);
 				ge = new GameEvent(scene.time, GameEvent.GOAL);
 			}
-			if (isPlayModeChanged(scene, prev, PlayMode.PM_AfterGoal_Right)) {
-				scoredGoalRight(scene.time);
+			if (this.isPlayModeChanged(scene, prev, PlayMode.PM_AfterGoal_Right)) {
+				this.scoredGoalRight(scene.time);
 				ge = new GameEvent(scene.time, GameEvent.GOAL);
 			}
 		}
@@ -219,7 +224,7 @@ public class GoalAnalyzer extends SceneAnalyzer implements Xmling {
 			Line2f rightGoalLine = new Line2f(Param.topRightCorner,
 					Param.bottomRightCorner);
 			if (this.crossedLine(prev.ball.pos, scene.ball.pos, rightGoalLine)) {
-				scoredGoalLeft(scene.time);
+				this.scoredGoalLeft(scene.time);
 				ge = new GameEvent(scene.time, GameEvent.GOAL);
 			}
 
@@ -227,14 +232,15 @@ public class GoalAnalyzer extends SceneAnalyzer implements Xmling {
 			Line2f leftGoalLine = new Line2f(Param.topLeftCorner,
 					Param.bottomLeftCorner);
 			if (this.crossedLine(prev.ball.pos, scene.ball.pos, leftGoalLine)) {
-				scoredGoalRight(scene.time);
+				this.scoredGoalRight(scene.time);
 				ge = new GameEvent(scene.time, GameEvent.GOAL);
 			}
 		}
 
 		// if a goal was scored do not try to find the goal miss
-		if (ge != null)
+		if (ge != null) {
 			return ge;
+		}
 
 		// ###########################
 		// # now for the goal miss!! #
@@ -242,18 +248,18 @@ public class GoalAnalyzer extends SceneAnalyzer implements Xmling {
 
 		// check if the goalie catched the ball
 		if (prev != null && scene.isGoalieCatching()) {
-			if (isPlayModeChanged(scene, prev, PlayMode.PM_FreeKick_Left)) {
+			if (this.isPlayModeChanged(scene, prev, PlayMode.PM_FreeKick_Left)) {
 				// left catched, if the right kicked we have a missed
 				// opportunity
-				Kicker k = getKickFault(prev.time);
+				Kicker k = this.getKickFault(prev.time);
 				if (k.team == Team.RIGHT_SIDE) {
 					this.goalMissed(k, MissType.GOALIE_CATCHED, scene.time);
 				}
 			}
-			if (isPlayModeChanged(scene, prev, PlayMode.PM_FreeKick_Right)) {
+			if (this.isPlayModeChanged(scene, prev, PlayMode.PM_FreeKick_Right)) {
 				// right catched, if the left kicked we have a missed
 				// opportunity
-				Kicker k = getKickFault(prev.time);
+				Kicker k = this.getKickFault(prev.time);
 				if (k.team == Team.LEFT_SIDE) {
 					this.goalMissed(k, MissType.GOALIE_CATCHED, scene.time);
 				}
@@ -264,12 +270,12 @@ public class GoalAnalyzer extends SceneAnalyzer implements Xmling {
 		Line2f relevantGoalLine = null;
 		// the other miss is if the ball crossed the goal line (but was not
 		// inside the actual goal)
-		if (isPlayModeChanged(scene, prev, PlayMode.PM_GoalKick_Left)) {
+		if (this.isPlayModeChanged(scene, prev, PlayMode.PM_GoalKick_Left)) {
 			missedGoalTeam = Team.RIGHT_SIDE;
 			relevantGoalLine = new Line2f(Param.topLeftCorner,
 					Param.bottomLeftCorner);
 		}
-		if (isPlayModeChanged(scene, prev, PlayMode.PM_GoalKick_Right)) {
+		if (this.isPlayModeChanged(scene, prev, PlayMode.PM_GoalKick_Right)) {
 			missedGoalTeam = Team.LEFT_SIDE;
 			relevantGoalLine = new Line2f(Param.topRightCorner,
 					Param.bottomRightCorner);
@@ -285,16 +291,18 @@ public class GoalAnalyzer extends SceneAnalyzer implements Xmling {
 			// not dividing by 2)
 			if (this.crossedLine(prev.ball.pos, next_ball_pos,
 					relevantGoalLine, Param.GOAL_WIDTH)) {
-				Kicker k = getKickFault(prev.time);
+				Kicker k = this.getKickFault(prev.time);
 				// kicker must be in the correct team
-				if (k.team == missedGoalTeam)
+				if (k.team == missedGoalTeam) {
 					this.goalMissed(k, MissType.OUTSIDE, scene.time);
+				}
 			}else if(this.crossedLine(prev.ball.pos, next_ball_pos,
 					relevantGoalLine, 34.0f)) {
-				Kicker k = getKickFault(prev.time);
+				Kicker k = this.getKickFault(prev.time);
 				// kicker must be in the correct team
-				if (k.team == missedGoalTeam)
+				if (k.team == missedGoalTeam) {
 					this.goalMissed(k, MissType.FAR_OUTSIDE, scene.time);
+				}
 			}
 		}
 		return ge;
@@ -314,24 +322,25 @@ public class GoalAnalyzer extends SceneAnalyzer implements Xmling {
 		// 3rd: check if the crossing occurred between the said positions
 		if (traj.intersect(line)) {
 			Point2f p = traj.intersection(line);
-			if (Math.abs(p.y) <= distance_to_middle)
+			if (Math.abs(p.y) <= distance_to_middle) {
 				if ((prevPos.x <= p.x && p.x <= currPos.x)
 						|| (currPos.x <= p.x && p.x <= prevPos.x)) {
 					return true;
 				}
+			}
 		}
 		return false;
 	}
 
 	public void scoredGoalLeft(int time) {
-		Kicker k = getKickFault(time);
-		goalScored(k, time);
+		Kicker k = this.getKickFault(time);
+		this.goalScored(k, time);
 		super.countUpLeft(time);
 	}
 
 	public void scoredGoalRight(int time) {
-		Kicker k = getKickFault(time);
-		goalScored(k, time);
+		Kicker k = this.getKickFault(time);
+		this.goalScored(k, time);
 		super.countUpRight(time);
 	}
 
@@ -347,7 +356,7 @@ public class GoalAnalyzer extends SceneAnalyzer implements Xmling {
 			this.rmissCount++;
 		}
 		System.out
-				.println("GOAL MISSED(" + type.toString() + ") kicker-> " + k);
+		.println("GOAL MISSED(" + type.toString() + ") kicker-> " + k);
 		this.goalMissList.add(new GoalMiss(k, type, time));
 	}
 
@@ -364,13 +373,13 @@ public class GoalAnalyzer extends SceneAnalyzer implements Xmling {
 
 			for (int i = 0; i < Param.MAX_PLAYER * 2; i++) {
 				if ((scene.player[i].isKicking() && prev.player[i]
-						.isKickable(prev.ball.pos))
-						|| (scene.player[i].isCatching() && prev.player[i]
-								.isCatchable(prev.ball.pos))
-						|| (scene.player[i].isTackling() && prev.player[i]
-								.canTackle(prev.ball.pos))) {
+				                                                .isKickable(prev.ball.pos))
+				                                                || (scene.player[i].isCatching() && prev.player[i]
+				                                                                                                .isCatchable(prev.ball.pos))
+				                                                                                                || (scene.player[i].isTackling() && prev.player[i]
+				                                                                                                                                                .canTackle(prev.ball.pos))) {
 					// we found the culprit! check the zone and return it!
-					for (Zone z : zones) {
+					for (Zone z : this.zones) {
 						if (z.contains(scene.player[i].pos)) {
 							return new Kicker(scene.time, scene.player[i].unum,
 									scene.player[i].side, scene.player[i].pos,
@@ -392,18 +401,27 @@ public class GoalAnalyzer extends SceneAnalyzer implements Xmling {
 	public void xmlElement(XMLBuilder builder) {
 
 		XMLBuilder goals = builder.elem("goals").attr("left",
-				String.valueOf(lcount)).attr("right", String.valueOf(rcount));
+				String.valueOf(this.lcount)).attr("right", String.valueOf(this.rcount));
 		for (Goal g : this.goalList) {
 			g.xmlElement(goals);
 		}
 
 		XMLBuilder goalmiss = builder.elem("goalmisses").attr("left",
-				String.valueOf(lmissCount)).attr("right",
-				String.valueOf(rmissCount));
+				String.valueOf(this.lmissCount)).attr("right",
+						String.valueOf(this.rmissCount));
 		for (GoalMiss g : this.goalMissList) {
 			g.xmlElement(goalmiss);
 		}
 
 	}
 
+	public int nGoals(int side) {
+		if(side == Team.LEFT_SIDE) {
+			return this.lcount;
+		}else if (side == Team.RIGHT_SIDE) {
+			return this.rcount;
+		}
+		assert false;
+		return 0;
+	}
 }

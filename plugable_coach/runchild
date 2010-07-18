@@ -1,0 +1,35 @@
+#!/bin/sh
+
+R_HOME=/usr/lib/R
+JRI_PATH=/usr/local/lib/R/site-library/rJava/jri
+
+R_SHARE_DIR=/usr/share/R/share
+export R_SHARE_DIR
+R_INCLUDE_DIR=/usr/share/R/include
+export R_INCLUDE_DIR
+R_DOC_DIR=/usr/share/R/doc
+export R_DOC_DIR
+
+JRI_LD_PATH=${R_HOME}/lib:${R_HOME}/bin:
+if test -z "$LD_LIBRARY_PATH"; then
+  LD_LIBRARY_PATH=$JRI_LD_PATH
+else
+  LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JRI_LD_PATH
+fi
+JAVA=/usr/bin/java
+
+JAVA_CLASSPATH=.:soccerscope.jar:java-xmlbuilder-0.3.jar:sexpr.jar:JRI.jar
+
+export R_HOME
+export LD_LIBRARY_PATH
+
+if [ -z "$1" ]; then
+    echo ""
+    echo " Usage: run <class> [...]"
+    echo ""
+    echo " For example: ./runchild soccerscope.SoccerScope"
+    echo " Set CLASSPATH variable if other than . is desired"
+    echo ""
+else
+    CLASSPATH=${JAVA_CLASSPATH} ${JAVA} -Djava.library.path=.:${JRI_PATH} $*
+fi

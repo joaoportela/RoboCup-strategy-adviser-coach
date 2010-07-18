@@ -51,7 +51,7 @@ strategy_data = {
         }
 
 # decision_tree
-decision_trees=["bagging", "randomforest", "svm"]
+decision_trees=["svm"]
 window_sizes=[500, 1000,2000]
 
 #match generation

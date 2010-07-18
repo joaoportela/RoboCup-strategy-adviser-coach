@@ -3,6 +3,7 @@
 import itertools
 import datetime
 import logging
+import sys
 
 import config
 from config import GenerationType
@@ -11,7 +12,7 @@ from team import *
 from confrontation import *
 from utils import *
 import report
-import sys
+import statusclient
 
 
 def fcpd_configurations_by_strategy(data=config.strategy_data):
@@ -154,7 +155,10 @@ def runmatches(confrontations=confrontations_by_strategy(), min_matches=config.m
             logging.debug(dbgmsg.format(n_played_matches, min_matches,
                 fcpD_vs_opp))
 
+            statusclient.live(delta=config.duration.seconds,
+                    criticaldelta=config.duration.seconds*2)
             fcpD_vs_opp.playnewmatch()
+            statusclient.live()
             if matches_missing:
                 # update the counter...
                 matches_played+=1
@@ -172,6 +176,7 @@ def print_progress(matches_played, matches_missing, matchduration=config.duratio
     print msg
 
 def main():
+    statusclient.live()
     for generation_type in config.generation_types:
         if generation_type is GenerationType.DecisionTree:
             cfs=list(confrontations_by_decisiontree())
@@ -212,6 +217,8 @@ def main():
         report.report("upload",passwd=passwd)
 
         runmatches(cfs,matches_missing=nmatches_missing)
+
+    statusclient.finish()
 
 if __name__ == "__main__":
     # get the upload pass

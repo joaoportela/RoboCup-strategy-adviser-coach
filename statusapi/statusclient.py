@@ -2,7 +2,7 @@
 
 import urllib2
 import urllib
-import platform 
+import platform
 
 __all__=['live', 'finish']
 
@@ -41,9 +41,13 @@ def finish():
     return _request(_finishmsg.format(id=id))
 
 def _request(msg):
-    data=urllib.urlencode([('inform', msg)])
-    response = urllib2.urlopen(apiuri,data)
-    return response.read()
+    try:
+        data=urllib.urlencode([('inform', msg)])
+        response = urllib2.urlopen(apiuri,data)
+        return response.read()
+    except:
+        print "Unexpected error:", sys.exc_info()[0]
+    return "error"
 
 if __name__ == '__main__':
     from datetime import timedelta

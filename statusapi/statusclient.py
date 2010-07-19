@@ -4,15 +4,16 @@ import urllib2
 import urllib
 import platform
 
-__all__=['live', 'finish']
+__all__=['live', 'finish', 'crash']
 
-id=platform.node()
+id_=platform.node()
 apiuri='http://ni.fe.up.pt/~poncio/statusserver.php'
 
-_livemsgA='(live {id})'
-_livemsgB='(live {id} {delta})'
-_livemsgC='(live {id} {delta} {criticaldelta})'
-_finishmsg='(finish {id})'
+_livemsgA='(live {id_})'
+_livemsgB='(live {id_} {delta})'
+_livemsgC='(live {id_} {delta} {criticaldelta})'
+_finishmsg='(finish {id_})'
+_crashmsg='(crash {id_})'
 
 
 # protocol summary:
@@ -29,16 +30,19 @@ _finishmsg='(finish {id})'
 
 def live(delta=None, criticaldelta=None):
     if delta is None:
-        apimsg=_livemsgA.format(id=id)
+        apimsg=_livemsgA.format(id_=id_)
     elif criticaldelta is None:
-        apimsg=_livemsgB.format(id=id, delta=delta)
+        apimsg=_livemsgB.format(id_=id_, delta=delta)
     else:
-        apimsg=_livemsgC.format(id=id, delta=delta, criticaldelta=criticaldelta)
+        apimsg=_livemsgC.format(id_=id_, delta=delta, criticaldelta=criticaldelta)
 
     return _request(apimsg)
 
 def finish():
-    return _request(_finishmsg.format(id=id))
+    return _request(_finishmsg.format(id_=id_))
+
+def crash():
+    return _request(_crashmsg.format(id_=id_))
 
 def _request(msg):
     try:

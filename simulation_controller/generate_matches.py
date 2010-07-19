@@ -126,6 +126,8 @@ def smart_prediction(confrontations=confrontations_by_strategy(), min_matches=co
             n_played_matches=len(fcpD_vs_opp)
             if n_played_matches < min_matches:
                 runsmissing+=(min_matches-n_played_matches)
+            elif n_played_matches > min_matches:
+                print fcpD_vs_opp, "has", n_played_matches-min_matches, "extra matches"
 
     print "{0} runs estimated to be missing".format(runsmissing)
     totalduration=matchduration*runsmissing
@@ -237,6 +239,7 @@ if __name__ == "__main__":
         logging.info("----------- '%s' finished ----------", sys.argv[0])
     except:
         logging.exception("Unforeseen exception:")
+        statusclient.crash()
         raise
     finally:
         # report

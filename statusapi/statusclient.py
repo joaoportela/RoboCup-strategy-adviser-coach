@@ -55,6 +55,7 @@ def _request(msg):
 
 if __name__ == '__main__':
     from datetime import timedelta
+    id_="a_test"
     _12min=timedelta(minutes=12)
     print live(_12min.seconds)
 

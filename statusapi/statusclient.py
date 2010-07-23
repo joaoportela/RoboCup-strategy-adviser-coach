@@ -50,6 +50,7 @@ def _request(msg):
         response = urllib2.urlopen(apiuri,data)
         return response.read()
     except:
+        import sys
         print "Unexpected error:", sys.exc_info()[0]
     return "error"
 

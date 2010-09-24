@@ -3,13 +3,17 @@
 // protocol summary:
 // (live Machineid) - indicates that the algorithm is working.
 // (live Machineid NextComm) - same as previous, but indicates the expected time
-// until the next communication. no communication for more than 'NextComm' time
-// raises a yellow flag -- the actions to take are up to the server.
-// (live Machineid NextComm NextCommCritical) - NextComm < NextCommCritical. same as previous but also
-// indicates the critical no communication time. no communication for more time than NextCommCritical means
-// serious problems. it is up to the server to take actions. -- the actions to take are defined by the server.
-// (crash Machineid) - indicates that the algorithm has crashed 
-// (finish Machineid) - indicates that the algorithm as finished
+//  until the next communication. no communication for more than 'NextComm' time
+//  indicates that something can be wrong. It is up to the server to take actions.
+// (live Machineid NextComm NextCommCritical) - NextComm < NextCommCritical.
+//  Same as previous but also indicates how much time without communications is
+//  indicates a critical failure. No communication for more time than
+//  NextCommCritical indicates serious problems. It is up to the server to take
+//  actions.
+// (crash Machineid) - indicates that the algorithm has crashed.
+// (finish Machineid) - indicates that the algorithm as finished.
+
+// NextComm and NextCommCritical must be in seconds.
 
 $logfname="statusserver.messages";
 $processedfname="statusserver.processedmessages";

@@ -5,8 +5,6 @@ __all__ = ["Match"]
 import time
 import logging
 import os
-import xml.dom.minidom as minidom
-import re
 import json
 import glob
 import tarfile
